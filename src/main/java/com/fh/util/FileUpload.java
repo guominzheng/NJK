@@ -17,7 +17,7 @@ public class FileUpload {
 	 * @param file //文件对象
 	 * @param filePath //上传路径
 	 * @param fileName //文件名
-	 * @return 文件名
+	 * @return 文件名称
 	 */
 	public static String fileUp(MultipartFile file, String filePath, String fileName) {
 		String extName = ""; // 扩展名格式：
