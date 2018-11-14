@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Comment_ResearchImgMapper">
+	<insert id="save" parameterType="pd">
+        insert into comment_research_img(
+            COMMENT_RESEARCH_ID,
+            IMG,
+            DATE
+        )values(
+            #{COMMENT_RESEARCH_ID},
+            #{IMG},
+            #{DATE}
+        )
+    </insert>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+            COMMENT_RESEARCH_ID,
+            IMG
+        from comment_research_img
+        where COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID}
+    </select>
+    
+    <delete id="delete" parameterType="pd">
+        delete from comment_research_img where COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID}
+    </delete>
+</mapper>

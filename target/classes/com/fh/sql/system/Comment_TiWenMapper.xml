@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Comment_TiWenMapper">
+    <insert id="save" parameterType="pd">
+        insert into comment_tiwen(
+            COMMENT_TIWEN_ID,
+            TIWEN_ID,
+            USER_ID,
+            NAME,
+            MESSAGE,
+            PUSER_ID,
+            PNAME,
+            DATE,
+            STATUS,
+            VIEWS,
+            YUE,
+            PID
+        )values(
+            #{COMMENT_TIWEN_ID},
+            #{TIWEN_ID},
+            #{USER_ID},
+            #{NAME},
+            #{MESSAGE},
+            #{PUSER_ID},
+            #{PNAME},
+            #{DATE},
+            #{STATUS},
+            #{VIEWS},
+            #{YUE},
+            #{PID}
+        )
+    </insert>
+    
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+            p.COMMENT_TIWEN_ID,
+            p.TIWEN_ID,
+            p.USER_ID,
+            p.MESSAGE,
+            p.PUSER_ID,
+            p.DATE,
+            p.STATUS,
+            p.VIEWS,
+            p.YUE,
+            p.PID,
+            i1.IMG,
+            u1.NAME,
+            u2.NAME as PNAME
+        from comment_tiwen p
+        LEFT JOIN sys_app_user u1 on u1.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=p.PUSER_ID
+         <where>
+            <if test="pd.TIWEN_ID!=null and pd.TIWEN_ID!=''">
+                and p.TIWEN_ID=#{pd.TIWEN_ID}
+            </if>
+            <if test="pd.STATUS!=null and pd.STATUS!=''">
+                and p.STATUS=#{pd.STATUS}
+            </if>
+        </where>
+        ORDER BY p.DATE DESC
+    </select>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+            p.COMMENT_TIWEN_ID,
+            p.TIWEN_ID,
+            p.USER_ID,
+            p.MESSAGE,
+            p.PUSER_ID,
+            p.DATE,
+            p.STATUS,
+            p.VIEWS,
+            p.YUE,
+            p.PID,
+            i1.IMG,
+            u1.NAME,
+            u2.NAME as PNAME
+        from comment_tiwen p
+        LEFT JOIN sys_app_user u1 on u1.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=p.PUSER_ID
+        where p.STATUS=#{STATUS} and p.PID=#{COMMENT_TIWEN_ID}
+        ORDER BY p.DATE
+    </select>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+         select
+            p.COMMENT_TIWEN_ID,
+            p.TIWEN_ID,
+            p.USER_ID,
+            p.MESSAGE,
+            p.PUSER_ID,
+            p.DATE,
+            p.STATUS,
+            p.VIEWS,
+            p.YUE,
+            p.PID
+            from comment_tiwen p
+            where COMMENT_TIWEN_ID=#{COMMENT_TIWEN_ID}
+    </select>
+    
+    <update id="editView" parameterType="pd">
+        update comment_tiwen
+        SET VIEWS=#{VIEWS}
+        where COMMENT_TIWEN_ID=#{COMMENT_TIWEN_ID}
+    </update>
+    
+    <select id="findList1" parameterType="pd" resultType="pd">
+        select
+            p.COMMENT_TIWEN_ID,
+            p.TIWEN_ID,
+            p.USER_ID,
+            p.MESSAGE,
+            p.PUSER_ID,
+            p.DATE,
+            p.STATUS,
+            p.VIEWS,
+            p.YUE,
+            p.PID,
+            i1.IMG,
+            u1.NAME,
+            u2.NAME as PNAME
+        from comment_tiwen p
+        LEFT JOIN sys_app_user u1 on u1.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=p.PUSER_ID
+        where p.STATUS=#{STATUS} and p.TIWEN_ID=#{TIWEN_ID}
+        ORDER BY p.DATE DESC
+        limit 5
+    </select>
+    
+    <delete id="delete" parameterType="pd">
+        delete from comment_tiwen where COMMENT_TIWEN_ID=#{COMMENT_TIWEN_ID}
+    </delete>
+    
+    <delete id="deleteA" parameterType="pd">
+     	delete from comment_tiwen where PID=#{COMMENT_TIWEN_ID}
+    </delete>
+    
+    <select id="findListTo" parameterType="pd" resultType="pd">
+    	  select
+            p.COMMENT_TIWEN_ID,
+            p.TIWEN_ID,
+            p.USER_ID,
+            p.MESSAGE,
+            p.PUSER_ID,
+            p.DATE,
+            p.STATUS,
+            p.VIEWS,
+            p.YUE,
+            p.PID,
+            i1.IMG,
+            u1.NAME,
+            u2.NAME as PNAME
+        from comment_tiwen p
+        LEFT JOIN sys_app_user u1 on u1.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=p.PUSER_ID
+        where p.STATUS=#{STATUS} and p.TIWEN_ID=#{TIWEN_ID}
+        ORDER BY p.DATE DESC
+        limit 2
+    </select>
+
+    <select id="findCount" parameterType="pd" resultType="pd">
+     select count(1) as count FROM  comment_tiwen where STATUS=#{STATUS} and TIWEN_ID=#{TIWEN_ID}
+    </select>
+</mapper>

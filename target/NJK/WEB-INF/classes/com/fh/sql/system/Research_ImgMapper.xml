@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Research_ImgMapper">
+	<insert id="save" parameterType="pd">
+		insert into research_img(
+			RESEARCH_ID,
+			IMG,
+			ORDE_BY,
+			DATE
+		)values(
+			#{RESEARCH_ID},
+			#{IMG},
+			#{ORDE_BY},
+			#{DATE}
+		)
+	</insert>
+	<insert id="saves" parameterType="hashmap">
+		insert into research_img(
+			RESEARCH_ID,
+			IMG,
+			ORDE_BY,
+			DATE
+		)values
+		<foreach collection="list" item="item" index="index" separator="," >
+    	(#{RESEARCH_ID},#{item.IMG},#{item.ORDE_BY},#{item.DATE})
+    	</foreach>
+	</insert>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+		select
+			RESEARCH_ID,
+			IMG,
+			ORDE_BY,
+			DATE
+		from research_img
+		where RESEARCH_ID=#{RESEARCH_ID} and ORDE_BY!='100'
+	</select>
+	
+	<delete id="delete" parameterType="pd">
+		delete from research_img where RESEARCH_ID=#{RESEARCH_ID}
+	</delete>
+
+    <delete id="deleteImg" parameterType="pd">
+        delete from research_img where RESEARCH_ID=#{RESEARCH_ID} AND  IMG = #{IMG}
+    </delete>
+
+	<delete id="deleteHuoDong" parameterType="pd">
+		delete from research_img where RESEARCH_ID=#{RESEARCH_ID} AND ORDE_BY='100'
+	</delete>
+
+	<select id="findHuoDongImg" parameterType="pd" resultType="pd">
+		select
+			RESEARCH_ID,
+			IMG,
+			ORDE_BY,
+			DATE
+		from research_img
+		where RESEARCH_ID=#{RESEARCH_ID} and ORDE_BY='100'
+	</select>
+	<update id="editHuoDongImg" parameterType="pd">
+		UPDATE
+		research_img
+		SET
+		IMG=#{IMG},
+		DATE=#{DATE}
+		where
+		RESEARCH_ID=#{RESEARCH_ID} and ORDE_BY='100'
+	</update>
+	
+</mapper>

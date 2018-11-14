@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Views_ActivityMapper">
+    <insert id="save" parameterType="pd">
+        insert into views_activity(
+            ACTIVITY_ID,
+            USER_ID,
+            QUSER_ID
+        )values(
+            #{ACTIVITY_ID},
+            #{USER_ID},
+            #{QUSER_ID}
+        )
+    </insert>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+            ACTIVITY_ID,
+            USER_ID,
+            QUSER_ID
+        from views_activity
+        where ACTIVITY_ID=#{ACTIVITY_ID} and QUSER_ID=#{QUSER_ID} and USER_ID=#{USER_ID}
+    </select>
+    
+    <select id="findCount" parameterType="pd" resultType="pd">
+        select count(*) as count from views_activity  where ACTIVITY_ID=#{ACTIVITY_ID} and USER_ID=#{USER_ID}
+    </select>
+    
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+    SELECT
+        S.*
+        FROM
+        (
+            SELECT 
+            count(*) as count,
+            v.USER_ID,
+            u.NAME,
+            u.USERNAME
+            from views_activity v
+            LEFT JOIN sys_app_user u on u.USER_ID=v.USER_ID
+            where v.ACTIVITY_ID=#{ACTIVITY_ID}
+            GROUP BY v.USER_ID
+    ) S
+    ORDER BY S.count DESC
+    limit 5
+    </select>
+</mapper>

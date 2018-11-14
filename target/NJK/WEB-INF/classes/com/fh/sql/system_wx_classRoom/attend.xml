@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_AttendMapper">
+    <!-- 听课和购买记录 -->
+
+    <select id="findCountBylistPage" parameterType="page" resultType="pd">
+   SELECT
+	a.attend_id,
+	a.liveId,
+	a.look_pay,
+	l.live_name,
+	l.live_img,
+	l.createTime,
+	l.live_view,
+	l.typeId,
+	l.live_bannerImg,
+	l.live_audioImg,
+	u.cr_userName,
+	(SELECT count(1) FROM wx_classroom_attend w WHERE w.liveId = l.live_id AND w.userId = a.userId ) AS counts
+FROM
+	wx_classroom_attend a
+LEFT JOIN wx_classroom_live l ON a.liveId = l.live_id
+LEFT JOIN wx_classroom_user u ON l.userId = u.cr_userid
+WHERE
+          a.userId = #{pd.userId}
+          AND
+          a.look_pay =#{pd.look_pay}
+          ORDER BY createTime DESC
+    </select>
+
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_attend
+        (
+        userId,
+        liveId,
+        createTime,
+        look_pay
+        )
+        VALUES
+        (
+        #{userId},
+        #{liveId},
+        #{createTime},
+        #{look_pay}
+        )
+    </insert>
+
+
+    <select id="findUserAttend" parameterType="pd" resultType="pd">
+        SELECT
+          attend_id,
+          userId,
+          liveId,
+          createTime,
+          look_pay
+          FROM
+          wx_classroom_attend
+          WHERE
+          look_pay = #{look_pay}
+          AND
+          userId = #{userId}
+          AND
+          liveId= #{liveId}
+    </select>
+
+    <update id="update" parameterType="pd">
+        UPDATE
+        wx_classroom_attend
+        SET
+createTime=#{createTime}
+WHERE
+attend_id= #{attend_id}
+    </update>
+    <delete id="delete" parameterType="pd">
+        DELETE
+FROM
+wx_classroom_attend
+where
+attend_id =#{attend_id}
+    </delete>
+</mapper>

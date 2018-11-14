@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NongYaoMapper">
+	<select id="findList" parameterType="pd" resultType="pd">
+		select
+			NONGYAO_ID,
+			ENAME,
+			NAME,
+			TYPE,
+			REGISTER_NUMBER,
+			LEVEL,
+			EFFECTIVE
+		from nongyao
+		<where>
+			<if test="KEYWORD1!=null and KEYWORD1!=''">
+				and REGISTER_NUMBER  LIKE CONCAT('%',CONCAT(#{KEYWORD1}),'%')
+			</if>
+			<if test="KEYWORD2!=null and KEYWORD2!=''">
+				and ENAME LIKE CONCAT(CONCAT('%',#{KEYWORD2}),'%')
+			</if>
+			<if test="KEYWORD3!=null and KEYWORD3!=''">
+				and EFFECTIVE LIKE CONCAT(CONCAT('%',#{KEYWORD3}),'%')
+			</if>
+		</where>
+		limit #{SHU1},10
+	</select>
+	
+	
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			NONGYAO_ID,
+			ENAME,
+			NAME,
+			TYPE,
+			EFFECTIVE,
+			EFFECTIVE_L,
+			REGISTER,
+			REGISTER_NUMBER,
+			REGISTER_DATE,
+			LEVEL,
+			USAGE1,
+			FORMANCE,
+			MATTERS,
+			TRANSPORT,
+			FIRST,
+			BEIZHU,
+			QUANBU
+		from nongyao
+		where NONGYAO_ID=#{NONGYAO_ID}
+	</select>
+</mapper>

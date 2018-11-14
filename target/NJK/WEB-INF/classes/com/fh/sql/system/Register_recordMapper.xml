@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Register_recordMapper">
+    <insert id="save" parameterType="pd">
+        insert into register_record(
+            REGISTER_RECORD_ID,
+            DATE,
+            NIAN1,
+            YUE
+        )values(
+            #{REGISTER_RECORD_ID},
+            #{DATE},
+            #{NIAN1},
+            #{YUE}
+        )
+    </insert>
+    
+    <select id="datalistPage" parameterType="pd" resultType="pd">
+        SELECT 
+        count(*) as cont1,
+        DATE 
+        from register_record 
+        GROUP BY DATE
+        ORDER BY DATE DESC
+    </select>
+    
+    <select id="findYDuiBi" parameterType="pd" resultType="pd">
+        SELECT 
+        count(*) as cont1,
+        YUE 
+        from register_record
+        where NIAN1=#{NIAN1}
+        GROUP BY YUE
+        ORDER BY YUE
+    </select>
+    
+    <select id="findListDate" parameterType="pd" resultType="pd">
+        SELECT  count(*) as cont1 from register_record where DATE &gt;= #{KAISHI} and  DATE &lt;= #{END} 
+    </select>
+    
+     <select id="findTDate" parameterType="pd" resultType="pd">
+        SELECT count(*) as cont1,IFNULL(DATE,#{DATE}) AS DATE from register_record where DATE=#{DATE}
+    </select>
+</mapper>

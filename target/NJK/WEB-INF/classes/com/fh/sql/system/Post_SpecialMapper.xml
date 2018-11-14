@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Post_SpecialMapper">
+    <insert id="save" parameterType="pd">
+        insert into post_special(
+            FID,
+            SPECIAL,
+            ORDE_BY,
+            MESSAGE,
+            VIEWS,
+            HUIFU,
+            USER_ID,
+            TSTATUS,
+            NAME,
+            IMG,
+            COVER_IMG,
+            COVER_IMG2,
+            SHUZI
+        )values(
+            #{FID},
+            #{SPECIAL},
+            #{ORDE_BY},
+            #{MESSAGE},
+            #{VIEWS},
+            #{HUIFU},
+            #{USER_ID},
+            #{TSTATUS},
+            #{NAME},
+            #{IMG},
+            #{COVER_IMG},
+            #{COVER_IMG2},
+            #{SHUZI}
+        )
+    </insert>
+    
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+            FID,
+            SPECIAL,
+            ORDE_BY,
+            MESSAGE,
+            VIEWS,
+            HUIFU,
+            USER_ID,
+            TSTATUS,
+            NAME,
+            IMG,
+            COVER_IMG,
+            COVER_IMG2,
+            SHUZI
+        from post_special
+        <where>
+            <if test="pd.KEYWORD!=null and pd.KEYWORD!=''">
+               and
+                (
+                 SPECIAL LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+                )
+            </if>
+        </where>
+        ORDER BY ORDE_BY
+    </select>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+            FID,
+            SPECIAL,
+            ORDE_BY,
+            MESSAGE,
+            VIEWS,
+            HUIFU,
+            USER_ID,
+            TSTATUS,
+            NAME,
+            IMG,
+            COVER_IMG,
+            COVER_IMG2,
+            SHUZI
+        from post_special 
+        where 1=1
+        <if test="FID!=null and FID!=''">
+          and  FID=#{FID}  
+        </if> 
+       <if test="TSTATUS!=null and TSTATUS!=''">
+           and TSTATUS=#{TSTATUS}
+       </if>
+    </select>
+    
+        <select id="findById2" parameterType="pd" resultType="pd">
+        select
+            p.FID,
+            p.SPECIAL,
+            p.ORDE_BY,
+            p.MESSAGE,
+            p.USER_ID,
+            p.TSTATUS,
+            p.NAME,
+            p.IMG,
+            p.COVER_IMG,
+            p.SHUZI,
+            (SELECT COUNT(*) from zan_special where FID=p.FID) as VIEWS,
+            (SELECT COUNT(*) from post where FID=p.FID) as ZONGSHU,
+		    (SELECT COUNT(*) from comment_special where FID=p.FID) as HUIFU
+        from post_special p 
+        where 1=1
+        <if test="FID!=null and FID!=''">
+          and  FID=#{FID}  
+        </if> 
+       <if test="TSTATUS!=null and TSTATUS!=''">
+           and TSTATUS=#{TSTATUS}
+       </if>
+    </select>
+    
+    
+    <select id="findById1" parameterType="pd" resultType="pd">
+        select
+            p.FID,
+            p.SPECIAL,
+            p.ORDE_BY,
+            p.MESSAGE,
+            p.USER_ID,
+            p.TSTATUS,
+            p.NAME,
+            p.IMG,
+            p.COVER_IMG2 as COVER_IMG,
+            p.SHUZI,
+            (SELECT COUNT(*) from zan_special where FID=p.FID) as VIEWS,
+            (SELECT COUNT(*) from post where FID=p.FID) as ZONGSHU,
+		    (SELECT COUNT(*) from comment_special where FID=p.FID) as HUIFU
+        from post_special p 
+        where 1=1
+        <if test="FID!=null and FID!=''">
+          and  FID=#{FID}  
+        </if> 
+       <if test="TSTATUS!=null and TSTATUS!=''">
+           and TSTATUS=#{TSTATUS}
+       </if>
+    </select>
+    
+    <select id="data4listPage" parameterType="page" resultType="pd">
+    	select
+            p.FID,
+            p.SPECIAL,
+            p.ORDE_BY,
+            p.MESSAGE,
+            p.VIEWS,
+            p.USER_ID,
+            p.TSTATUS,
+            p.NAME,
+            p.IMG,
+            p.COVER_IMG,
+            (SELECT COUNT(*) from post where FID=p.FID) as ZONGSHU,
+		    (SELECT COUNT(*) from comment_special where FID=p.FID and STATUS='0') as HUIFU
+        from post_special p
+        ORDER BY p.ORDE_BY
+    </select>
+    
+    <update id="edit" parameterType="pd">
+        update post_special
+        SET SPECIAL=#{SPECIAL},
+            ORDE_BY=#{ORDE_BY},
+            FID=FID,
+            MESSAGE=#{MESSAGE},
+            VIEWS=#{VIEWS},
+            HUIFU=#{HUIFU},
+            NAME=#{NAME},
+            COVER_IMG=#{COVER_IMG},
+            IMG=#{IMG},
+            COVER_IMG2=#{COVER_IMG2}
+        where FID=#{FID}
+    </update>
+    
+    <delete id="delete" parameterType="pd">
+        delete from post_special where FID=#{FID}
+    </delete>
+    
+                <!-- 批量删除 -->
+    <delete id="deleteAll" parameterType="String">
+        delete from post_special
+        where 
+            FID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+        </foreach>
+    </delete>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+         select
+            FID,
+            SPECIAL,
+            ORDE_BY,
+            VIEWS,
+            HUIFU,
+            USER_ID,
+            TSTATUS,
+            NAME,
+            IMG,
+            COVER_IMG,
+            MESSAGE,
+            COVER_IMG2
+        from post_special 
+        ORDER BY ORDE_BY
+    </select>
+    
+    <select id="findCount" parameterType="pd" resultType="pd">
+        select count(*) as count from post_special where TSTATUS=1
+    </select>
+    
+       <update id="TStatus" parameterType="pd">
+        update post_special
+        SET TSTATUS=#{TSTATUS}
+        where FID=#{FID}
+    </update>
+    
+    <update id="editViews" parameterType="pd">
+        update post_special
+        SET VIEWS=#{VIEWS}
+        where FID=#{FID}
+    </update>
+    
+    <update id="editHuiFu" parameterType="pd">
+        update post_special
+        SET HUIFU=#{HUIFU}
+        where FID=#{FID}
+    </update>
+        <update id="editTStatus" parameterType="pd">
+        update post_special
+        SET TSTATUS=#{TSTATUS}
+        where FID=#{FID}
+    </update>
+    
+    <select id="findNotIn" parameterType="pd" resultType="pd">
+    select 
+            FID,
+            SPECIAL,
+            ORDE_BY,
+            VIEWS,
+            HUIFU,
+            USER_ID,
+            TSTATUS,
+            NAME,
+            IMG,
+            COVER_IMG,
+            MESSAGE,
+            COVER_IMG2
+    from post_special 
+    where FID not in(
+    select FID from collection_special where USER_ID=#{USER_ID})
+    ORDER BY ORDE_BY
+    </select>
+    
+    
+     <select id="findlistIn" parameterType="pd" resultType="pd">
+    select 
+            FID,
+            SPECIAL,
+            ORDE_BY,
+            VIEWS,
+            HUIFU,
+            USER_ID,
+            TSTATUS,
+            NAME,
+            IMG,
+            COVER_IMG,
+            MESSAGE,
+            COVER_IMG2,
+            SHUZI
+    from post_special 
+    where FID in(
+    select FID from collection_special where USER_ID=#{USER_ID})
+    ORDER BY ORDE_BY
+    </select>
+    
+    <update id="editShuZi" parameterType="pd">
+    	update post_special
+    	SET SHUZI=#{SHUZI}
+    	where FID=#{FID}
+    </update>
+</mapper>

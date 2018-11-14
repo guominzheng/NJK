@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CouponMapper">
+    <insert id="save" parameterType="pd">
+        insert into coupon(
+            MAX,
+            JIAN,
+            DATE,
+            END,
+            USER_ID,
+            STATUS,
+            BEIZHU,
+            IMG,
+            ZSTATUS
+        )values(
+            #{MAX},
+            #{JIAN},
+            #{DATE},
+            #{END},
+            #{USER_ID},
+            #{STATUS},
+            #{BEIZHU},
+            #{IMG},
+            #{ZSTATUS}
+        )
+    </insert>
+    <update id="edit" parameterType="pd">
+        UPDATE  coupon
+         SET
+         MAX=#{MAX},
+         JIAN=#{JIAN},
+         END=#{END},
+         STATUS=#{STATUS},
+         IMG=#{IMG},
+         BEIZHU=#{BEIZHU},
+         STATUS=#{STATUS}
+         WHERE
+         COUPON_ID = #{COUPON_ID}
+
+    </update>
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+            COUPON_ID,
+            MAX,
+            JIAN,
+            DATE,
+            END,
+            USER_ID,
+            STATUS
+        from coupon
+        where USER_ID=#{USER_ID} and STATUS='1'
+        ORDER BY MAX DESC
+    </select>
+
+    <delete id="deleteAll" parameterType="String">
+        delete from coupon
+        where
+        COUPON_ID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="delete" parameterType="pd">
+        delete from coupon where COUPON_ID=#{COUPON_ID}
+    </delete>
+
+    <select id="findUserId" parameterType="pd" resultType="pd">
+        select
+            COUPON_ID,
+            MAX,
+            JIAN,
+            DATE,
+            END,
+            USER_ID,
+            STATUS,
+            BEIZHU,
+            IMG
+        from coupon
+        where USER_ID=#{USER_ID}
+    </select>
+    <select id="findCouponId" parameterType="pd" resultType="pd">
+        select
+        su.USERNAME,
+        c.COUPON_ID,
+        c.MAX,
+        c.JIAN,
+        c.DATE,
+        c.END,
+        c.USER_ID,
+        c.IMG,
+        C.BEIZHU,
+        c.STATUS
+        from coupon c
+        LEFT JOIN
+        sys_app_user su
+        ON
+         c.USER_ID = su.USER_ID
+        where COUPON_ID=#{COUPON_ID}
+    </select>
+    <select id="dataslistPage" parameterType="page" resultType="pd">
+        select
+        c.COUPON_ID,
+        su.`USER_ID`,
+        su.`USERNAME`,
+        su.NAME,
+        c.`MAX`,
+        c.`JIAN`,
+        c.`DATE`,
+        c.`END`,
+        c.`STATUS`,
+        c.`BEIZHU`,
+        c.`IMG` from coupon c
+        LEFT JOIN
+        sys_app_user su
+        ON
+        c.USER_ID = su.USER_ID
+        WHERE 1=1
+        <if test="pd.USERNAME!=null and pd.USERNAME!='' ">AND su.USERNAME=#{pd.USERNAME}</if>
+        <if test="pd.STATUS!=null and pd.STATUS!='' ">AND c.STATUS=#{pd.STATUS}</if>
+        ORDER BY DATE DESC
+    </select>
+
+
+    <select id="findZstatus" parameterType="pd" resultType="pd">
+    	select
+            COUPON_ID,
+            MAX,
+            JIAN,
+            DATE,
+            END,
+            USER_ID,
+            STATUS,
+            BEIZHU,
+            IMG
+        from coupon
+        where USER_ID=#{USER_ID} and ZSTATUS='0'
+        limit 1
+    </select>
+
+    <update id="editZStatus" parameterType="pd">
+    	update coupon
+    	SET ZSTATUS='1'
+    	where USER_ID=#{USER_ID}
+    </update>
+
+    <select id="findCount" parameterType="pd" resultType="pd">
+    	select count(*) as count1 from coupon where USER_ID=#{USER_ID}
+    </select>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+    	select
+    	 	COUPON_ID,
+            MAX,
+            JIAN,
+            DATE,
+            END,
+            USER_ID,
+            STATUS,
+            BEIZHU,
+            IMG
+    	from coupon
+    	where COUPON_ID=#{COUPON_ID}
+    </select>
+    <select id="findCopyUser" parameterType="pd" resultType="pd">
+        SELECT
+	A.COUPON_ID,
+	A.MAX,
+	A.JIAN,
+	A.DATE,
+	A.END,
+	A.USER_ID,
+	A.STATUS,
+	A.BEIZHU,
+  A.IMG
+FROM
+	(SELECT
+	COUPON_ID,
+	MAX,
+	JIAN,
+	date_format(DATE,'%Y-%m-%d') DATE,
+	END,
+	USER_ID,
+	STATUS,
+	BEIZHU,
+  IMG
+FROM
+	coupon
+WHERE
+	USER_ID = #{USER_ID}) A
+WHERE
+	A.DATE = #{DATE}
+    </select>
+
+
+    <update id="editStatus" parameterType="pd">
+    	update coupon
+    	SET STATUS='1'
+    	where USER_ID=#{USER_ID}
+    </update>
+
+    <insert id="batchSave" parameterType="java.util.Map">
+        INSERT INTO coupon(
+        MAX,
+        JIAN,
+        DATE,
+        END,
+        USER_ID,
+        IMG,
+        BEIZHU,
+        STATUS,
+        ZSTATUS
+        )VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{pd.MAX},#{pd.JIAN},NOW(),#{pd.END},#{item.USER_ID},#{pd.IMG},#{pd.BEIZHU},'0','0')
+        </foreach>
+    </insert>
+</mapper>

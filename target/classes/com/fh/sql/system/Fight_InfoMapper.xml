@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Fight_InfoMapper">
+	<insert id="save" parameterType="pd">
+		insert into fight_info(
+			FIGHT_INFO_ID,
+			USER_ID,
+			PRODUCT,
+			DATE,
+			FIGHT_ID,
+			ADDRESS,
+			OPENID,
+			MONEY,
+			ORDER_NUMBER,
+			STATUS,
+			PAY_DATE,
+			PAY_METHOD,
+			PHONE,
+			NAME,
+			STATUS1,
+			KUAIDI,
+			NUMBER,
+			YMONEY
+		)values(
+			#{FIGHT_INFO_ID},
+			#{USER_ID},
+			#{PRODUCT},
+			#{DATE},
+			#{FIGHT_ID},
+			#{ADDRESS},
+			#{OPENID},
+			#{MONEY},
+			#{ORDER_NUMBER},
+			#{STATUS},
+			#{PAY_DATE},
+			#{PAY_METHOD},
+			#{PHONE},
+			#{NAME},
+			#{STATUS1},
+			#{KUAIDI},
+			#{NUMBER},
+			#{YMONEY}
+		)
+	</insert>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+		select
+			f.FIGHT_INFO_ID,
+			f.USER_ID,
+			f.PRODUCT,
+			f.DATE,
+			f.FIGHT_ID,
+			f.ADDRESS,
+			f.OPENID,
+			f.MONEY,
+			f.ORDER_NUMBER,
+			f.STATUS,
+			f.PAY_DATE,
+			f.PAY_METHOD,
+			f.PHONE,
+			f.NAME,
+			f.KUAIDI,
+			f.NUMBER,
+			f.YMONEY,
+			u.IMG
+		from fight_info f
+		LEFT JOIN sys_app_userinfo u on u.USER_ID= f.USER_ID
+		where f.FIGHT_ID=#{FIGHT_ID}
+		<if test="STATUS!=null and STATUS!=''">
+			and f.STATUS='1'
+		</if>
+	</select>
+	
+	<select id="findListUserId" parameterType="pd" resultType="pd">
+		select
+			FIGHT_INFO_ID,
+			USER_ID,
+			PRODUCT,
+			DATE,
+			FIGHT_ID,
+			ADDRESS,
+			OPENID,
+			MONEY,
+			ORDER_NUMBER,
+			STATUS,
+			PAY_DATE,
+			PHONE,
+			PAY_METHOD,
+			NAME,
+			KUAIDI,
+			NUMBER,
+			YMONEY
+		from fight_info
+		where USER_ID=#{USER_ID} and STATUS!='0' and STATUS!='10'
+		ORDER BY DATE
+	</select>
+	
+	<select id="findListOpenId" parameterType="pd" resultType="pd">
+		select
+			i.FIGHT_INFO_ID,
+			i.USER_ID,
+			i.PRODUCT,
+			i.DATE,
+			i.FIGHT_ID,
+			i.ADDRESS,
+			i.OPENID,
+			i.MONEY,
+			i.ORDER_NUMBER,
+			i.STATUS,
+			i.PAY_DATE,
+			i.PHONE,
+			i.PAY_METHOD,
+			i.NAME,
+			i.KUAIDI,
+			i.NUMBER,
+			i.YMONEY
+		from fight_info i
+		LEFT JOIN fight f on f.FIGHT_ID=i.FIGHT_ID
+		where i.OPENID=#{OPENID} and i.STATUS!='4' and i.STATUS!='2' and i.STATUS!='0' and i.STATUS!='3' and i.STATUS!='10' and f.STATUS!='2' and f.STATUS!='3' and f.STATUS!='10'
+	</select>
+	
+	<select id="findNumber" parameterType="pd" resultType="pd">
+		select
+			FIGHT_INFO_ID,
+			USER_ID,
+			PRODUCT,
+			DATE,
+			FIGHT_ID,
+			ADDRESS,
+			OPENID,
+			MONEY,
+			ORDER_NUMBER,
+			STATUS,
+			PAY_DATE,
+			PHONE,
+			PAY_METHOD,
+			NAME,
+			KUAIDI,
+			NUMBER,
+			YMONEY
+		from fight_info
+		where ORDER_NUMBER=#{ORDER_NUMBER}
+	</select>
+	
+	<update id="editStatus" parameterType="pd">
+		update fight_info
+		SET STATUS=#{STATUS},
+			PAY_DATE=#{PAY_DATE}
+		where FIGHT_INFO_ID=#{FIGHT_INFO_ID}
+	</update>
+	
+	
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			FIGHT_INFO_ID,
+			USER_ID,
+			PRODUCT,
+			DATE,
+			FIGHT_ID,
+			ADDRESS,
+			OPENID,
+			MONEY,
+			ORDER_NUMBER,
+			STATUS,
+			PAY_DATE,
+			PHONE,
+			PAY_METHOD,
+			NAME,
+			KUAIDI,
+			NUMBER,
+			YMONEY
+		from fight_info
+		where 1=1
+		<if test="pd.FIGHT_ID!=null and pd.FIGHT_ID!=''">
+			and FIGHT_ID=#{pd.FIGHT_ID}
+		</if>
+		<if test="pd.USER_ID!=null and pd.USER_ID!=''">
+			and USER_ID=#{pd.USER_ID} 
+		</if>
+		and STATUS!='0' and STATUS!='10'
+	</select>
+	
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			FIGHT_INFO_ID,
+			USER_ID,
+			PRODUCT,
+			DATE,
+			FIGHT_ID,
+			ADDRESS,
+			OPENID,
+			MONEY,
+			ORDER_NUMBER,
+			STATUS,
+			PAY_DATE,
+			PHONE,
+			PAY_METHOD,
+			NAME,
+			KUAIDI,
+			NUMBER,
+			YMONEY
+		from fight_info
+		where FIGHT_INFO_ID=#{FIGHT_INFO_ID}
+	</select>
+	
+
+
+	<update id="edit" parameterType="pd">
+		update fight_info
+		SET KUAIDI=#{KUAIDI},
+			NUMBER=#{NUMBER}
+		where FIGHT_INFO_ID=#{FIGHT_INFO_ID}
+	</update>
+	
+	<select id="findByUIdOId" parameterType="pd" resultType="pd">
+		select
+			FIGHT_INFO_ID,
+			USER_ID,
+			PRODUCT,
+			DATE,
+			FIGHT_ID,
+			ADDRESS,
+			OPENID,
+			MONEY,
+			ORDER_NUMBER,
+			STATUS,
+			PAY_DATE,
+			PHONE,
+			PAY_METHOD,
+			NAME,
+			KUAIDI,
+			NUMBER,
+			YMONEY
+		from fight_info
+		where FIGHT_ID=#{FIGHT_ID} and OPENID=#{OPENID} and STATUS='1'
+	</select>
+	
+	<select id="findOpenId" parameterType="pd" resultType="pd">
+		select
+			FIGHT_INFO_ID,
+			USER_ID,
+			PRODUCT,
+			DATE,
+			FIGHT_ID,
+			ADDRESS,
+			OPENID,
+			MONEY,
+			ORDER_NUMBER,
+			STATUS,
+			PAY_DATE,
+			PHONE,
+			PAY_METHOD,
+			NAME,
+			KUAIDI,
+			NUMBER,
+			YMONEY
+		from fight_info
+		where OPENID=#{OPENID} and STATUS='1'
+	</select>
+	
+	<select id="findCount" parameterType="pd" resultType="pd">
+		select count(*) as count from fight_info where FIGHT_ID=#{FIGHT_ID} and STATUS='1';
+	</select>
+	
+	<select id="findList1" parameterType="pd" resultType="pd">
+		select
+			f.FIGHT_INFO_ID,
+			f.USER_ID,
+			f.PRODUCT,
+			f.DATE,
+			f.FIGHT_ID,
+			f.ADDRESS,
+			f.OPENID,
+			f.MONEY,
+			f.ORDER_NUMBER,
+			f.STATUS,
+			f.PAY_DATE,
+			f.PAY_METHOD,
+			f.PHONE,
+			f.NAME,
+			f.KUAIDI,
+			f.NUMBER,
+			f.YMONEY,
+			u.IMG
+		from fight_info f
+		LEFT JOIN sys_app_userinfo u on u.USER_ID= f.USER_ID
+		where f.FIGHT_ID=#{FIGHT_ID} and f.STATUS='1' and f.MONEY!='0'
+	</select>
+	
+	<select id="findList2" parameterType="pd" resultType="pd">
+		select 
+			f.PRODUCT,
+			f.DATE,
+			f.NAME,
+			f.PHONE,
+			f.ADDRESS,
+			f.MONEY,
+			f.ORDER_NUMBER,
+			f.KUAIDI,
+			f.NUMBER,
+			h.STATUS1,
+			h.NAME as NAME1
+		from fight_info f
+		LEFT JOIN fight h on h.FIGHT_ID=f.FIGHT_ID
+		where f.STATUS='1' and f.MONEY!='0' and f.NAME!='宋俊成' and f.NAME!='崔景航' and MONEY='10.99'
+		ORDER BY f.DATE DESC
+	</select>
+</mapper>

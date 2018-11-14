@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GameLuckMapper">
+
+    <insert id="save" parameterType="pd">
+        INSERT
+        into
+        game_luck
+        (
+        openId,
+        prizeName,
+        prizeImg,
+        get_status,
+        type,
+        createTime,
+        couponImg
+        )
+        VALUE
+        (
+        #{openId},
+        #{prizeName},
+        #{prizeImg},
+        #{get_status},
+        #{type},
+        #{createTime},
+        #{couponImg}
+        )
+    </insert>
+
+    <select id="findLuckList" parameterType="pd" resultType="pd">
+        SELECT
+        l.luckId,
+        l.openId,
+        l.prizeName,
+        l.prizeImg,
+        l.createTime,
+        u.userName,
+        u.userImg,
+        l.get_status,
+        l.couponImg,
+        l.type
+        FROM
+        game_luck l
+        LEFT JOIN
+        game_user u
+        ON
+        l.openId = u.openId
+        WHERE
+        type != 0
+        <if test="openId !=null">
+            AND l.openId=#{openId}
+        </if>
+        <if test="get_status != null">
+            AND l.get_status=#{get_status}
+        </if>
+        <if test="type != null">
+            AND l.type = #{type}
+        </if>
+        <if test="createTime != null">
+            AND l.createTime = #{createTime}
+        </if>
+    </select>
+
+    <update id="update" parameterType="pd">
+        UPDATE
+        game_luck
+        <set>
+            <if test="get_status != null">
+                get_status=#{get_status}
+            </if>
+        </set>
+        WHERE
+        luckId=#{luckId}
+    </update>
+</mapper>

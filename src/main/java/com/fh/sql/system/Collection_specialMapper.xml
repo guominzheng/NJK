@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Collection_specialMapper">
+	<insert id="save" parameterType="pd">
+		insert into collection_special(
+		COLLECTION_SPECIAL_ID,
+		USER_ID,
+		FID,
+		DATE,
+		STATUS
+		)values(
+		#{COLLECTION_SPECIAL_ID},
+		#{USER_ID},
+		#{FID},
+		#{DATE},
+		#{STATUS}
+		)
+	</insert>
+
+	<delete id="delete" parameterType="pd">
+		delete from collection_special where USER_ID=#{USER_ID} and FID=#{FID}
+	</delete>
+
+	<select id="findList" parameterType="pd" resultType="pd">
+		select
+		p.FID,
+		p.SPECIAL,
+		p.ORDE_BY,
+		p.VIEWS,
+		p.HUIFU,
+		p.USER_ID,
+		p.TSTATUS,
+		p.NAME,
+		p.IMG,
+		p.COVER_IMG,
+		p.MESSAGE
+		from collection_special s
+		LEFT JOIN post_special p on p.FID=s.FID
+		where s.USER_ID=#{USER_ID}
+		ORDER BY p.ORDE_BY
+	</select>
+
+	<select id="findCollentionSpecial" parameterType="pd"
+		resultType="pd">
+		select
+		c.COLLECTION_SPECIAL_ID,
+		c.USER_ID,
+		c.FID,
+		p.SPECIAL,
+		p.MESSAGE,
+		p.VIEWS,
+		p.HUIFU,
+		p.NAME,
+		p.IMG
+		from collection_special c
+		LEFT JOIN post_special p on p.FID=c.FID
+		where c.USER_ID=#{USER_ID}
+	</select>
+
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+		c.COLLECTION_SPECIAL_ID,
+		p.USER_ID,
+		c.FID,
+		c.STATUS,
+		p.SPECIAL,
+		p.MESSAGE,
+		p.VIEWS,
+		p.HUIFU,
+		p.NAME,
+		p.IMG
+		from collection_special c
+		LEFT JOIN post_special p on p.FID=c.FID
+		where c.USER_ID=#{pd.USER_ID}
+	</select>
+
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+		c.COLLECTION_SPECIAL_ID,
+		c.USER_ID,
+		c.FID
+		from collection_special c
+		where c.FID=#{FID} and c.USER_ID=#{USER_ID}
+	</select>
+
+	<select id="findById1" parameterType="pd" resultType="pd">
+		select
+		c.COLLECTION_SPECIAL_ID,
+		c.USER_ID,
+		c.FID
+		from collection_special c
+		where c.FID=#{FID} and c.USER_ID=#{USER_ID1}
+	</select>
+
+	<update id="editStatus1" parameterType="pd">
+		update collection_special
+		SET STATUS='1'
+		where FID=#{FID}
+	</update>
+
+	<update id="editStatus2" parameterType="pd">
+		update collection_special
+		SET STATUS='0'
+		where USER_ID=#{USER_ID}
+	</update>
+
+	<select id="findListStatus" parameterType="pd" resultType="pd">
+		select
+		COLLECTION_SPECIAL_ID,
+		USER_ID,
+		FID
+		from collection_special
+		where USER_ID=#{USER_ID} and STATUS='1'
+		limit 1
+	</select>
+</mapper>

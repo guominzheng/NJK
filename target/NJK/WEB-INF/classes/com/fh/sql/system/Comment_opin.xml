@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户建议回复mapper-->
+<mapper namespace="Comment_opinMapper">
+    <!--查询所有用户建议回复返回listpage类型(返回自动封装分页)-->
+    <select id="findlistPage" parameterType="page" resultType="pd">
+        SELECT
+        co.COMMENT_OPIN_ID,   <!--用户建议回复主键 -->
+        co.USER_ID,
+        s1.USERNAME,          <!-- 用户登陆账号-->
+        s1.NAME,              <!-- 被回复的客户-->
+        co.CREATE_DATE,       <!-- 创建时间 -->
+        co.INFO,              <!--  回复内容-->
+        e.NAME EXNAME,        <!-- 客服人员 -->
+        co.OPINION_ID         <!--  关联的建议表ID-->
+        FROM
+        comment_opin co       <!--  用户建议回复表-->
+        LEFT JOIN
+        sys_app_user s1       <!--  用户信息表-->
+        ON
+        co.USER_ID=s1.USER_ID <!-- 用户和建议恢复表关联 -->
+        LEFT JOIN
+        exclu e                <!-- 客服表  -->
+        ON
+        co.EXCLU_ID=e.EXCLU_ID<!-- 客服和建议回复表关联 -->
+        WHERE
+        1=1
+        <if test="pd.OPINION_ID != null ">AND co.OPINION_ID =#{pd.OPINION_ID}</if>                   <!-- 根据建议表主键查询 -->
+        <if test="pd.EXCLU_ID != null ">AND co.EXCLU_ID = #{pd.EXCLU_ID}</if>                          <!--根据客服主键查询  -->
+        <if test="pd.COMMENT_OPIN_ID != null">AND co.COMMENT_OPIN_ID=#{pd.COMMENT_OPIN_ID}</if><!-- 根据主键查询 -->
+    </select>
+
+
+    <!-- 添加用户建议的回复信息表-->
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        comment_opin(
+          USER_ID,        <!-- 用户主键-->
+          CREATE_DATE,    <!-- 创建时间-->
+          INFO,           <!-- 回复信息-->
+          EXCLU_ID,       <!-- 客服主键-->
+          OPINION_ID      <!-- 用户建议主键-->
+        )
+        VALUES
+        (
+        #{USER_ID},
+        #{CREATE_DATE},
+        #{INFO},
+        #{EXCLU_ID},
+        #{OPINION_ID}
+        )
+
+    </insert>
+    <!-- 删除用户建议回复表的信息-->
+    <delete id="del" parameterType="pd">
+        DELETE FROM comment_opin
+        WHERE
+        COMMENT_OPIN_ID=#{COMMENT_OPIN_ID}  <!-- 回复表主键-->
+    </delete>
+
+
+    <!-- 批量删除用户建议回复表信息-->
+    <delete id="deleteAll" parameterType="String">
+        delete from comment_opin
+        where
+        COMMENT_OPIN_ID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

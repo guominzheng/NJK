@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Zan_CatnestMapper">
+	<insert id="save" parameterType="pd">
+		insert into zan_catnest(
+			CATNEST_ID,
+			USER_ID
+		)values(
+			#{CATNEST_ID},
+			#{USER_ID}
+		)
+	</insert>
+	
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			CATNEST_ID,
+			USER_ID
+		from zan_catnest
+		where CATNEST_ID=#{CATNEST_ID} and USER_ID=#{USER_ID}
+	</select>
+	
+	<select id="findById1" parameterType="pd" resultType="pd">
+		select
+			CATNEST_ID,
+			USER_ID
+		from zan_catnest
+		where CATNEST_ID=#{CATNEST_ID} and USER_ID=#{USER_ID1}
+	</select>
+	
+	<delete id="delete" parameterType="pd">
+		delete from zan_catnest where CATNEST_ID=#{CATNEST_ID} and USER_ID=#{USER_ID}
+	</delete>
+	
+	<select id="findCount" parameterType="pd" resultType="pd">
+		select count(*) as count1 from zan_catnest  where CATNEST_ID=#{CATNEST_ID}
+	</select>
+</mapper>

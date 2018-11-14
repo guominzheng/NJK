@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="User_DailyMapper">
+    <select id="findDailyByUserId" resultType="pd" parameterType="pd">
+          SELECT
+        USERDAILY_ID,
+        USER_ID,
+        RESEARCH_ID
+        FROM
+        user_daily
+        WHERE
+        USER_ID=#{USER_ID}
+        AND
+        RESEARCH_ID=#{RESEARCH_ID}
+    </select>
+
+    <insert id="save" parameterType="pd">
+        INSERT INTO
+        user_daily
+        (
+          USER_ID,
+          RESEARCH_ID
+        )
+        values(
+          #{USER_ID},
+          #{RESEARCH_ID}
+        )
+    </insert>
+</mapper>

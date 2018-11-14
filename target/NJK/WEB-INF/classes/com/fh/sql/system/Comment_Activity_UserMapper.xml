@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Comment_Activity_UserMapper">
+    
+    <insert id="save" parameterType="pd">
+        insert into comment_activity_user(
+            COMMENT_ACTIVITY_USER_ID,
+            ACTIVITY_ID,
+            USER_ID,
+            NAME,
+            MESSAGE,
+            PUSER_ID,
+            PNAME,
+            DATE,
+            STATUS,
+            VIEWS,
+            YUE,
+            PID,
+            QUSER_ID
+        )values(
+            #{COMMENT_ACTIVITY_USER_ID},
+            #{ACTIVITY_ID},
+            #{USER_ID},
+            #{NAME},
+            #{MESSAGE},
+            #{PUSER_ID},
+            #{PNAME},
+            #{DATE},
+            #{STATUS},
+            #{VIEWS},
+            #{YUE},
+            #{PID},
+            #{QUSER_ID}
+        )
+    </insert>
+    
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+            a.COMMENT_ACTIVITY_USER_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            a.MESSAGE,
+            a.PUSER_ID,
+            a.DATE,
+            a.STATUS,
+            a.VIEWS,
+            a.YUE,
+            a.QUSER_ID,
+            i1.IMG,
+            u1.NAME,
+            u2.NAME as PNAME
+        from comment_activity_user a
+        LEFT JOIN sys_app_user u1 on u1.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=a.PUSER_ID
+        <where>
+            <if test="pd.ACTIVITY_ID!=null and pd.ACTIVITY_ID!=''">
+                and a.ACTIVITY_ID=#{pd.ACTIVITY_ID}
+            </if>
+            <if test="pd.QUSER_ID!=null and pd.QUSER_ID!=''">
+                and a.QUSER_ID=#{pd.QUSER_ID}
+            </if>
+            <if test="pd.STATUS!=null and pd.STATUS!=''">
+                and a.STATUS=#{pd.STATUS}
+            </if>
+        </where>
+        ORDER BY a.DATE DESC
+    </select>
+    
+    <select id="findList1" parameterType="pd" resultType="pd">
+         select
+            a.COMMENT_ACTIVITY_USER_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            a.MESSAGE,
+            a.PUSER_ID,
+            a.DATE,
+            a.STATUS,
+            a.VIEWS,
+            a.YUE,
+            a.PID,
+            a.QUSER_ID,
+            i1.IMG,
+            u1.NAME,
+            u2.NAME as PNAME
+        from comment_activity_user a
+        LEFT JOIN sys_app_user u1 on u1.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=a.PUSER_ID
+        where a.STATUS=#{STATUS} and a.QUSER_ID=#{USER_ID} and a.ACTIVITY_ID=#{ACTIVITY_ID}
+        ORDER BY a.DATE DESC
+    </select>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+            a.COMMENT_ACTIVITY_USER_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            a.MESSAGE,
+            a.PUSER_ID,
+            a.DATE,
+            a.STATUS,
+            a.VIEWS,
+            a.YUE,
+            a.PID,
+            a.QUSER_ID,
+            i1.IMG,
+            u1.NAME,
+            u2.NAME as PNAME
+        from comment_activity_user a
+        LEFT JOIN sys_app_user u1 on u1.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=a.PUSER_ID
+        where a.STATUS=#{STATUS} and a.PID=#{COMMENT_ACTIVITY_USER_ID}
+        ORDER BY a.DATE DESC
+    </select>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+         select
+            a.COMMENT_ACTIVITY_USER_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            a.MESSAGE,
+            a.PUSER_ID,
+            a.DATE,
+            a.STATUS,
+            a.VIEWS,
+            a.YUE,
+            a.QUSER_ID
+          from comment_activity_user a
+          where a.COMMENT_ACTIVITY_USER_ID=#{COMMENT_ACTIVITY_USER_ID}
+    </select>
+    
+    <update id="editViews" parameterType="pd">
+        update comment_activity_user
+        SET VIEWS=#{VIEWS}
+        where COMMENT_ACTIVITY_USER_ID=#{COMMENT_ACTIVITY_USER_ID}
+    </update>
+    
+    <delete id="delete" parameterType="pd">
+        delete from comment_activity_user where COMMENT_ACTIVITY_USER_ID=#{COMMENT_ACTIVITY_USER_ID}
+    </delete>
+    
+     <delete id="deletePid" parameterType="pd">
+        delete from comment_activity_user where PID=#{COMMENT_ACTIVITY_USER_ID}
+    </delete>
+    
+    <select id="findCount" parameterType="pd" resultType="pd">
+    	select count(*) as count from comment_activity_user where QUSER_ID=#{USER_ID} and ACTIVITY_ID=#{ACTIVITY_ID}
+    </select>
+</mapper>

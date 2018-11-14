@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_BannerMapper">
+    <!-- 头图表 -->
+
+    <sql id="base">
+        banner_id,
+        banner_title,
+        banner_Img,
+        createTime,
+        banner_name,
+        banner_index
+    </sql>
+
+    <!-- 查询微信首页头部图片-->
+    <select id="findBannerList" resultType="pd">
+        SELECT
+        <include refid="base"/>
+        FROM
+        wx_classroom_banner
+        ORDER BY
+        banner_index ASC
+        LIMIT 0,3
+    </select>
+
+    <!-- 查询微信首页头部图片-->
+    <select id="findAllBannerListlistPage" parameterType="page" resultType="pd">
+        SELECT
+        banner_id,
+        banner_title,
+        banner_Img,
+        banner_name,
+        banner_index,
+        live_name
+        FROM
+        wx_classroom_banner
+        LEFT JOIN
+        wx_classroom_live
+        ON
+        banner_title = live_id
+        ORDER BY
+        banner_index ASC
+    </select>
+
+
+    <select id="findBannerById" parameterType="pd" resultType="pd">
+        SELECT
+        <include refid="base"/>
+        FROM
+        wx_classroom_banner
+        WHERE
+        banner_id = #{banner_id}
+    </select>
+
+
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_banner
+        (
+        banner_id,
+        banner_title,
+        banner_Img,
+        createTime,
+        banner_name,
+        banner_index
+        )
+        VALUES
+        (
+        #{banner_id},
+        #{banner_title},
+        #{banner_Img},
+        #{createTime},
+        #{banner_name},
+        #{banner_index}
+        )
+    </insert>
+
+    <update id="update" parameterType="pd">
+        UPDATE
+        wx_classroom_banner
+        <set>
+            <if test="banner_title != null and banner_title != '' ">
+                banner_title = #{banner_title},
+            </if>
+            <if test="banner_Img != null">
+                banner_Img = #{banner_Img},
+            </if>
+            <if test="banner_name != null">
+                banner_name = #{banner_name},
+            </if>
+            <if test="banner_index != null">
+                banner_index = #{banner_index},
+            </if>
+        </set>
+        WHERE
+        banner_id= #{banner_id}
+    </update>
+
+
+    <delete id="delete" parameterType="pd">
+        DELETE
+        FROM
+        wx_classroom_banner
+        WHERE
+        banner_id = #{banner_id}
+    </delete>
+</mapper>

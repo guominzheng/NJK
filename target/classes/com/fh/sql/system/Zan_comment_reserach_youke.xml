@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Zan_Comment_reserach_youkeMapper">
+
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        zan_comment_research_youke
+        (
+        COMMENT_RESEARCH_ID,
+        UNIONID,
+        DATETIME
+        )
+        VALUES
+        (
+        #{COMMENT_RESEARCH_ID},
+        #{UNIONID},
+        #{DATETIME}
+        )
+    </insert>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+        SELECT
+        COMMENT_RESEARCH_ID,
+        UNIONID
+        FROM
+        zan_comment_research_youke
+        WHERE
+        UNIONID =#{UNIONID}
+        AND
+        COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID}
+    </select>
+
+    <delete id="deleteZan" parameterType="pd">
+        DELETE FROM zan_comment_research_youke WHERE COMMENT_RESEARCH_ID =#{COMMENT_RESEARCH_ID} AND UNIONID= #{UNIONID}
+    </delete>
+
+    <delete id="deletes" parameterType="pd">
+        DELETE FROM zan_comment_research_youke
+    </delete>
+</mapper>

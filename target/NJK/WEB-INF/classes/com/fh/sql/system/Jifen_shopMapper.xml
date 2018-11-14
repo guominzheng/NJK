@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Jifen_shopMapper">
+    <sql id="Base_Column_List">
+        JIFENSHOP_ID,
+        JIFENSHOP_NAME,
+        JIFENSHOP_IMG,
+        JIFENSHOP_SCO,
+        STATUS_SHANG,
+        STATUS_WU,
+        CREATE_DATE,
+        UPDATE_DATE,
+        JIFENSHOP_NUM,
+        JIFEN_MIAOSHU,
+        JIFEN_ZHANIMG
+    </sql>
+
+    <sql id="update_base">
+        <trim prefix="set" suffixOverrides=",">
+            <if test="JIFENSHOP_NAME!=null"> JIFENSHOP_NAME=#{JIFENSHOP_NAME},</if>
+            <if test="JIFENSHOP_IMG!=null">JIFENSHOP_IMG=#{JIFENSHOP_IMG},</if>
+            <if test="JIFENSHOP_SCO!=null">JIFENSHOP_SCO=#{JIFENSHOP_SCO},</if>
+            <if test="STATUS_SHANG!=null">STATUS_SHANG=#{STATUS_SHANG},</if>
+            <if test="STATUS_WU!=null">STATUS_WU=#{STATUS_WU},</if>
+            <if test="CREATE_DATE!=null">CREATE_DATE=#{CREATE_DATE},</if>
+            <if test="UPDATE_DATE!=null">UPDATE_DATE=#{UPDATE_DATE},</if>
+            <if test="JIFENSHOP_NUM!=null">JIFENSHOP_NUM=#{JIFENSHOP_NUM},</if>
+            <if test="JIFEN_MIAOSHU!=null">JIFEN_MIAOSHU=#{JIFEN_MIAOSHU},</if>
+            <if test="JIFEN_ZHANIMG!=null">JIFEN_ZHANIMG=#{JIFEN_ZHANIMG},</if>
+        </trim>
+    </sql>
+
+    <insert id="save" parameterType="pd">
+      INSERT
+      INTO
+      jifen_shop
+      (
+        JIFENSHOP_NAME,
+        JIFENSHOP_IMG,
+        JIFENSHOP_SCO,
+        STATUS_SHANG,
+        STATUS_WU,
+        CREATE_DATE,
+        UPDATE_DATE,
+        JIFENSHOP_NUM,
+        JIFEN_MIAOSHU,
+        JIFEN_ZHANIMG
+      )
+      VALUES
+      (
+        #{JIFENSHOP_NAME},
+        #{JIFENSHOP_IMG},
+        #{JIFENSHOP_SCO},
+        #{STATUS_SHANG},
+        #{STATUS_WU},
+        #{CREATE_DATE},
+        #{UPDATE_DATE},
+        #{JIFENSHOP_NUM},
+        #{JIFEN_MIAOSHU},
+        #{JIFEN_ZHANIMG}
+      )
+    </insert>
+
+
+
+    <select id="datalistPage" parameterType="page" resultType="pd">
+      SELECT
+        <include refid="Base_Column_List" />
+      FROM
+        jifen_shop
+        WHERE
+        STATUS_WU='0'
+        AND
+        STATUS_SHANG='1'
+        ORDER BY create_date DESC
+    </select>
+
+    <select id="data1listPage" parameterType="page" resultType="pd">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        jifen_shop
+        WHERE
+        1=1
+        <if test="pd.JIFENSHOP_NAME !=null and pd.JIFENSHOP_NAME!='' ">AND JIFENSHOP_NAME LIKE CONCAT(CONCAT('%', #{pd.JIFENSHOP_NAME}),'%')</if>
+        ORDER BY create_date DESC
+    </select>
+
+    <update id="editInfo" parameterType="pd">
+        UPDATE
+        jifen_shop
+        <include refid="update_base" />
+        WHERE
+        JIFENSHOP_ID=#{JIFENSHOP_ID}
+    </update>
+
+
+    <update id="editNotInfo" parameterType="pd">
+        UPDATE
+        jifen_shop
+        SET
+        STATUS_WU='0'
+        WHERE
+        JIFENSHOP_ID != #{JIFENSHOP_ID}
+    </update>
+
+
+
+    <delete id="delete" parameterType="pd">
+        DELETE FROM
+        jifen_shop
+        WHERE
+        JIFENSHOP_ID=#{JIFENSHOP_ID}
+    </delete>
+    <select id="findDataById" parameterType="pd" resultType="pd">
+      SELECT
+        <include refid="Base_Column_List" />
+      FROM
+        jifen_shop
+      WHERE
+        1=1
+        <if test="JIFENSHOP_ID != 0 and JIFENSHOP_ID != '' ">
+            AND JIFENSHOP_ID =#{JIFENSHOP_ID}
+        </if>
+    </select>
+
+
+    <select id="findShopById" parameterType="pd" resultType="pd">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        jifen_shop
+        WHERE
+       STATUS_WU='1'
+    </select>
+    <delete id="deleteAll" parameterType="String">
+        delete from jifen_shop
+        where
+        JIFENSHOP_ID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+
+
+</mapper>

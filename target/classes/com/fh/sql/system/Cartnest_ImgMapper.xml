@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Cartnest_ImgMapper">
+	<insert id="save" parameterType="pd">
+		insert into cartnest_img(
+			CATNEST_ID,
+			IMG,
+			ORDE_BY,
+			DATE
+		)values(
+			#{CATNEST_ID},
+			#{IMG},
+			#{ORDE_BY},
+			#{DATE}
+		)
+	</insert>
+	
+	<insert id="saves" parameterType="hashmap">
+		insert into cartnest_img(
+			CATNEST_ID,
+			IMG,
+			ORDE_BY,
+			DATE
+		)values
+		<foreach collection="list" item="item" index="index" separator="," >
+    	(#{CATNEST_ID},#{item.IMG},#{item.ORDE_BY},#{item.DATE})
+    	</foreach>
+	</insert>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+		select
+			CATNEST_ID,
+			IMG,
+			ORDE_BY,
+			DATE
+		from cartnest_img
+		where CATNEST_ID=#{CATNEST_ID}
+	</select>
+	
+	<delete id="delete" parameterType="pd">
+		delete from cartnest_img where RESEARCH_ID=#{RESEARCH_ID}
+	</delete>
+	
+	
+</mapper>

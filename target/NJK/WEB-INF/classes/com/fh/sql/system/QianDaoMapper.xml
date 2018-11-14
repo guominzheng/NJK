@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="QianDaoMapper">
+	<insert id="save" parameterType="pd">
+		insert into qiandao(
+			USER_ID,
+			COUNT,
+			DATE,
+			YUE,
+			KDATE
+		)values(
+			#{USER_ID},
+			#{COUNT},
+			#{DATE},
+			#{YUE},
+			#{KDATE}
+		)
+	</insert>
+	
+	<select id="findUserId" parameterType="pd" resultType="pd">
+		select
+			QIANDAO_ID,
+			USER_ID,
+			COUNT,
+			DATE,
+			YUE,
+			KDATE
+		from qiandao
+		where USER_ID=#{USER_ID}
+	</select>
+	
+	<select id="findUserIdDate" parameterType="pd" resultType="pd">
+		select
+			QIANDAO_ID,
+			USER_ID,
+			COUNT,
+			DATE,
+			YUE,
+			KDATE
+		from qiandao
+		where USER_ID=#{USER_ID} and YUE=#{YUE}
+	</select>
+	
+	<update id="edit" parameterType="pd">
+		update qiandao
+		SET COUNT=#{COUNT},
+			DATE=#{DATE},
+			YUE=#{YUE}
+		where USER_ID=#{USER_ID}
+	</update>
+	
+	<update id="editS" parameterType="pd">
+		update qiandao
+		SET COUNT=COUNT+1,
+			DATE=#{DATE},
+			YUE=#{YUE}
+		where USER_ID=#{USER_ID}
+	</update>
+	
+	<select id="findUser" parameterType="pd" resultType="pd">
+		select
+			q.QIANDAO_ID,
+			q.USER_ID,
+			q.COUNT,
+			q.DATE,
+			q.YUE,
+			q.KDATE,
+			u.NAME,
+			i.IMG,
+			i.QIANMING
+		from qiandao q
+		LEFT JOIN sys_app_user u on u.USER_ID=q.USER_ID
+		LEFt JOIN sys_app_userinfo i on i.USER_ID=q.USER_ID
+		where q.USER_ID=#{USER_ID}
+	</select>
+</mapper>

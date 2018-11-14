@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PostInfoMapper">	
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select 
+			i.SUBJECT,
+			i.MESSAGE,
+			u.NAME,
+			us.IMG
+		from post_info i
+		LEFT JOIN sys_app_user u on u.USER_ID=i.USER_ID
+		LEFT JOIN sys_app_userinfo us on us.USER_ID=u.USER_ID
+		where 1=1 
+		<if test="pd.TID!=null and pd.TID!=''">
+			and i.TID=#{pd.TID}
+		</if>
+		<if test="pd.FIRST==0">
+			and i.FIRST='0'
+		</if>
+		<if test="pd.FIRST==1">
+			and i.FIRST='1'
+		</if>
+		ORDER BY i.DATE DESC
+	</select>
+	
+	<select id="userlistPage" parameterType="page" resultType="pd">
+	   select
+	       i.PID,
+	       i.TID,
+	       i.NAME,
+	       i.USER_ID,
+	       i.DATE,
+	       i.MESSAGE,
+	       i.YUE,
+	       p.SUBJECT,
+	       f.IMG
+	   from post_info i
+	   LEFT JOIN post p on p.TID=i.TID 
+	   LEFT JOIN sys_app_user u on u.USER_ID=i.USER_ID
+	   LEFT JOIN sys_app_userinfo f on f.USER_ID=i.USER_ID
+	   where i.USER_ID=#{pd.USER_ID} and i.FIRST=0
+	   ORDER BY i.DATE DESC
+	</select>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+        select
+           i.PID,
+           i.TID,
+           i.NAME,
+           i.USER_ID,
+           i.DATE,
+           i.MESSAGE,
+           i.YUE
+       from post_info i
+	</select>
+	
+	<update id="editDate" parameterType="pd">
+	    update post_info
+        SET DATE=#{DATE}
+        where PID=#{PID}
+	   
+	   
+	</update>
+	
+	<select id="findById" parameterType="pd" resultType="pd">
+	   select
+	       PID,
+	       TID,
+	       FID,
+	       FIRST,
+	       NAME,
+	       USER_ID,
+	       DATE,
+	       MESSAGE,
+	       SUBJECT
+	   from post_info
+	   where TID=#{TID}
+	</select>
+	
+	<update id="edit" parameterType="pd">
+		update post_info
+		SET MESSAGE=#{MESSAGE},
+			SUBJECT=#{SUBJECT}
+		where TID=#{TID}
+	</update>
+	
+	<delete id="delete" parameterType="pd">
+		delete from post_info where TID=#{TID}
+	</delete>
+	
+				<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from post_info
+		where 
+			TID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteA" parameterType="pd">
+	   delete from post_info where PID=#{PID}
+	</delete>
+	
+	<insert id="save" parameterType="pd">
+	   insert into post_info(
+	       PID,
+	       TID,
+	       FID,
+	       FIRST,
+	       NAME,
+	       USER_ID,
+	       DATE,
+	       MESSAGE,
+	       SUBJECT,
+	       YUE
+	   )values(
+	       #{PID},
+	       #{TID},
+	       #{FID},
+	       #{FIRST},
+	       #{NAME},
+	       #{USER_ID},
+	       #{DATE},
+	       #{MESSAGE},
+	       #{SUBJECT},
+	       #{YUE}
+	   )
+	</insert>
+</mapper>

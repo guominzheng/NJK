@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FightMapper">
+	<insert id="save" parameterType="pd">
+		insert into fight(
+			FIGHT_ID,
+			USER_ID,
+			NAME,
+			DATE,
+			STATUS,
+			PDATE,
+			STATUS1
+		)values(
+			#{FIGHT_ID},
+			#{USER_ID},
+			#{NAME},
+			#{DATE},
+			#{STATUS},
+			#{PDATE},
+			#{STATUS1}
+		)
+	</insert>
+	
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			FIGHT_ID,
+			USER_ID,
+			NAME,
+			DATE,
+			PDATE,
+			STATUS,
+			STATUS1
+		from fight
+		where FIGHT_ID=#{FIGHT_ID}
+	</select>
+	
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			FIGHT_ID,
+			USER_ID,
+			NAME,
+			DATE,
+			PDATE,
+			STATUS,
+			STATUS1
+		from fight
+		where STATUS!='10'
+		 <if test="pd.STATUS1!=null and pd.STATUS1!=''">
+		 	and STATUS1=#{pd.STATUS1}
+		 </if>
+		<if test="pd.STATUS!=null and pd.STATUS!=''">
+			and STATUS=#{pd.STATUS}
+		</if>
+		ORDER BY DATE
+	</select>
+	
+	<update id="edit" parameterType="pd">
+		update fight
+		SET STATUS=#{STATUS}
+		where FIGHT_ID=#{FIGHT_ID}
+	</update>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+		select
+			FIGHT_ID,
+			USER_ID,
+			NAME,
+			DATE,
+			PDATE,
+			STATUS,
+			STATUS1
+		from fight
+		where STATUS='2' and STATUS!='10'
+	</select>
+	
+	<update id="editTu" parameterType="pd">
+		update fight
+		SET STATUS=2
+		where STATUS='0' and PDATE &lt; #{DATE1}
+	</update>
+	
+</mapper>

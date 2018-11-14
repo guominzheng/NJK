@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Error_WendaMapper">
+	<insert id="save" parameterType="pd">
+		insert into error_wenda(
+			ERROR_WENDA_ID,
+			USER_ID,
+			WENDA_ID,
+			DATE,
+			STATUS,
+			CORRECT
+		)values(
+			#{ERROR_WENDA_ID},
+			#{USER_ID},
+			#{WENDA_ID},
+			#{DATE},
+			#{STATUS},
+			#{CORRECT}
+		)
+	</insert>
+	
+	
+	<insert id="saveAll" parameterType="java.util.List">
+		insert into error_wenda(
+			USER_ID,
+			WENDA_ID,
+			DATE,
+			STATUS,
+			WENDA_INFO_ID,
+			CORRECT,
+			WENDA_TYPE_ID
+		)values
+    	<!--<foreach collection="list" item="item" index="index" separator="," >  
+        		(#{item.USER_ID},#{item.WENDA_ID},#{item.DATE},'1',#{item.XUANXIANG},#{item.CORRECT})  
+    	</foreach>   -->
+    	<foreach collection="list" item="item" index="index" separator="," >
+    	(#{item.USER_ID},#{item.WENDA_ID},#{item.DATE},'1',#{item.XUANZE},#{item.CORRECT},#{item.WENDA_TYPE_ID})
+    	</foreach>
+    	
+	</insert>
+	
+	<insert id="saveAlls" parameterType="java.util.List">
+		insert into error_wenda(
+			USER_ID,
+			WENDA_ID,
+			DATE,
+			STATUS,
+			WENDA_INFO_ID,
+			CORRECT,
+			WENDA_TYPE_ID
+		)values
+    	<foreach collection="list" item="item" index="index" separator="," >
+    	(#{item.USER_ID},#{item.WENDA_ID},#{item.DATE},'2',#{item.XUANZE},#{item.CORRECT},#{item.WENDA_TYPE_ID})
+    	</foreach>
+	</insert>
+	
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			e.ERROR_WENDA_ID,
+			e.USER_ID,
+			e.WENDA_ID,
+			e.WENDA_INFO_ID,
+			w.SUBJECT,
+			w.MESSAGE,
+			w.WENDA_SHIJUAN_ID,
+			w.WENDA_TYPE_ID,
+			w.IMG,
+			'0' as STATUS
+		from error_wenda e
+		LEFT JOIN wenda w on e.WENDA_ID=w.WENDA_ID
+		where e.USER_ID=#{pd.USER_ID} and e.CORRECT='1' and e.STATUS!='4'
+		ORDER BY e.DATE DESC
+	</select>
+	
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			ERROR_WENDA_ID,
+			USER_ID,
+			WENDA_ID,
+			DATE
+		from error_wenda
+		where USER_ID=#{USER_ID} and WENDA_ID=#{WENDA_ID}
+	</select>
+	
+	
+	<delete id="delete" parameterType="pd">
+		delete from error_wenda where ERROR_WENDA_ID=#{ERROR_WENDA_ID}
+	</delete>
+	
+	<delete id="deleteAll" parameterType="java.util.Map">
+		delete from error_wenda where WENDA_ID in(
+		<foreach collection="list1111" item="item" index="index" separator="," >  
+        		#{item.WENDA_ID}
+    	</foreach> ) and USER_ID=#{USER_ID}
+	</delete>
+	
+	<update id="editAll" parameterType="java.util.Map">
+		update error_wenda
+		SET STATUS='4'
+		where WENDA_ID in(
+		<foreach collection="list1111" item="item" index="index" separator="," >  
+        		#{item.WENDA_ID}
+    	</foreach> ) and USER_ID=#{USER_ID} and STATUS='1'
+	</update>
+	
+	<update id="edita" parameterType="pd">
+		update error_wenda
+		SET STATUS='4'
+		where ERROR_WENDA_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</update>
+	
+	<update id="editaa" parameterType="pd">
+		update error_wenda
+		SET STATUS='4'
+		where USER_ID=#{USER_ID} and STATUS!='4'
+	</update>
+	
+	
+	<update id="editUserId" parameterType="pd">
+    	update error_wenda
+    	SET USER_ID=#{USER_ID}
+    	where USER_ID=#{USER_ID1}
+    </update>
+    
+    <select id="dataCuoTilistPage" parameterType="pd" resultType="pd">
+    	SELECT
+			t.count1,
+			t.WENDA_ID,
+			w.`SUBJECT`,
+			s.WENDA_SHIJUAN_NAME
+		from (
+			select count(*) as count1,WENDA_ID from error_wenda where CORRECT='1' GROUP BY WENDA_ID ORDER BY count1 DESC
+		) t
+		LEFT JOIN wenda w on w.WENDA_ID=t.WENDA_ID
+		LEFT JOIN wenda_shijuan s on s.WENDA_SHIJUAN_ID=w.WENDA_SHIJUAN_ID
+    </select>
+    
+    <select id="findZuoTilistPage" parameterType="pd" resultType="pd">
+    	SELECT
+			t.count1,
+			t.WENDA_ID,
+			w.`SUBJECT`,
+			s.WENDA_SHIJUAN_NAME
+		from (
+			select count(*) as count1,WENDA_ID from error_wenda GROUP BY WENDA_ID ORDER BY count1 DESC
+		) t
+		LEFT JOIN wenda w on w.WENDA_ID=t.WENDA_ID
+		LEFT JOIN wenda_shijuan s on s.WENDA_SHIJUAN_ID=w.WENDA_SHIJUAN_ID
+    </select>
+    
+    <select id="findZhouZuoTi" parameterType="pd" resultType="pd">
+    	SELECT 
+			t.count1,
+			t2.count2
+		from (select count(*) as count1 from error_wenda where USER_ID=#{USER_ID} and DATE&gt;=#{DATE}) t,
+			(select count(*) as count2 from error_wenda where USER_ID=#{USER_ID} and DATE&gt;=#{DATE} and CORRECT='1') t2
+    </select>
+    
+    <select id="findNianZuoTi" parameterType="pd" resultType="pd">
+    	SELECT 
+			t.count1,
+			t2.count2
+		from (select count(*) as count1 from error_wenda where USER_ID=#{USER_ID} and year(DATE)=#{NIAN}) t,
+			 (select count(*) as count2 from error_wenda where USER_ID=#{USER_ID} and CORRECT='1' and year(DATE)=#{NIAN}) t2
+    </select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="WenDa_SuiJiMapper">
+	<insert id="save" parameterType="pd">
+		insert into wenda_suiji(
+			WEBDA_SUIJI_ID,
+			USER_ID,
+			DATE,
+			YUE
+		)values(
+			#{WEBDA_SUIJI_ID},
+			#{USER_ID},
+			#{DATE},
+			#{YUE}
+		)
+	</insert>
+	
+	<select id="findCount" parameterType="pd" resultType="pd">
+		select count(*) as count1 from wenda_suiji where YUE=#{YUE} and USER_ID=#{USER_ID}
+	</select>
+</mapper>

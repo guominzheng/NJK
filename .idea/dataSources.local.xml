@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="njk@localhost" uuid="c1dade34-6d30-4337-bfc9-6c8c0b1858ef">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" />
+      <introspection-schemas>*:njk</introspection-schemas>
+    </data-source>
+  </component>
+</project>

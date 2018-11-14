@@ -1,0 +1,234 @@
+body{
+	width:100%;
+	margin: 0 auto;
+}
+img{
+	width:100%;
+}
+.main{
+	width:100%;
+	margin: 0 auto;
+	background:#fff;
+	
+}
+@media only screen and (min-width: 500px){
+    .main {
+        width: 500px;
+    }
+	.IMGS{
+		width:500px;
+	}
+}
+.brief{
+	font-size:14px;
+	width:96%;
+	margin-left:2%;
+}
+.top{
+	width:100%;
+	margin-top:-7px;
+}
+.top .top-info{
+	width:100%;
+	height:44px;
+	line-height:44px;
+	border-top-style: solid;
+    border-width: 1px;
+    border-color: #ebebeb;
+}
+.top .top-info .top-info-zhiding{
+	color:#999;
+	margin-left:15px;
+	float:left;
+	font-size:14px;
+}
+.top .top-info .top-info-title{
+	font-size:14px;
+	float:left;
+	margin-left:20px;
+}
+.top .top-info .top-info-jiantou{
+	float:right;
+	margin-right:15px;
+}
+.top .top-info .top-info-jiantou img{
+	width:8.5px;
+	height:13.5px;
+}
+.message{
+	width:100%;	
+}
+.message .message-top{
+	height:44px;
+	line-height:44px;
+	margin-left:15px;
+	font-size:19px;
+	color:#33b4ff;
+	border-bottom-style: solid;
+    border-width: 1px;
+    border-color: #ebebeb;
+}
+.message .message-bottom{
+	margin-left:15px;
+	border-bottom-style: solid;
+    border-width: 1px;
+    border-color: #ebebeb;
+	height:120px;
+	
+}
+.message .message-bottom .message-bottom-left{
+	width:65%;
+	margin-top:8px;
+	float:left;
+}
+.message .message-bottom .message-bottom-left .message-bottom-left-title{
+	font-size:20px;
+	color:#262626;
+}
+.message .message-bottom .message-bottom-left .message-bottom-left-message{
+	margin-top:12px;
+	font-size:14px;
+	color:#666;
+}
+.message .message-bottom .message-bottom-right{
+	width:30%;
+	margin-top:12px;
+	float:right;
+	margin-right:10px;
+	height:90px;
+}
+.message .message-bottom .message-bottom-right img{
+	border-radius: 5px;
+	height:100%;
+}
+@media only screen and (min-width: 414px){
+.message .message-bottom{
+	height:130px;
+}
+}
+@media only screen and (max-width: 320px){
+	.message .message-bottom{
+	height:120px;
+	}
+}
+}
+.commentquyu{
+	width:96%;
+	margin-left:2%;
+	height:44px;
+	line-height:44px;
+    border-bottom-style: solid;
+    border-width: 1px;
+    border-color: #ebebeb;
+}
+.commentquyu .commentNumber{
+	 font-size: 17px;
+	 color:#262626;
+	 float:left;
+}
+.commentquyu .spot{
+	line-height:28px;
+	height:28px;
+	width:45px;
+	background-color:#33b4ff;
+	float:right;
+	margin-right:15px;
+	text-align:center;
+	margin-top:8px;
+	color:#fff;
+	font-size:17px;
+	border-radius:5px;
+}
+.commentquyu{
+	width:96%;
+	margin-left:2%;
+	height:44px;
+	line-height:44px;
+    border-bottom-style: solid;
+    border-width: 1px;
+    border-color: #ebebeb;
+}
+.commentquyu .commentNumber{
+	 font-size: 17px;
+	 color:#262626;
+	 float:left;
+}
+.commentquyu .spot{
+	line-height:28px;
+	height:28px;
+	width:45px;
+	background-color:#33b4ff;
+	float:right;
+	margin-right:15px;
+	text-align:center;
+	margin-top:8px;
+	color:#fff;
+	font-size:17px;
+	border-radius:5px;
+}
+.comment {
+    border-bottom-style: solid;
+    border-width: 1px;
+    border-color: #DBDBDB;
+    /*display: inline;*/
+    margin-right: 12px;
+}
+.subComment {
+    margin-left: 72px;
+}
+.comment img {
+	border-radius: 50%;
+    float: left;
+    width: 40px;
+	height:40px;
+    margin: 0 12px;
+}
+
+.commentUser {
+    font-size: 15px;
+    color: #3d5766;
+    margin-bottom: 0;
+}
+
+.commentMessage {
+    font-size: 15px;
+    color: #4D4D4D;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.date {
+    font-size: 15px;
+    color: #8C8C8C;
+    margin-top: 10px;
+}
+.message-bottom1{
+	margin-left:15px;
+	margin-top:10px;
+	border-bottom-style: solid;
+    border-width: 1px;
+    border-color: #ebebeb;
+	height:100px;
+}
+.message-bottom1 .message-bottom-left-message1{
+	margin-top:10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

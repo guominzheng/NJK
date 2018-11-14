@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Comment_ResearchMapper">
+    <insert id="save" parameterType="pd" useGeneratedKeys="true" keyProperty="COMMENT_RESEARCH_ID">
+		insert into comment_research(
+			RESEARCH_ID,
+			USER_ID,
+			NAME,
+			MESSAGE,
+			PUSER_ID,
+			PNAME,
+			DATE,
+			STATUS,
+			VIEWS,
+			YUE,
+			PID
+		)values(
+			#{RESEARCH_ID},
+			#{USER_ID},
+			#{NAME},
+			#{MESSAGE},
+			#{PUSER_ID},
+			#{PNAME},
+			#{DATE},
+			#{STATUS},
+			#{VIEWS},
+			#{YUE},
+			#{PID}
+		)
+	</insert>
+
+
+    <select id="findlists" parameterType="page" resultType="pd">
+        select
+        c.COMMENT_RESEARCH_ID,
+        c.RESEARCH_ID,
+        c.USER_ID,
+        c.MESSAGE,
+        c.PUSER_ID,
+        c.DATE,
+        c.STATUS,
+        c.VIEWS,
+        c.YUE,
+        c.PID,
+        i1.IMG,
+        u1.NAME,
+        u2.NAME as PNAME
+        from (
+        select
+        COMMENT_RESEARCH_ID,
+        RESEARCH_ID,
+        USER_ID,
+        NAME,
+        MESSAGE,
+        PUSER_ID,
+        PNAME,
+        DATE,
+        STATUS,
+        VIEWS,
+        YUE,
+        PID
+        from comment_research
+        <where>
+            <if test="pd.RESEARCH_ID!=null and pd.RESEARCH_ID!=''">
+                and RESEARCH_ID=#{pd.RESEARCH_ID}
+            </if>
+            <if test="pd.STATUS!=null and pd.STATUS!=''">
+                and STATUS=#{pd.STATUS}
+            </if>
+        </where>
+        ORDER BY VIEWS DESC
+        limit #{pd.SHU1},10
+        ) c
+        LEFT JOIN sys_app_user u1 on u1.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=c.PUSER_ID
+
+    </select>
+
+
+    <select id="findList" parameterType="pd" resultType="pd">
+		select
+			c.COMMENT_RESEARCH_ID,
+            c.RESEARCH_ID,
+            c.USER_ID,
+            c.MESSAGE,
+            c.PUSER_ID,
+            c.DATE,
+            c.STATUS,
+            c.VIEWS,
+            c.YUE,
+            c.PID,
+            i1.IMG,
+            u1.NAME,
+            u2.NAME as PNAME
+		from (
+			select
+				COMMENT_RESEARCH_ID,
+				RESEARCH_ID,
+				USER_ID,
+				NAME,
+				MESSAGE,
+				PUSER_ID,
+				PNAME,
+				DATE,
+				STATUS,
+				VIEWS,
+				YUE,
+				PID
+			from comment_research
+			where STATUS=#{STATUS} and PID=#{COMMENT_RESEARCH_ID}
+		) c
+		LEFT JOIN sys_app_user u1 on u1.USER_ID=c.USER_ID
+		LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=c.PUSER_ID
+        ORDER BY c.VIEWS DESC
+	</select>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+		select
+			c.COMMENT_RESEARCH_ID,
+			c.RESEARCH_ID,
+			c.USER_ID,
+			c.NAME,
+			c.MESSAGE,
+			c.PUSER_ID,
+			c.PNAME,
+			c.DATE,
+			c.STATUS,
+			c.VIEWS,
+			c.YUE,
+			c.PID,
+			s.IMG,
+			s1.NAME AS USERNAME
+		from comment_research c
+		LEFT JOIN
+		sys_app_userinfo s
+		ON
+		c.USER_ID = s.USER_ID
+		LEFT JOIN
+		sys_app_user s1
+		ON
+		c.USER_ID = s1.USER_ID
+		where c.COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID}
+	</select>
+
+    <update id="editView" parameterType="pd">
+		update comment_research
+		SET VIEWS=#{VIEWS}
+		where COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID}
+	</update>
+
+    <delete id="delete" parameterType="pd">
+		delete from comment_research where COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID}
+	</delete>
+
+    <select id="findCount" parameterType="pd" resultType="pd">
+    	select count(*) as count1 from comment_research where RESEARCH_ID=#{RESEARCH_ID} and STATUS='0'
+    </select>
+
+    <select id="findCount1" parameterType="pd" resultType="pd">
+    	select count(*) as count1 from comment_research where RESEARCH_ID=#{RESEARCH_ID}
+    </select>
+
+    <update id="editJiaViewss" parameterType="pd">
+    	update comment_research
+    	SET 
+    			VIEWS=VIEWS+1
+    	where COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID}
+    </update>
+
+    <update id="editJianViewss" parameterType="pd">
+    	update comment_research
+    	SET 
+    			VIEWS=VIEWS-1
+    	where COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID}
+    </update>
+
+    <select id="findList1" parameterType="pd" resultType="pd">
+  		select
+			c.COMMENT_RESEARCH_ID,
+            c.RESEARCH_ID,
+            c.USER_ID,
+            c.MESSAGE,
+            c.PUSER_ID,
+            c.DATE,
+            c.STATUS,
+            c.VIEWS,
+            c.YUE,
+            c.PID,
+            i1.IMG,
+            u1.NAME,
+            u2.NAME as PNAME
+		from (
+			select
+				COMMENT_RESEARCH_ID,
+				RESEARCH_ID,
+				USER_ID,
+				NAME,
+				MESSAGE,
+				PUSER_ID,
+				PNAME,
+				DATE,
+				STATUS,
+				VIEWS,
+				YUE,
+				PID
+			from comment_research
+			where STATUS=#{STATUS} and RESEARCH_ID=#{RESEARCH_ID}
+		) c
+		LEFT JOIN sys_app_user u1 on u1.USER_ID=c.USER_ID
+		LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=c.PUSER_ID
+        ORDER BY c.VIEWS DESC
+  	</select>
+    <!--获取当前研究院的所有评论内容-->
+    <select id="findCommentByResIdlistPage" parameterType="page" resultType="pd">
+		SELECT
+	    c.*,
+	    su.NAME,
+        IFNULL(u2.`NAME`,'') as PNAME
+        from(
+	    SELECT
+		COMMENT_RESEARCH_ID,
+		RESEARCH_ID,
+		MESSAGE,
+		DATE,
+		USER_ID,
+		PUSER_ID
+	    FROM comment_research
+	    where RESEARCH_ID='51'
+	    LIMIT 0,10
+        ) c
+        LEFT JOIN sys_app_user su on su.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=c.PUSER_ID
+	</select>
+
+    <!--获取当前研究院的所有评论内容-->
+    <select id="findCommentsByResIdlistPage" parameterType="page" resultType="pd">
+        SELECT
+        c.*,
+        su.NAME,
+        IFNULL(u2.`NAME`,'') as PNAME
+        from(
+        SELECT
+        COMMENT_RESEARCH_ID,
+        RESEARCH_ID,
+        MESSAGE,
+        DATE,
+        USER_ID,
+		PUSER_ID
+        FROM comment_research
+        where RESEARCH_ID=#{pd.RESEARCH_ID}
+        ) c
+        LEFT JOIN sys_app_user su on su.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=c.PUSER_ID
+    </select>
+
+    <!--  批量删除 -->
+    <delete id="deleteAll" parameterType="String">
+        delete from comment_research
+        where
+        COMMENT_RESEARCH_ID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="PData" parameterType="pd" resultType="pd">
+        select
+        c.COMMENT_RESEARCH_ID,
+        c.RESEARCH_ID,
+        c.USER_ID,
+        c.MESSAGE,
+        c.PUSER_ID,
+        c.DATE,
+        c.STATUS,
+        c.VIEWS,
+        c.YUE,
+        c.PID,
+        i1.IMG,
+        u1.NAME,
+        u2.NAME as PNAME
+        from (
+        select
+        COMMENT_RESEARCH_ID,
+        RESEARCH_ID,
+        USER_ID,
+        NAME,
+        MESSAGE,
+        PUSER_ID,
+        PNAME,
+        DATE,
+        STATUS,
+        VIEWS,
+        YUE,
+        PID
+        from comment_research
+        <where>
+            <if test="PID!=null and PID!=''">
+                and PID=#{PID}
+            </if>
+            <if test="STATUS!=null and STATUS!=''">
+                and STATUS=#{STATUS}
+            </if>
+        </where>
+        ) c
+        LEFT JOIN sys_app_user u1 on u1.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=c.PUSER_ID
+        ORDER BY VIEWS DESC
+    </select>
+
+</mapper>

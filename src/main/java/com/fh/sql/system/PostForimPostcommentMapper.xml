@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PostForimPostcommentMapper">
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+            FORUM_POST_ID,
+            TID,
+            PID,
+            NAME,
+            USER_ID,
+            DATE,
+            MESSAGE,
+            RNAME,
+            RUSER_ID
+        from post_forim_postcomment
+        where TID=#{pd.TID}
+        ORDER BY DATE DESC
+    </select>
+    
+    
+    <insert id="save" parameterType="pd">
+        insert into post_forim_postcomment(
+            FORUM_POST_ID,
+            TID,
+            PID,
+            NAME,
+            USER_ID,
+            DATE,
+            MESSAGE,
+            RNAME,
+            RUSER_ID
+        )values(
+            #{FORUM_POST_ID},
+            #{TID},
+            #{PID},
+            #{NAME},
+            #{USER_ID},
+            #{DATE},
+            #{MESSAGE},
+            #{RNAME},
+            #{RUSER_ID}
+        )
+    </insert>
+</mapper>

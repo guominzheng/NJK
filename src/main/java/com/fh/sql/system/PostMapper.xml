@@ -1,0 +1,875 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PostMapper">	
+	<insert id="save" parameterType="pd">
+		insert into post(
+		    TID,
+			FID,
+			NAME,
+			USER_ID,
+			SUBJECT,
+			DATE,
+			VIEWS,
+			HUIFU,
+			TSTATUS,
+			PRODUCT_ID,
+			ESTATUS,
+			MSTATUS,
+			KEYWORD1,
+			KEYWORD2,
+			BROWSE,
+			ACTIVITY_ID,
+			URL,
+			HUODONG,
+			HUODONG1,
+			POST_SPECIAL_TYPE_ID,
+			ORDE_BY,
+			TUPIANTYPE,
+			FIMG
+		)values(
+		    #{TID},
+			#{FID},
+			#{NAME},
+			#{USER_ID},
+			#{SUBJECT},
+			#{DATE},
+			#{VIEWS},
+			#{HUIFU},
+			#{TSTATUS},
+			#{PRODUCT_ID},
+			#{ESTATUS},
+			#{MSTATUS},
+			#{KEYWORD1},
+			#{KEYWORD2},
+			#{BROWSE},
+			#{ACTIVITY_ID},
+			#{URL},
+			#{HUODONG},
+			#{HUODONG1},
+			#{POST_SPECIAL_TYPE_ID},
+			#{ORDE_BY},
+			#{TUPIANTYPE},
+			#{FIMG}
+		)
+	</insert>
+	
+	<update id="editFID" parameterType="pd">
+	   update post
+	   SET FID=#{FID}
+	   where TID=#{TID}
+	</update>
+	
+	  <update id="editPID" parameterType="pd">
+       update post
+       SET PRODUCT_ID=#{PRODUCT_ID}
+       where TID=#{TID}
+    </update>
+    
+    <update id="editAID" parameterType="pd">
+       update post
+       SET ACTIVITY_ID=#{ACTIVITY_ID}
+       where TID=#{TID}
+    </update>
+	
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			p.TID,
+			p.FID,
+			p.NAME,
+			p.USER_ID,
+			p.SUBJECT,
+			p.DATE,
+			p.VIEWS,
+			p.HUIFU,
+		    p.TSTATUS,
+		    p.PRODUCT_ID,
+		    p.ESTATUS,
+		    p.MSTATUS,
+		    p.KEYWORD1,
+		    p.KEYWORD2,
+		    p.ACTIVITY_ID,
+		    p.HUODONG,
+		    p.URL,
+		    p.HUODONG1,
+		    p.ORDE_BY,
+		    p.TUPIANTYPE,
+		    p.FIMG,
+		    p.SHUZI,
+		    a.TITLE,
+			u.NAME as NAME1,
+			s.SPECIAL,
+			t.PRODUCT_NAME
+		from post p
+		LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+		LEFT JOIN post_special s on s.FID=p.FID
+		LEFT JOIN product t on t.PRODUCT_ID=p.PRODUCT_ID
+		LEFT JOIN activity a on a.ACTIVITY_ID=p.ACTIVITY_ID
+		where 1=1 and p.HUODONG='0'
+		<if test="pd.KEYWORD != null and pd.KEYWORD != ''"><!-- 关键词检索 -->
+			and
+				(
+				 p.SUBJECT LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+				 or
+				 p.NAME LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+				)
+		</if>
+		<if test="pd.FID1!=null and pd.FID1!=''">
+		  and p.FID=#{pd.FID1}
+		</if>
+		 <if test="pd.PRODUCT_ID1!=null and pd.PRODUCT_ID1!=''">
+          and p.PRODUCT_ID=#{pd.PRODUCT_ID1}
+        </if>
+        <if test="pd.ACTIVITY_ID1!=null and pd.ACTIVITY_ID1!=''">
+           and p.ACTIVITY_ID=#{pd.ACTIVITY_ID1}
+        </if>
+		 <if test="pd.TSTATUS!=null and pd.TSTATUS!=''">
+          and p.TSTATUS=#{pd.TSTATUS}
+        </if>
+        <if test="pd.ESTATUS!=null and pd.ESTATUS!=''">
+            and p.ESTATUS=#{pd.ESTATUS}
+        </if>
+		ORDER BY p.DATE DESC
+	</select>
+	
+	<select id="userlistPage" parameterType="page" resultType="pd">
+	   select
+	       p.TID,
+	       p.NAME,
+	       p.USER_ID,
+	       p.SUBJECT,
+	       p.DATE,
+	       p.VIEWS,
+	       p.HUIFU,
+	       p.KEYWORD1,
+	       p.KEYWORD2,
+	       p.HUODONG1,
+	       p.ORDE_BY,
+	       p.TUPIANTYPE,
+	       p.FIMG,
+	       i.MESSAGE,
+	       i.YUE
+	   from post p
+	   LEFT JOIN post_info i on i.TID=p.TID
+	   where p.USER_ID=#{pd.USER_ID} and i.FIRST=1 and p.HUODONG='0'
+	   ORDER BY p.DATE DESC
+	</select>
+	
+	<select id="postlistPage" parameterType="page" resultType="pd">
+	   select
+	       p.TID,
+	       p.SUBJECT,
+	       p.DATE,
+	       p.VIEWS,
+	       p.HUIFU,
+	       p.NAME,
+	       p.KEYWORD1,
+	       p.KEYWORD2,
+	       p.MSTATUS,
+	       p.HUODONG1,
+	       p.ORDE_BY,
+	       p.TUPIANTYPE,
+	       p.FIMG,
+	       i.MESSAGE,
+	       i.YUE,
+	       f.IMG
+	   from post p
+	   LEFT JOIN post_info i on i.TID=p.TID
+	   LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+	   LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+	   where i.FIRST='1' and p.HUODONG='0' and p.MSTATUS!='1'
+	   <if test="pd.STATUS==0">
+	      and p.ESTATUS=1
+	   </if>
+	   <if test="pd.FID!=null and pd.FID!=''">
+	       and p.FID=#{pd.FID}
+	   </if>
+	  ORDER BY p.MSTATUS DESC,p.DATE DESC
+	</select>
+	
+	<select id="RelistPage" parameterType="page" resultType="pd">
+       select
+           p.TID,
+           p.SUBJECT,
+           p.DATE,
+           p.VIEWS,
+           p.HUIFU,
+           p.NAME,
+           p.KEYWORD1,
+           p.KEYWORD2,
+           p.MSTATUS,
+           p.HUODONG1,
+           p.ORDE_BY,
+           p.TUPIANTYPE,
+           p.FIMG,
+           i.MESSAGE,
+           i.YUE,
+           f.IMG
+       from post p
+       LEFT JOIN post_info i on i.TID=p.TID
+       LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+       LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+       where i.FIRST='1' and p.HUODONG='0' and p.MSTATUS!='1'
+       <if test="pd.STATUS==0">
+          and p.ESTATUS=1
+       </if>
+      ORDER BY p.VIEWS DESC
+    </select>
+    
+    
+    <select id="findZhuanTi" parameterType="pd" resultType="pd">
+       select
+           p.TID,
+           p.SUBJECT,
+           p.DATE,
+           p.VIEWS,
+           p.HUIFU,
+           p.NAME,
+           p.KEYWORD1,
+           p.KEYWORD2,
+           p.MSTATUS,
+           p.HUODONG1,
+           p.ORDE_BY,
+           p.TUPIANTYPE,
+           p.FIMG,
+           i.MESSAGE,
+           i.YUE,
+           f.IMG
+       from post p
+       LEFT JOIN post_info i on i.TID=p.TID
+       LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+       LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+       where p.HUODONG='0' and p.FID=#{FID}
+      ORDER BY p.DATE DESC
+    </select>
+    
+    <select id="ZhuanlistPage" parameterType="page" resultType="pd">
+       select
+           p.TID,
+           p.SUBJECT,
+           p.DATE,
+           p.VIEWS,
+           p.HUIFU,
+           p.NAME,
+           p.KEYWORD1,
+           p.KEYWORD2,
+           p.MSTATUS,
+           p.HUODONG1,
+           p.ORDE_BY,
+           p.TUPIANTYPE,
+           p.FIMG,
+           i.MESSAGE,
+           i.YUE,
+           f.IMG
+       from post p
+       LEFT JOIN post_info i on i.TID=p.TID
+       LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+       LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+       where p.HUODONG='0' and p.FID=#{pd.FID}
+      ORDER BY p.DATE DESC
+    </select>
+    
+    
+    <select id="findZhuan" parameterType="pd" resultType="pd">
+       select
+           p.TID,
+           p.SUBJECT,
+           p.DATE,
+           p.VIEWS,
+           p.HUIFU,
+           p.NAME,
+           p.KEYWORD1,
+           p.KEYWORD2,
+           p.MSTATUS,
+           p.HUODONG1,
+           p.ORDE_BY,
+           p.TUPIANTYPE,
+           p.FIMG,
+           i.MESSAGE,
+           i.YUE,
+           f.IMG
+       from post p
+       LEFT JOIN post_info i on i.TID=p.TID
+       LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+       LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+       where p.HUODONG='0' and p.FID=#{FID}
+      ORDER BY p.DATE DESC
+      limit 6
+    </select>
+    
+    
+    <select id="ReNamelistPage" parameterType="page" resultType="pd">
+       select
+           p.TID,
+           p.SUBJECT   
+       from post p
+      ORDER BY p.MSTATUS DESC,p.VIEWS DESC
+    </select>
+    
+    <select id="KelistPage" parameterType="page" resultType="pd">
+       select
+           p.TID,
+           p.SUBJECT,
+           p.DATE,
+           p.VIEWS,
+           p.HUIFU,
+           p.NAME,
+           p.KEYWORD1,
+           p.KEYWORD2,
+           p.MSTATUS,
+           p.HUODONG1,
+           p.ORDE_BY,
+           p.TUPIANTYPE,
+           p.FIMG,
+           i.MESSAGE,
+           i.YUE,
+           f.IMG
+       from post p
+       LEFT JOIN post_info i on i.TID=p.TID
+       LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+       LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+       where i.FIRST='1' and p.HUODONG='0'
+            <if test="pd.KEYWORD != null and pd.KEYWORD != ''"><!-- 关键词检索 -->
+            and
+                (
+                 p.SUBJECT LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+                 or
+                 p.NAME LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+                )
+        </if>
+      ORDER BY p.MSTATUS DESC,p.DATE DESC
+    </select>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+		select
+			p.TID,
+			p.FID,
+			p.NAME,
+			p.USER_ID,
+			p.SUBJECT,
+			p.DATE,
+			p.VIEWS,
+			p.HUIFU,
+			p.TSTATUS,
+			p.PRODUCT_ID,
+			p.ESTATUS,
+			p.KEYWORD1,
+			p.HUODONG1,
+			p.KEYWORD2,
+			p.ORDE_BY,
+			p.TUPIANTYPE,
+			p.FIMG
+		from post p
+		where 1=1 and p.HUODONG='0'
+		<if test="TSTATUS!=null and TSTATUS!=''">
+		 and p.TSTATUS=#{TSTATUS}
+		</if>
+		<if test="FID!=null and FID!=''">
+		 and p.FID=#{FID}
+		</if>
+		<if test="SUSER_ID!=null and SUSER_ID!=''">
+		 and p.USER_ID=#{SUSER_ID}
+		</if>
+		ORDER BY p.DATE DESC
+	</select>
+
+	
+	<update id="editDate" parameterType="pd">
+		update post
+		SET DATE=#{DATE}
+		where TID=#{TID}
+	</update>
+	
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			p.TID,
+			p.FID,
+			p.NAME,
+			p.USER_ID,
+			p.SUBJECT,
+			p.DATE,
+			p.VIEWS,
+			p.HUIFU,
+			p.TSTATUS,
+			p.PRODUCT_ID,
+			p.ESTATUS,
+			p.KEYWORD1,
+			p.KEYWORD2,
+			p.HUODONG1,
+			p.ORDE_BY,
+			p.SHUZI,
+			p.TUPIANTYPE,
+			p.FIMG,
+			i.MESSAGE,
+			i.YUE,
+			f.IMG
+		from post p
+		LEFT JOIN post_info i on i.TID=p.TID
+		LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+		where p.TID=#{TID} and i.FIRST='1'
+	</select>
+	
+		<select id="findById111" parameterType="pd" resultType="pd">
+		select
+			p.TID,
+			p.USER_ID,
+			p.SUBJECT,
+			p.HUIFU
+		from post p
+		where p.TID=#{TID}
+	</select>
+	
+	
+	 <select id="findByTId" parameterType="pd" resultType="pd">
+        select
+            p.TID,
+            p.FID,
+            p.NAME,
+            p.USER_ID,
+            p.SUBJECT,
+            p.DATE,
+            p.VIEWS,
+            p.HUIFU,
+            p.TSTATUS,
+            p.PRODUCT_ID,
+            p.ESTATUS,
+            p.KEYWORD1,
+            p.KEYWORD2,
+            p.HUODONG1,
+            p.SHUZI,
+            p.ORDE_BY,
+            p.TUPIANTYPE,
+            p.FIMG,
+            i.MESSAGE
+        from post p
+        LEFT JOIN post_info i on i.TID=p.TID
+        where p.TID=#{TID}
+    </select>
+    
+    <select id="findFIDCount" parameterType="pd" resultType="pd">
+       select count(*) count from post FID=#{FID}
+    </select>
+	
+	<delete id="delete" parameterType="pd">
+		delete from post where TID=#{TID}
+	</delete>
+	
+			<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from post
+		where 
+			TID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	<update id="edit" parameterType="pd">
+		update post
+		SET SUBJECT=#{SUBJECT},
+		    KEYWORD1=#{KEYWORD1},
+		    KEYWORD2=#{KEYWORD2},
+		    ORDE_BY=#{ORDE_BY},
+		    FIMG=#{FIMG}
+		where TID=#{TID}
+	</update>
+	
+    <update id="editTop" parameterType="pd">
+        update post
+        SET TSTATUS=#{TSTATUS}
+        where TID=#{TID}
+    </update>
+    
+   <update id="editEStatus" parameterType="pd">
+        update post
+        SET ESTATUS=#{ESTATUS}
+        where TID=#{TID}
+    </update>
+    
+   <update id="editMStatus" parameterType="pd">
+        update post
+        SET MSTATUS=#{MSTATUS}
+        where TID=#{TID}
+    </update>
+    
+    <update id="editHuiFu" parameterType="pd">
+        update post
+        SET HUIFU=#{HUIFU}
+        where TID=#{TID}
+    </update>
+    
+    <update id="editViews" parameterType="pd">
+        update post
+        SET VIEWS=#{VIEWS}
+        where TID=#{TID}
+    </update>
+    
+    <select id="findCount" parameterType="pd" resultType="pd">
+        select count(*) as count from post where TSTATUS=1
+    </select>
+    
+     <select id="findCount1" parameterType="pd" resultType="pd">
+        select count(*) as count from post where MSTATUS=1
+    </select>
+    
+    <select id="findPostPid" parameterType="pd" resultType="pd">
+        select
+            p.TID,
+            p.FID,
+            p.NAME,
+            p.USER_ID,
+            p.SUBJECT,
+            p.DATE,
+            p.VIEWS,
+            p.HUIFU,
+            p.TSTATUS,
+            p.PRODUCT_ID,
+            p.ESTATUS,
+            p.KEYWORD1,
+            p.KEYWORD2,
+            p.HUODONG1,
+            p.ORDE_BY,
+            p.SHUZI,
+            p.TUPIANTYPE,
+            p.FIMG,
+            i.MESSAGE
+        from post p
+        LEFT JOIN post_info i on i.TID=p.TID
+        where p.PRODUCT_ID=#{PRODUCT_ID}
+        ORDER BY p.DATE DESC
+    </select>
+    
+    <select id="selectPost" parameterType="pd" resultType="pd">
+       select
+            p.TID,
+            p.SUBJECT
+        from post p
+        where p.PRODUCT_ID=#{PRODUCT_ID}
+        ORDER BY DATE
+        limit 2
+    </select>
+    
+    <select id="selectActivity" parameterType="pd" resultType="pd">
+       select
+            p.TID,
+            p.SUBJECT
+        from post p
+        where p.ACTIVITY_ID=#{ACTIVITY_ID}
+        ORDER BY DATE
+        limit 3
+    </select>
+    
+    <select id="findPostMstatus" parameterType="pd" resultType="pd">
+    	select
+            p.TID,
+            p.SUBJECT,
+            p.DATE
+        from post p
+        where p.MSTATUS='1'
+        ORDER BY DATE DESC
+        limit 1
+    </select>
+    
+    <select id="meirilistPage" parameterType="page" resultType="pd">
+    	select
+            p.TID,
+            p.SUBJECT,
+            p.DATE,
+            (SELECT COUNT(*) from zan_post where TID=p.TID) as VIEWS,
+		    (SELECT COUNT(*) from comment_post where TID=p.TID) as HUIFU,
+            i.MESSAGE
+        from post p
+        LEFT JOIN post_info i on i.TID=p.TID
+        where p.MSTATUS='1'
+        ORDER BY DATE DESC
+    </select>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <select id="ReelistPage" parameterType="page" resultType="pd">
+       select
+           p.TID,
+           p.SUBJECT,
+           p.DATE,
+           p.VIEWS,
+           p.HUIFU,
+           p.NAME,
+           p.KEYWORD1,
+           p.KEYWORD2,
+           p.MSTATUS,
+           p.URL,
+           p.HUODONG1,
+           p.ORDE_BY,
+           p.TUPIANTYPE,
+           p.FIMG,
+           i.MESSAGE,
+           i.YUE,
+           f.IMG
+       from post p
+       LEFT JOIN post_info i on i.TID=p.TID
+       LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+       LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+       where p.HUODONG='0' and p.HUODONG1='0'
+      ORDER BY p.DATE DESC
+    </select>
+    
+    
+    <select id="data1listPage" parameterType="page" resultType="pd">
+        select
+            p.TID,
+            p.FID,
+            p.NAME,
+            p.USER_ID,
+            p.SUBJECT,
+            p.DATE,
+            p.VIEWS,
+            p.HUIFU,
+            p.TSTATUS,
+            p.PRODUCT_ID,
+            p.ESTATUS,
+            p.MSTATUS,
+            p.KEYWORD1,
+            p.KEYWORD2,
+            p.ACTIVITY_ID,
+            p.HUODONG1,
+            p.HUODONG,
+            p.URL,
+            p.ORDE_BY,
+            p.TUPIANTYPE,
+            p.FIMG
+        from post p
+        where 1=1 and p.HUODONG='0' and p.HUODONG1='0'
+        <if test="pd.KEYWORD != null and pd.KEYWORD != ''"><!-- 关键词检索 -->
+            and
+                (
+                 p.SUBJECT LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+                 or
+                 p.NAME LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+                )
+        </if>
+        ORDER BY p.DATE DESC
+    </select>
+    
+    
+    
+    
+    
+    
+    
+    <select id="ZhuanTi" parameterType="pd" resultType="pd">
+          select
+            p.TID,
+            p.FID,
+            p.SUBJECT,
+            p.KEYWORD1,
+            p.DATE,
+            p.ORDE_BY
+        from post p
+        where p.FID=#{FID} and p.HUODONG='2'
+        ORDER BY p.ORDE_BY DESC
+    </select>
+    
+    <select id="data2listPage" parameterType="page" resultType="pd">
+        select
+            p.TID,
+            p.FID,
+            p.NAME,
+            p.USER_ID,
+            p.SUBJECT,
+            p.DATE,
+            p.VIEWS,
+            p.HUIFU,
+            p.TSTATUS,
+            p.PRODUCT_ID,
+            p.ESTATUS,
+            p.MSTATUS,
+            p.KEYWORD1,
+            p.KEYWORD2,
+            p.ACTIVITY_ID,
+            p.HUODONG,
+            p.HUODONG1,
+            p.URL,
+            p.ORDE_BY,
+            p.TUPIANTYPE,
+            p.FIMG,
+            p.SHUZI
+        from post p
+        where p.FID=#{pd.FID} and p.HUODONG='2'
+        <if test="pd.KEYWORD != null and pd.KEYWORD != ''"><!-- 关键词检索 -->
+            and
+                (
+                 p.SUBJECT LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+                 or
+                 p.NAME LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+                )
+        </if>
+        ORDER BY p.DATE DESC
+    </select>
+    
+       <select id="findTList" parameterType="pd" resultType="pd">
+       select
+           p.TID,
+           p.SUBJECT,
+           p.DATE,
+           p.VIEWS,
+           p.HUIFU,
+           p.NAME,
+           p.KEYWORD1,
+           p.KEYWORD2,
+           p.MSTATUS,
+           p.URL,
+           p.HUODONG1,
+           p.ORDE_BY,
+           p.TUPIANTYPE,
+           p.FIMG,
+           i.MESSAGE,
+           i.YUE,
+           f.IMG
+       from post p
+       LEFT JOIN post_info i on i.TID=p.TID
+       LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+       LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+       where p.HUODONG='2' and p.FID=#{FID}
+       ORDER BY p.DATE DESC
+    </select>
+    
+    <select id="data3listPage" parameterType="page" resultType="pd">
+ 		select
+	       p.TID,
+	       p.FID,
+	       p.SUBJECT,
+	       p.DATE,
+	       p.NAME,
+	       p.POST_SPECIAL_TYPE_ID,
+	       p.ORDE_BY,
+	       p.TUPIANTYPE,
+	       p.FIMG,
+	       i.MESSAGE,
+	       i.YUE,
+	       f.IMG,
+		   (SELECT COUNT(*) from zan_post where TID=p.TID) as VIEWS,
+		   (SELECT COUNT(*) from comment_post where TID=p.TID) as HUIFU
+	   from post p
+	   LEFT JOIN post_info i on i.TID=p.TID
+	   LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+	   LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+	   where p.FID=#{pd.FID} and p.POST_SPECIAL_TYPE_ID=#{pd.POST_SPECIAL_TYPE_ID} and p.BROWSE='0'
+	   ORDER BY p.ORDE_BY DESC
+    </select>
+    
+    <select id="data4listPage" parameterType="page" resultType="pd">
+ 		select
+	       p.TID,
+	       p.FID,
+	       p.SUBJECT,
+	       p.DATE,
+	       p.NAME,
+	       p.POST_SPECIAL_TYPE_ID,
+	       p.ORDE_BY,
+	       p.TUPIANTYPE,
+	       p.FIMG,
+	       p.SHUZI,
+	       i.MESSAGE,
+	       i.YUE,
+	       f.IMG,
+		   (SELECT COUNT(*) from zan_post where TID=p.TID) as VIEWS,
+		   (SELECT COUNT(*) from comment_post where TID=p.TID) as HUIFU
+	   from post p
+	   LEFT JOIN post_info i on i.TID=p.TID
+	   LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+	   LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+	   where p.FID=#{pd.FID} and p.POST_SPECIAL_TYPE_ID=#{pd.POST_SPECIAL_TYPE_ID}
+	   ORDER BY p.DATE DESC
+    </select>
+    
+   <select id="findListFid" parameterType="page" resultType="pd">
+	  select
+	       p.TID,
+	       p.FID,
+	       p.SUBJECT,
+	       p.DATE,
+	       p.NAME,
+	       p.POST_SPECIAL_TYPE_ID,
+	       p.ORDE_BY,
+	       p.TUPIANTYPE,
+	       p.FIMG,
+	       i.MESSAGE,
+	       i.YUE,
+	       f.IMG,
+		   (SELECT COUNT(*) from zan_post where TID=p.TID) as VIEWS,
+		   (SELECT COUNT(*) from comment_post where TID=p.TID) as HUIFU
+	   from post p
+	   LEFT JOIN post_info i on i.TID=p.TID
+	   LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+	   LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+	   where p.FID=#{FID} and p.POST_SPECIAL_TYPE_ID=#{POST_SPECIAL_TYPE_ID} and p.BROWSE='0'
+	   ORDER BY p.ORDE_BY DESC
+	   limit 2
+    </select>
+    
+    <select id="findListFid2" parameterType="page" resultType="pd">
+	  select
+	       p.TID,
+	       p.FID,
+	       p.SUBJECT,
+	       p.DATE,
+	       p.NAME,
+	       p.POST_SPECIAL_TYPE_ID,
+	       p.ORDE_BY,
+	       p.TUPIANTYPE,
+	       p.FIMG,
+	       i.MESSAGE,
+	       i.YUE,
+	       f.IMG,
+		   (SELECT COUNT(*) from zan_post where TID=p.TID) as VIEWS,
+		   (SELECT COUNT(*) from comment_post where TID=p.TID) as HUIFU
+	   from post p
+	   LEFT JOIN post_info i on i.TID=p.TID
+	   LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+	   LEFT JOIN sys_app_userinfo f on f.USER_ID=p.USER_ID
+	   where p.FID=#{FID} and p.POST_SPECIAL_TYPE_ID=#{POST_SPECIAL_TYPE_ID} and p.BROWSE='0'
+	   ORDER BY p.ORDE_BY DESC
+    </select>
+    
+    <update id="editBrowse" parameterType="pd">
+    	update post
+    	SET BROWSE='0'
+    	where TID=#{TID}
+    </update>
+    
+    <update id="editShuZi" parameterType="pd">
+    	update post
+    	SET SHUZI=#{SHUZI}
+    	where TID=#{TID}
+    </update>
+    
+    <update id="editUserId" parameterType="pd">
+    	update post
+    	SET USER_ID=#{USER_ID}
+    	where USER_ID=#{USER_ID1}
+    </update>
+    
+    <update id="editFimg" parameterType="pd">
+    	update post
+    	SET FIMG=''
+    	where TID=#{TID}
+    </update>
+</mapper>

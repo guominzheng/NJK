@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="P_QuanXianMapper">
+    <insert id="save" parameterType="pd">
+		insert into p_quanxian(
+			P_QUANXIANID,
+			USER_ID,
+			PRODUCT_ID
+		)values(
+			#{P_QUANXIANID},
+			#{USER_ID},
+			#{PRODUCT_ID}
+		)
+	</insert>
+	<insert id="batchSave" parameterType="java.util.Map">
+		insert
+		into
+		p_quanxian(
+		P_QUANXIANID,
+		USER_ID,
+		PRODUCT_ID
+		)VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+		(#{item.P_QUANXIANID},#{pd.USER_ID},#{item.PRODUCT_ID})
+	</foreach>
+	</insert>
+
+	<delete id="deleteAll" parameterType="String">
+		delete from p_quanxian
+		where
+		P_QUANXIANID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+    <select id="datalistPage" parameterType="page" resultType="pd">
+		select 
+			q.P_QUANXIANID,
+			q.USER_ID,
+			q.PRODUCT_ID,
+			p.PRODUCT_NAME
+		from p_quanxian q
+		LEFT JOIN product p on p.PRODUCT_ID=q.PRODUCT_ID
+		where USER_ID=#{pd.USER_ID}
+	</select>
+
+    <select id="findList" parameterType="pd" resultType="pd">
+		SELECT
+			q.*,
+			p.PRODUCT_ID
+		FROM (
+			select
+			P_QUANXIANID,
+			USER_ID,
+			PRODUCT_ID
+			from p_quanxian
+			where USER_ID=#{USER_ID}
+		) q
+		LEFT JOIN product p on p.PRODUCT_ID=q.PRODUCT_ID
+	</select>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+		select 
+			P_QUANXIANID,
+			USER_ID,
+			PRODUCT_ID
+		from p_quanxian
+		where USER_ID=#{USER_ID} and PRODUCT_ID=#{PRODUCT_ID}
+	</select>
+
+    <delete id="delete" parameterType="pd">
+		delete from p_quanxian where P_QUANXIANID=#{P_QUANXIANID}
+	</delete>
+
+
+	<delete id="deleteUser" parameterType="pd">
+		delete from p_quanxian where USER_ID=#{USER_ID}
+	</delete>
+
+    <select id="findById1" parameterType="pd" resultType="pd">
+		select 
+			P_QUANXIANID,
+			USER_ID,
+			PRODUCT_ID
+		from p_quanxian
+		where P_QUANXIANID=#{P_QUANXIANID}
+	</select>
+
+
+
+	<!--  按照商品寻找权限用户-->
+    <select id="findUserByProductlistPage" parameterType="page" resultType="pd">
+		select
+		p.P_QUANXIANID,
+		pr.PRODUCT_ID,
+		u.NAME,
+		u.USERNAME,
+		e.NAME EXNAME,
+		u.PHONE,
+		u.ADDRESS,
+		u.VIP
+		FROM
+		p_quanxian p
+		LEFT JOIN
+		product pr
+		ON
+		p.PRODUCT_ID = pr.PRODUCT_ID
+		LEFT JOIN
+		sys_app_user u
+		ON
+		p.USER_ID = u.USER_ID
+		LEFT JOIN
+		exclu e
+		ON
+		u.EXCLU_ID = e.EXCLU_ID
+		WHERE
+		p.PRODUCT_ID=#{pd.PRODUCT_ID}
+	</select>
+
+	<!-- 查询当前VIP是否可以查看当前货品的信息-->
+	<select id="findProRoleByVipName" parameterType="pd" resultType="pd">
+		SELECT
+		P_QUANXIANID,
+		USER_ID,
+		PRODUCT_ID
+		FROM
+		p_quanxian
+		WHERE
+		USER_ID = #{USER_ID}
+		AND
+		PRODUCT_ID = #{PRODUCT_ID}
+	</select>
+
+</mapper>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Activity_Post1Mapper">
+    <insert id="save" parameterType="pd">
+        insert into activity_post1(
+            ACTIVITY_POST_ID,
+            SUBJECT,
+            MESSAGE,
+            PROMPT,
+            ACTIVITY_ROOM_ID,
+            DATE,
+            USER_ID,
+            STATUS,
+            YUE,
+            VIEWS,
+            HUIFU
+        )values(
+            #{ACTIVITY_POST_ID},
+            #{SUBJECT},
+            #{MESSAGE},
+            #{PROMPT},
+            #{ACTIVITY_ROOM_ID},
+            #{DATE},
+            #{USER_ID},
+            #{STATUS},
+            #{YUE},
+            #{VIEWS},
+            #{HUIFU}
+        )
+    </insert>
+    
+    <update id="edit" parameterType="pd">
+        update activity_post1
+        SET MESSAGE=#{MESSAGE},
+            ACTIVITY_POST_ID=ACTIVITY_POST_ID
+        where ACTIVITY_POST_ID=#{ACTIVITY_POST_ID}
+    </update>
+    
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+            p.ACTIVITY_POST_ID,
+            p.MESSAGE,
+            p.PROMPT,
+            p.ACTIVITY_ROOM_ID,
+            p.DATE,
+            p.USER_ID,
+            p.YUE,
+            p.VIEWS,
+            p.HUIFU,
+            i.IMG,
+            u.NAME
+        from activity_post1 p
+        LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_userinfo i on i.USER_ID=p.USER_ID
+        <where>
+           <if test="pd.KEYWORD != null and pd.KEYWORD != ''"><!-- 关键词检索 -->
+            and
+                (
+                 p.SUBJECT LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+                 or
+                 p.PROMPT LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+                )
+        </if>
+        <if test="pd.ACTIVITY_ID!=null and pd.ACTIVITY_ID!=''">
+            and p.ACTIVITY_ROOM_ID=#{pd.ACTIVITY_ROOM_ID}
+        </if>
+        <if test="pd.STATUS!=null and pd.STATUS!=''">
+            and p.STATUS=#{pd.STATUS}
+        </if>
+        <if test="pd.USER_ID!=null and pd.USER_ID!=''">
+            and p.USER_ID=#{pd.USER_ID}
+        </if>
+        </where>
+        ORDER BY p.DATE
+    </select>
+    
+    
+    <select id="findData" parameterType="pd" resultType="pd">
+        select
+            YUE,
+            DATE
+        from activity_post1
+        where USER_ID=#{USER_ID} and STATUS=1
+        ORDER BY DATE DESC
+        limit 1
+    </select>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+            p.ACTIVITY_POST_ID,
+            p.SUBJECT,
+            p.MESSAGE,
+            p.PROMPT,
+            p.ACTIVITY_ROOM_ID,
+            p.DATE,
+            p.USER_ID,
+            p.YUE,
+            a.TITLE,
+            a.DATE
+        from activity_post1 p
+        LEFT JOIN activity a on a.ACTIVITY_ID=p.ACTIVITY_ID
+        where 1=1
+        <if test="SUSER_ID!=null and SUSER_ID!=''">
+           and p.USER_ID=#{SUSER_ID}
+        </if> 
+        <if test="STATUS!=null and STATUS!=''">
+           and p.STATUS=#{STATUS}
+        </if>
+        <if test="ACTIVITY_ROOM_ID!=null and ACTIVITY_ROOM_ID!=''">
+           and p.ACTIVITY_ROOM_ID=#{ACTIVITY_ROOM_ID}
+        </if>
+        ORDER BY p.DATE
+    </select>
+    
+    <delete id="delete" parameterType="pd">
+        delete from activity_post1 where ACTIVITY_POST_ID=#{ACTIVITY_POST_ID}
+    </delete>
+    
+    <delete id="deleteAll" parameterType="String">
+        delete from activity_post1
+        where 
+            ACTIVITY_POST_ID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+        </foreach>
+    </delete>
+    
+    <select id="findNumViews" parameterType="pd" resultType="pd">
+        select SUM(VIEWS) as views from activity_post1 where ACTIVITY_ROOM_ID=#{ACTIVITY_ROOM_ID} and USER_ID=#{USER_ID}
+    </select>
+    
+    <select id="findCount" parameterType="pd" resultType="pd">
+    	select count(*) as count from activity_post1 where ACTIVITY_ROOM_ID=#{ACTIVITY_ROOM_ID}
+    </select>
+</mapper>

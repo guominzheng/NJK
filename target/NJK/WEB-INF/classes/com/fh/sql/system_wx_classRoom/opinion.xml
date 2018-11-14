@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_OpinionMapper">
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_opinion
+        (
+        userName,
+        userImg,
+        opinionType,
+        opinionText,
+        createTime,
+        audit,
+        openId
+        )
+        VALUE
+        (
+        #{userName},
+        #{userImg},
+        #{opinionType},
+        #{opinionText},
+        #{createTime},
+        #{audit},
+        #{openId}
+        )
+    </insert>
+
+
+    <select id="findOpinionlistPage" parameterType="page" resultType="pd">
+        SELECT
+        opinionId,
+          userName,
+          userImg,
+         opinionType,
+         opinionText,
+         createTime,
+         audit
+         FROM
+         wx_classroom_opinion
+        <where>
+            <if test="pd.userName !=null">
+              AND  userName like CONCAT(CONCAT('%', #{pd.userName}),'%')
+            </if>
+            <if test="pd.opinionType !=null">
+                AND  opinionType like CONCAT(CONCAT('%', #{pd.opinionType}),'%')
+            </if>
+            <if test="pd.opinionText !=null">
+                AND  opinionText like CONCAT(CONCAT('%', #{pd.opinionText}),'%')
+            </if>
+            <if test="pd.audit !=null">
+                AND  audit= #{pd.audit}
+            </if>
+        </where>
+    </select>
+
+    <update id="update" parameterType="pd">
+        UPDATE
+          wx_classroom_opinion
+        SET
+          audit = #{audit}
+        WHERE
+          opinionId = #{opinionId}
+    </update>
+
+
+</mapper>

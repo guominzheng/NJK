@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_KeyMapper">
+    <sql id="base">
+        hotId,
+        hotKey,
+        num
+    </sql>
+
+
+
+
+    <select id="findAllKeylistPage" parameterType="page" resultType="pd">
+        SELECT
+        <include refid="base"/>
+        FROM
+        wx_classroom_hotKey
+        ORDER BY num DESC
+    </select>
+
+
+
+    <select id="findKeyOne" parameterType="pd" resultType="pd">
+        SELECT
+        <include refid="base"/>
+        FROM
+        wx_classroom_hotKey
+        <where>
+            <if test="hotId != null">
+               AND hotId = #{hotId}
+            </if>
+            <if test="searchKey != null">
+                AND  hotKey = #{searchKey}
+            </if>
+        </where>
+    </select>
+
+
+
+
+
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_hotKey
+        (
+        hotKey,
+        createTime,
+        num
+        )
+        VALUE
+        (
+        #{hotKey},
+        #{createTime},
+        #{num}
+        )
+    </insert>
+
+
+
+
+    <update id="update" parameterType="pd">
+        UPDATE
+          wx_classroom_hotKey
+        SET
+          num = num+1
+        WHERE
+        hotId = #{hotId}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>农极客</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<link rel="stylesheet" href="css/special.css" />
+	</head>
+<body>
+	<div class="main">
+		<div class="cover_img">
+			<img class="userimg" src="">
+		</div>
+		<div class="brief">
+			
+		</div>
+		<div style="background-color:#ebebeb;height:10px;"></div>
+		<div class="top">
+
+		</div>
+		
+		<div class="message">
+		</div><br/>
+		<div style="background-color:#ebebeb;height:10px;"></div>
+		<div class="commentquyu">
+			<div class="commentNumber">评论(0)</div>
+			<a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.ylsoft.njk"><div class="spot">
+				评论
+			</div></a>
+		</div>
+		<div class="comment" id="comm">
+			
+		</div>
+		<div style="height:80px;" id="tianchong"></div>
+		<div id="cha" onclick="yincang();" style="width:50px;height:50px;position:fixed;bottom:22px;z-index:1"></div>
+		<div id="IMGSs" style="position:fixed;bottom:-5px;width:100%;"><a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.ylsoft.njk"><img class="IMGS" src=""></a></div>
+	</div>
+
+	<script type="text/javascript">	 
+var STATUS='1';	
+		var url=location.href;
+var strs= new Array(); //定义一数组 
+strs=url.split("?");
+var strs1=new Array();
+strs1=strs[1].split("=");
+var strs12=new Array();
+strs12=strs1[1].split("&");
+/* function show(){
+	alert("请下载农极客")
+} */
+//微信分享朋友圈  
+$(function(){  
+  /***用户点击分享到微信圈后加载接口接口*******/  
+    $.ajax({  
+        url : "http://192.168.1.143:8888/NJK/app/WeiXinResearcs",
+        type: "POST",
+        data:{url:location.href.split('#')[0],PRODUCT_ID:strs12[0]},
+        dataType: "json",
+        ContentType:'application/json; charset=utf-8',
+        success: function(data){
+        	console.log(data)
+			$(".userimg").attr("src",data.research.RIMG);
+			$(".IMGS").attr("src","images/xiazai.png");
+			$.each(data.top, function(i, list){
+			
+				if(list.SUBJECT.length>14){
+						list.SUBJECT=list.SUBJECT.substring(0,14);
+				}
+            	//$('<tr style="height:35px;width:100%;" onclick=show("'+list.TID+'");><td style="color:#4DB8EA;">'+list.KEYWORD1+':</td><td>'+list.SUBJECT+'</td></tr>').appendTo("#ZHIDING");
+				$('<div class="top-info" onclick=show("'+list.RESEARCH_ID+'");><div class="top-info-zhiding">置顶:</div><div class="top-info-title">'+list.SUBJECT+'</div><div class="top-info-jiantou"><img src="images/jiantou.png"></div></div>').appendTo(".top");
+            });
+				var html='<div style="background-color:#ebebeb;height:10px;"></div><div class="message-top"></div>';
+				//var html='<div style="background:#ffffff;"><div style="color:#4DB8EA;font-size:20px;margin-top:10px;text-align:center;line-height:25px;height:25px;">'+list.TYPE_NAME+'</div><div style="width:100%;height:210px;margin-top:5px"><div>';
+				var img="";
+				$.each(data.list, function(i, list){
+					if(list.FIMG.length==0){
+						html+='<div onclick=show("'+list.RESEARCH_ID+'"); class="message-bottom1"><div class="message-bottom-left1"><div class="message-bottom-left-title1">'+list.SUBJECT+'</div><div class="message-bottom-left-message1">'+list.JIANJIE+'</div></div></div>'
+					}else{
+						html+='<div onclick=show("'+list.RESEARCH_ID+'"); class="message-bottom"><div class="message-bottom-left"><div class="message-bottom-left-title">'+list.SUBJECT+'</div><div class="message-bottom-left-message">'+list.JIANJIE+'</div></div><div class="message-bottom-right"><img src="'+list.FIMG[0].IMG+'" /></div></div>'
+					}
+
+				})
+				//for(int i=0;i<list2.length;i++){
+					//html+='<div style="height:110px;float:left;width:65%;border-bottom:  1px    solid  #C3C3C1;"><div style="float:left"><div style="margin-top:5px">'+list1.SUBJECT+'</div><div style="margin-top:17px;color:#6c6c6c;font-size:16px;">'+list.MESSAGE+'</div></div></div><div style="width:35%;height:110px;float:left"><img style="width:100%;height:100%;" src="'+list1.POST_IMG[0].IMG+'"></div>';
+				//}
+				$(html).appendTo(".message")
+				//$('<tr style="height:5px"><td style="color:#4DB8EA">'+list.KEYWORD1+':</td><td>'+list.SUBJECT+'</td></tr>').appendTo("#ZHIDING");
+            wx.config({
+                //debug : true,
+                appId: data.appId,  
+                timestamp:data.timestamp,  
+                nonceStr:data.nonceStr,  
+                signature:data.signature,  
+                jsApiList: ['onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ','onMenuShareWeibo','onMenuShareQZone'] // 必填，需要使用的JS接口列表
+            });
+              wx.ready(function(){
+                  wx.onMenuShareTimeline({//分享到朋友圈
+                      title: data.research.PRODUCT_NAME, // 分享标题
+                      link:data.url, // 分享链接
+                      imgUrl:data.research.RIMG// 分享图标
+                  });
+                  wx.onMenuShareAppMessage({//分享给朋友
+                      title:data.research.PRODUCT_NAME, // 分享标题
+                      desc: data.research.COMPONENT, // 分享描述
+                      link:data.url, // 分享链接
+                      imgUrl: data.research.RIMG // 分享图标
+                  });
+                  wx.onMenuShareQQ({//分享到QQ
+                      title: data.research.PRODUCT_NAME, // 分享标题
+                      desc:data.research.COMPONENT, // 分享描述
+                      imgUrl:data.research.RIMG // 分享图标
+                  });
+                  wx.onMenuShareWeibo({//分享到腾讯微博
+                      title: data.research.PRODUCT_NAME, // 分享标题
+                      desc: data.research.COMPONENT, // 分享描述
+                      link:data.url, // 分享链接
+                      imgUrl:data.research.RIMG // 分享图标
+                  });
+                  wx.onMenuShareQZone({//分享到QQ空间
+                      title: data.research.PRODUCT_NAME, // 分享标题
+                      desc: data.research.COMPONENT, // 分享描述
+                      link:data.url, // 分享链接
+                      imgUrl:data.research.RIMG // 分享图标
+                  });
+
+                  // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
+              });
+        }
+    });         
+  });
+  
+  function show(RESEARCH_ID){
+	window.location.href='http://192.168.1.143:8888/NJK/static/jsp/Researc.html?RESEARCH_ID='+RESEARCH_ID;
+  }
+  function yincang(){
+	document.getElementById("IMGSs").style.display="none";
+	document.getElementById("tianchong").style.height="0px";
+  }
+	</script>
+</body>
+</html>

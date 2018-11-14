@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ActivityPostMapper">
+    <insert id="save" parameterType="pd">
+        insert into activity_post(
+            ACTIVITY_POST_ID,
+            SUBJECT,
+            MESSAGE,
+            PROMPT,
+            ACTIVITY_ID,
+            DATE,
+            USER_ID,
+            STATUS,
+            YUE,
+            VIEWS,
+            HUIFU,
+            ACTIVITY_ROOM_ID
+        )values(
+            #{ACTIVITY_POST_ID},
+            #{SUBJECT},
+            #{MESSAGE},
+            #{PROMPT},
+            #{ACTIVITY_ID},
+            #{DATE},
+            #{USER_ID},
+            #{STATUS},
+            #{YUE},
+            #{VIEWS},
+            #{HUIFU},
+            #{ACTIVITY_ROOM_ID}
+        )
+    </insert>
+    
+    <update id="edit" parameterType="pd">
+        update activity_post
+        SET MESSAGE=#{MESSAGE},
+            ACTIVITY_POST_ID=ACTIVITY_POST_ID
+        where ACTIVITY_POST_ID=#{ACTIVITY_POST_ID}
+    </update>
+    
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+            p.ACTIVITY_POST_ID,
+            p.MESSAGE,
+            p.PROMPT,
+            p.ACTIVITY_ID,
+            p.DATE,
+            p.USER_ID,
+            p.YUE,
+            p.VIEWS,
+            p.HUIFU,
+            i.IMG,
+            u.NAME
+        from activity_post p
+        LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_userinfo i on i.USER_ID=p.USER_ID
+        where p.STATUS='1'
+           <if test="pd.KEYWORD != null and pd.KEYWORD != ''"><!-- 关键词检索 -->
+            and
+                (
+                 p.SUBJECT LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+                 or
+                 p.PROMPT LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+                )
+        </if>
+        <if test="pd.ACTIVITY_ID!=null and pd.ACTIVITY_ID!=''">
+            and p.ACTIVITY_ID=#{pd.ACTIVITY_ID}
+        </if>
+        <if test="pd.USER_ID!=null and pd.USER_ID!=''">
+            and p.USER_ID=#{pd.USER_ID}
+        </if>
+        ORDER BY p.DATE
+    </select>
+    
+    
+      <select id="userlistPage" parameterType="page" resultType="pd">        
+        SELECT
+        S.*
+    FROM
+    (
+         select
+            a.ACTIVITY_POST_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            u.NAME,
+            i.IMG,
+            a.YUE,
+            a.DATE
+        from activity_post a
+        LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_userinfo i on a.USER_ID=i.USER_ID
+        where a.STATUS='1'
+        <if test="pd.ACTIVITY_ID!=null and pd.ACTIVITY_ID!=''">
+            and ACTIVITY_ID=#{pd.ACTIVITY_ID}
+        </if>
+        ORDER BY a.DATE DESC
+    ) S
+    GROUP BY USER_ID
+    ORDER BY S.DATE DESC
+    </select>
+    
+    
+    
+    <select id="userlistPage1" parameterType="page" resultType="pd">        
+        SELECT
+        S.*
+    FROM
+    (
+         select
+            a.ACTIVITY_POST_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            u.NAME,
+            i.IMG,
+            a.YUE,
+            a.DATE
+        from activity_post a
+        LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_userinfo i on a.USER_ID=i.USER_ID
+        where 1=1
+        <if test="pd.ACTIVITY_ID!=null and pd.ACTIVITY_ID!=''">
+            and ACTIVITY_ID=#{pd.ACTIVITY_ID}
+        </if>
+        ORDER BY a.DATE DESC
+    ) S
+    GROUP BY USER_ID
+    ORDER BY S.DATE DESC
+    </select>
+    
+    
+    <select id="findData" parameterType="pd" resultType="pd">
+        select
+            YUE,
+            DATE
+        from activity_post
+        where USER_ID=#{USER_ID} and STATUS=1
+        ORDER BY DATE DESC
+        limit 1
+    </select>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+            p.ACTIVITY_POST_ID,
+            p.SUBJECT,
+            p.MESSAGE,
+            p.PROMPT,
+            p.ACTIVITY_ID,
+            p.DATE,
+            p.USER_ID,
+            p.YUE,
+            a.TITLE,
+            a.DATE
+        from activity_post p
+        LEFT JOIN activity a on a.ACTIVITY_ID=p.ACTIVITY_ID
+        where p.STATUS='1'
+        <if test="SUSER_ID!=null and SUSER_ID!=''">
+           and p.USER_ID=#{SUSER_ID}
+        </if> 
+        <if test="STATUS!=null and STATUS!=''">
+           and p.STATUS=#{STATUS}
+        </if>
+        <if test="ACTIVITY_ID!=null and ACTIVITY_ID!=''">
+           and p.ACTIVITY_ID=#{ACTIVITY_ID}
+        </if>
+        ORDER BY p.DATE
+    </select>
+    
+    <select id="findList3" parameterType="pd" resultType="pd">
+        select
+            p.ACTIVITY_POST_ID,
+            p.SUBJECT,
+            p.MESSAGE,
+            p.PROMPT,
+            p.ACTIVITY_ID,
+            p.DATE,
+            p.USER_ID,
+            p.YUE,
+            a.TITLE,
+            a.DATE,
+            r.IMG,
+            r.CROP
+        from activity_post p
+        LEFT JOIN activity a on a.ACTIVITY_ID=p.ACTIVITY_ID
+        LEFT JOIN activity_room r on r.ACTIVITY_ROOM_ID=p.ACTIVITY_ROOM_ID
+        where p.STATUS='1'
+        <if test="USER_ID!=null and USER_ID!=''">
+           and p.USER_ID=#{USER_ID}
+        </if> 
+        <if test="ACTIVITY_ID!=null and ACTIVITY_ID!=''">
+           and p.ACTIVITY_ID=#{ACTIVITY_ID}
+        </if>
+        ORDER BY p.DATE
+    </select>
+    
+    <select id="findTop" parameterType="pd" resultType="pd">
+        select
+            p.ACTIVITY_POST_ID,
+            p.SUBJECT,
+            p.MESSAGE,
+            p.PROMPT,
+            p.ACTIVITY_ID,
+            p.DATE,
+            p.USER_ID,
+            p.YUE,
+            p.VIEWS,
+            p.HUIFU,
+            a.TITLE
+        from activity_post p
+        LEFT JOIN activity a on a.ACTIVITY_ID=p.ACTIVITY_ID
+        where p.USER_ID=#{USER_ID} and p.ACTIVITY_ID=#{ACTIVITY_ID} and p.STATUS='1'
+        ORDER BY DATE
+        limit 2
+    </select>
+    
+    
+        <select id="findTop3" parameterType="pd" resultType="pd">
+        select
+            p.ACTIVITY_POST_ID,
+            p.SUBJECT,
+            p.MESSAGE,
+            p.PROMPT,
+            p.ACTIVITY_ID,
+            p.DATE,
+            p.USER_ID,
+            p.YUE,
+            p.VIEWS,
+            p.HUIFU,
+            a.TITLE,
+            u.IMG,
+            u1.NAME
+        from activity_post p
+        LEFT JOIN activity a on a.ACTIVITY_ID=p.ACTIVITY_ID
+        LEFT JOIn sys_app_user u1 on u1.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_userinfo u on u.USER_ID=p.USER_ID
+        where p.ACTIVITY_ID=#{ACTIVITY_ID} and p.STATUS='1'
+        ORDER BY p.VIEWS DESC
+        limit 3
+    </select>
+    
+    <select id="ActivitylistPage" parameterType="pd" resultType="pd">
+                SELECT
+        S.*
+    FROM
+    (
+         select
+            a.ACTIVITY_POST_ID,
+            a.USER_ID,
+            a.ACTIVITY_ID,
+            u.NAME,
+            i.IMG,
+            a.YUE,
+            a.DATE
+        from activity_post a
+        LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_userinfo i on a.USER_ID=i.USER_ID
+        where a.STATUS='1'
+        <if test="pd.USER_ID!=null and pd.USER_ID!=''">
+            and a.USER_ID=#{pd.USER_ID}
+        </if>
+        ORDER BY a.DATE DESC
+    ) S
+    GROUP BY ACTIVITY_ID
+    ORDER BY S.DATE DESC
+    </select>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+         select
+            p.ACTIVITY_POST_ID,
+            a.TITLE as SUBJECT,
+            p.MESSAGE,
+            p.PROMPT,
+            p.ACTIVITY_ID,
+            p.DATE,
+            p.USER_ID,
+            p.VIEWS,
+            p.HUIFU,
+            u.NAME,
+            i.IMG
+        from activity_post p
+        LEFT JOIN activity a on a.ACTIVITY_ID=p.ACTIVITY_ID
+        LEFT JOIN sys_app_user u on u.USER_ID=p.USER_ID
+        LEFT JOIN sys_app_userinfo i on i.USER_ID=p.USER_ID
+        where ACTIVITY_POST_ID=#{ACTIVITY_POST_ID}
+    </select>
+    
+    <delete id="delete" parameterType="pd">
+        delete from activity_post where ACTIVITY_POST_ID=#{ACTIVITY_POST_ID}
+    </delete>
+    
+     <delete id="delete1" parameterType="pd">
+        delete from activity_post where ACTIVITY_ID=#{ACTIVITY_ID} and USER_ID=#{USER_ID}
+    </delete>
+    
+    <delete id="deleteAll" parameterType="String">
+        delete from activity_post
+        where 
+            ACTIVITY_POST_ID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+        </foreach>
+    </delete>
+    
+    <update id="editHuiFu" parameterType="pd">
+        update activity_post
+        SET HUIFU=#{HUIFU}
+        where ACTIVITY_POST_ID=#{ACTIVITY_POST_ID}
+    </update>
+    
+    <update id="editViews" parameterType="pd">
+        update activity_post
+        SET VIEWS=#{VIEWS}
+        where ACTIVITY_POST_ID=#{ACTIVITY_POST_ID}
+    </update>
+    
+    <update id="editRoom" parameterType="pd">
+        update activity_post
+        SET ACTIVITY_ROOM_ID=#{ACTIVITY_ROOM_ID}
+        where ACTIVITY_POST_ID=#{ACTIVITY_POST_ID}
+    </update>
+    
+    <select id="findNumViews" parameterType="pd" resultType="pd">
+        select SUM(VIEWS) as views from activity_post where ACTIVITY_ID=#{ACTIVITY_ID} and USER_ID=#{USER_ID} and STATUS='1'
+    </select>
+    
+    <select id="findCount" parameterType="pd" resultType="pd">
+    	select count(*) as count from activity_post where ACTIVITY_ROOM_ID=#{ACTIVITY_ROOM_ID} and STATUS='1'
+    </select>
+    
+    <update id="editUserId" parameterType="pd">
+    	update activity_post
+    	SET USER_ID=#{USER_ID}
+    	where USER_ID=#{USER_ID1}
+    </update>
+</mapper>

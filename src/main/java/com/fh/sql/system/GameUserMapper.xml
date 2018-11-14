@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GameUserMapper">
+    <select id="findAllUserList" parameterType="pd" resultType="pd">
+        SELECT
+        userName,
+        userImg,
+        draw_count,
+        phone,
+        address,
+        recommend,
+        openId
+        FROM
+        game_user
+    </select>
+    <select id="findUser" parameterType="pd" resultType="pd">
+        SELECT
+        userName,
+        userImg,
+        draw_count,
+        phone,
+        address,
+        openId,
+        recommend
+        FROM
+        game_user
+       WHERE
+        openId= #{openId}
+    </select>
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        game_user
+        (
+          userName,
+          userImg,
+          phone,
+          address,
+          draw_count,
+          recommend,
+          createTime,
+          openId
+        )values(
+          #{userName},
+          #{userImg},
+          #{phone},
+          #{address},
+          #{draw_count},
+          #{recommend},
+          #{createTime},
+          #{openId}
+        )
+    </insert>
+    <!-- 修改User 信息-->
+    <update id="update" parameterType="pd">
+        UPDATE
+        game_user
+        <set>
+            <if test="userName != null">
+                userName=#{userName},
+            </if>
+            <if test="userImg != null">
+                userImg=#{userImg},
+            </if>
+            <if test="draw_count != null">
+                draw_count=#{draw_count},
+            </if>
+        </set>
+        WHERE
+        openId=#{openId}
+    </update>
+    <!-- 修改User 信息-->
+    <update id="updateRecommend" parameterType="pd">
+        UPDATE
+        game_user
+        SET
+        recommend=recommend+1,
+        WHERE
+        openId=#{openId}
+    </update>
+
+
+    <update id="updateDraw" parameterType="pd">
+        UPDATE
+        game_user
+        SET
+                draw_count=draw_count+2,
+                recommend=#{recommend}
+        WHERE
+        openId=#{openId}
+    </update>
+
+
+
+    <update id="updateAllDraw" parameterType="pd">
+        UPDATE
+        game_user
+        SET
+        draw_count=3,
+        recommend=0
+    </update>
+</mapper>

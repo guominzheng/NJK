@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OrderproMapper">
+	<insert id="save" parameterType="pd">
+		insert into order_pro(
+			ORDER_PRO_ID,
+			ORDER_INFO_ID,
+			PRO_NAME,
+			REMARK,
+			PRICE,
+			NUM,
+			URL,
+			PRODUCT_ID
+		)values(
+			#{ORDER_PRO_ID},
+			#{ORDER_INFO_ID},
+			#{PRO_NAME},
+			#{REMARK},
+			#{PRICE},
+			#{NUM},
+			#{URL},
+			#{PRODUCT_ID}
+		)
+	</insert>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+		select
+			o.ORDER_PRO_ID,
+			o.ORDER_INFO_ID,
+			o.PRO_NAME,
+			o.REMARK,
+			o.PRICE,
+			o.NUM,
+			o.URL,
+			o.PRODUCT_ID
+		from order_pro o
+		where o.ORDER_INFO_ID=#{ORDER_INFO_ID}
+	</select>
+	
+	   <select id="findList1" parameterType="pd" resultType="pd">
+        select
+            p.REMARKS as ORDER_PRO_ID,
+            o.ORDER_INFO_ID,
+            o.PRO_NAME,
+            o.REMARK,
+            o.PRICE,
+            o.NUM,
+            o.URL,
+            o.PRODUCT_ID
+        from order_pro o
+        LEFT JOIN product p on p.PRODUCT_ID=o.PRODUCT_ID
+        where o.ORDER_INFO_ID=#{ORDER_INFO_ID}
+    </select>
+
+	<select id="findList2" parameterType="pd" resultType="pd">
+		select
+            p.REMARKS as ORDER_PRO_ID,
+            o.ORDER_INFO_ID,
+            o.PRO_NAME,
+            o.REMARK,
+            o.PRICE,
+            o.NUM,
+            o.URL,
+            o.PRODUCT_ID,
+            p.HSTATUS
+        from order_pro o
+        LEFT JOIN product p on p.PRODUCT_ID=o.PRODUCT_ID
+        where o.ORDER_INFO_ID=#{ORDER_INFO_ID}
+	</select>
+
+	<select id="findOrderProList" parameterType="pd" resultType="pd">
+			select
+	ord.ORDER_INFO_ID,
+	s.USERNAME,
+	s.NAME,
+	ord.NAME ONAME,
+	ord.ADDRESS,
+	ord.BEIZHU,
+	ord.CITY,
+	ord.PHONE,
+	ord.PAY_MONEY,
+	ord.PAY_METHOD,
+	ord.MONEY,
+	cu.JIAN,
+	ord.PAY_DATE,
+	pr.PRO_NAME,
+	pr.REMARK,
+	pr.NUM
+	FROM
+	order_info ord
+	LEFT JOIN
+	order_pro pr
+	ON
+	ord.ORDER_INFO_ID = pr.ORDER_INFO_ID
+	LEFT JOIN
+	coupon cu
+	ON
+	ord.COUPON_ID=cu.COUPON_ID
+	LEFT JOIN
+	sys_app_user s
+	on
+	ord.USER_ID=s.USER_ID
+	WHERE
+	ord.ORDER_NUMBER = #{ORDER_NUMBER};
+	</select>
+</mapper>

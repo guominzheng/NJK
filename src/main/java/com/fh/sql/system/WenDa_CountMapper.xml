@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="WenDa_CountMapper">
+	<insert id="save" parameterType="pd">
+		insert into wenda_count(
+			WENDA_COUNT_ID,
+			USER_ID,
+			DATE,
+			YUE,
+			FRACTION,
+			data,
+			indexlist,
+			selectArr
+		)values(
+			#{WENDA_COUNT_ID},
+			#{USER_ID},
+			#{DATE},
+			#{YUE},
+			#{FRACTION},
+			#{data},
+			#{indexlist},
+			#{selectArr}
+		)
+	</insert>
+	
+	
+	<select id="ZuoTilist" parameterType="page" resultType="pd">
+		select 
+			w.WENDA_COUNT_ID,
+			w.USER_ID,
+			w.FRACTION,
+			w.data,
+			u.NAME,
+			i.IMG,
+			count(*) as count1
+		from wenda_count w
+		LEFT JOIN sys_app_user u on u.USER_ID=w.USER_ID
+		LEFT JOIN sys_app_userinfo i on i.USER_ID=u.USER_ID
+		GROUP BY w.USER_ID
+		ORDER BY count1 DESC,w.DATE DESC
+		limit 10
+	</select>
+	
+	<!-- 查询做题次数排名 -->
+	<select id="findZuoTiZiJiPaiMing" parameterType="pd" resultType="pd">
+SELECT	
+	WENDA_COUNT_ID,
+	USER_ID,
+	count1,
+	rowno,
+	NAME,
+	IMG
+from 
+(
+	SELECT
+	WENDA_COUNT_ID,
+	USER_ID,
+	count1,
+	NAME,
+	IMG,
+	(@rowno :=@rowno + 1) AS rowno
+FROM
+	(
+		SELECT
+		w.WENDA_COUNT_ID,
+		w.DATE,
+		w.USER_ID,
+		u.NAME,
+		i.IMG,
+		count(*) as count1
+	FROM wenda_count w
+	LEFT JOIN sys_app_user u on u.USER_ID=w.USER_ID
+	LEFT JOIN sys_app_userinfo i on i.USER_ID=u.USER_ID
+	GROUP BY w.USER_ID
+) c,
+(SELECT(@rowno := 0)) b
+ ORDER BY c.count1 DESC,c.DATE DESC
+) c2
+where c2.USER_ID=#{USER_ID}
+	</select>
+	
+	
+	<!-- 查询做题分数排名 -->
+	<select id="findFractionPaiMing" parameterType="pd" resultType="pd">
+		SELECT	
+	WENDA_COUNT_ID,
+	USER_ID,
+	count1,
+	rowno,
+	NAME,
+	IMG
+from 
+(
+	SELECT
+	WENDA_COUNT_ID,
+	USER_ID,
+	count1,
+	NAME,
+	IMG,
+	(@rowno :=@rowno + 1) AS rowno
+FROM
+	(
+		SELECT
+		w.WENDA_COUNT_ID,
+		w.DATE,
+		w.USER_ID,
+		u.NAME,
+		i.IMG,
+		SUM(FRACTION) as count1
+	FROM wenda_count w
+	LEFT JOIN sys_app_user u on u.USER_ID=w.USER_ID
+	LEFT JOIN sys_app_userinfo i on i.USER_ID=u.USER_ID
+	GROUP BY w.USER_ID
+) c,
+(SELECT(@rowno := 0)) b
+ ORDER BY c.count1 DESC,c.DATE DESC
+) c2
+where c2.USER_ID=#{USER_ID}
+	</select>
+	
+	<select id="FractionpageList" parameterType="pd" resultType="pd">
+		select 
+			w.WENDA_COUNT_ID,
+			w.USER_ID,
+			w.FRACTION,
+			w.data,
+			u.NAME,
+			i.IMG,
+			SUM(FRACTION) as count1
+		from wenda_count w
+		LEFT JOIN sys_app_user u on u.USER_ID=w.USER_ID
+		LEFT JOIN sys_app_userinfo i on i.USER_ID=u.USER_ID
+		GROUP BY w.USER_ID
+		ORDER BY count1 DESC,w.DATE DESC
+		limit 10
+	</select>
+</mapper>

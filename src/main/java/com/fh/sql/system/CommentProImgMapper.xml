@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CommentProImgMapper">
+    <insert id="save" parameterType="pd">
+        insert into comment_pro_img(
+            COMMENT_PRO_IMG_ID,
+            IMG,
+            COMMENT_PRO_ID,
+            DATE
+        )values(
+            #{COMMENT_PRO_IMG_ID},
+            #{IMG},
+            #{COMMENT_PRO_ID},
+            #{DATE}
+        )
+    </insert>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+            COMMENT_PRO_IMG_ID,
+            IMG,
+            COMMENT_PRO_ID
+        from comment_pro_img
+        where COMMENT_PRO_ID=#{COMMENT_PRO_ID}
+    </select>
+</mapper>

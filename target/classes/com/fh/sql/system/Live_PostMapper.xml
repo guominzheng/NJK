@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Live_PostMapper">
+    <insert id="save" parameterType="pd">
+        insert into live_post(
+            LIVE_POST_ID,
+            SUBJECT,
+            DATE,
+            VIEWS,
+            HUIFU,
+            URL,
+            IMG,
+            NAME,
+            COVER_IMG,
+            MESSAGE
+        )values(
+            #{LIVE_POST_ID},
+            #{SUBJECT},
+            #{DATE},
+            #{VIEWS},
+            #{HUIFU},
+            #{URL},
+            #{IMG},
+            #{NAME},
+            #{COVER_IMG},
+            #{MESSAGE}
+        )
+    </insert>
+    
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+            LIVE_POST_ID,
+            SUBJECT,
+            DATE,
+            VIEWS,
+            HUIFU,
+            URL,
+            IMG,
+            NAME,
+            COVER_IMG,
+            MESSAGE
+        from live_post
+        ORDER BY DATE DESC
+    </select>
+    
+    <update id="edit" parameterType="pd">
+        update live_post
+        SET LIVE_POST_ID=#{LIVE_POST_ID},
+            SUBJECT=#{SUBJECT},
+            DATE=#{DATE},
+            VIEWS=#{VIEWS},
+            HUIFU=#{HUIFU},
+            URL=#{URL},
+            IMG=#{IMG},
+            NAME=#{NAME},
+            COVER_IMG=#{COVER_IMG},
+            MESSAGE=#{MESSAGE}
+         where LIVE_POST_ID=#{LIVE_POST_ID}
+    </update>
+    
+    <delete id="delete" parameterType="pd">
+        delete from live_post where LIVE_POST_ID=#{LIVE_POST_ID}
+    </delete>
+    
+            <!-- 批量删除 -->
+    <delete id="deleteAll" parameterType="String">
+        delete from live_post
+        where 
+            LIVE_POST_ID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+        </foreach>
+    </delete>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+       select
+            LIVE_POST_ID,
+            SUBJECT,
+            DATE,
+            VIEWS,
+            HUIFU,
+            URL,
+            IMG,
+            NAME,
+            COVER_IMG,
+            MESSAGE
+        from live_post
+        where LIVE_POST_ID=#{LIVE_POST_ID}
+    </select>
+</mapper>

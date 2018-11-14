@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AddressMapper">
+    <select id="findDefault" parameterType="pd" resultType="pd">
+        select
+            ADDRESS_ID,
+            USER_ID,
+            NAME,
+            EMAIL,
+            STATUS,
+            PHONE,
+            ADDRESS,
+            PROVINCE,
+            CITY
+        from address
+        where USER_ID=#{USER_ID} and STATUS=1
+    </select>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+         select
+            ADDRESS_ID,
+            USER_ID,
+            NAME,
+            EMAIL,
+            STATUS,
+            PHONE,
+            ADDRESS,
+            PROVINCE,
+            CITY
+        from address
+        where ADDRESS_ID=#{ADDRESS_ID}
+    </select>
+    
+    <insert id="save" parameterType="pd">
+        insert into address(
+            ADDRESS_ID,
+            USER_ID,
+            NAME,
+            EMAIL,
+            STATUS,
+            PHONE,
+            ADDRESS,
+            PROVINCE,
+            CITY
+        )values(
+            #{ADDRESS_ID},
+            #{USER_ID},
+            #{NAME},
+            #{EMAIL},
+            #{STATUS},
+            #{PHONE},
+            #{ADDRESS},
+            #{PROVINCE},
+            #{CITY}
+        )
+    </insert>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+            ADDRESS_ID,
+            USER_ID,
+            NAME,
+            EMAIL,
+            STATUS,
+            PHONE,
+            ADDRESS,
+            PROVINCE,
+            CITY
+        from address
+        where USER_ID=#{USER_ID}
+        ORDER BY STATUS DESC
+    </select>
+    
+    <delete id="delete" parameterType="pd">
+        delete from address where ADDRESS_ID=#{ADDRESS_ID}
+    </delete>
+    
+    <update id="edit" parameterType="pd">
+        update address
+        SET NAME=#{NAME},
+            EMAIL=#{EMAIL},
+            PHONE=#{PHONE},
+            ADDRESS=#{ADDRESS},
+            PROVINCE=#{PROVINCE},
+            CITY=#{CITY}
+        where ADDRESS_ID=#{ADDRESS_ID}
+    </update>
+    
+    <update id="editUser" parameterType="pd">
+        update address
+        SET STATUS=0
+        where USER_ID=#{USER_ID}
+    </update>
+    
+    <update id="editId" parameterType="pd">
+        update address
+        SET STATUS=1
+        where ADDRESS_ID=#{ADDRESS_ID}
+    </update>
+</mapper>

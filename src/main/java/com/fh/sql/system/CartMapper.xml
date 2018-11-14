@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CartMapper">
+    <insert id="save" parameterType="pd">
+        insert into cart(
+            CART_ID,
+            PRODUCT_ID,
+            REMARK_ID,
+            NUM,
+            USER_ID,
+            STATUS
+        )values(
+            #{CART_ID},
+            #{PRODUCT_ID},
+            #{REMARK_ID},
+            #{NUM},
+            #{USER_ID},
+            #{STATUS}
+        )
+    </insert>
+
+    <update id="edit" parameterType="pd">
+        update cart
+        SET NUM=#{NUM}
+        where CART_ID=#{CART_ID}
+    </update>
+
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+            c.CART_ID,
+            c.PRODUCT_ID,
+            c.REMARK_ID,
+            c.NUM,
+            c.USER_ID,
+           r.MAXNUM,
+            c.STATUS,
+            p.PRODUCT_NAME,
+            r.REMARK,
+            r.PRICE,
+            r.NUM RNUM,
+            r.IMG,
+            p.REMARKS as SHUOMING,
+            r.SHUMING
+        from cart c
+        LEFT JOIN product p on p.PRODUCT_ID=c.PRODUCT_ID
+        LEFT JOIN remark r on r.REMARK_ID=c.REMARK_ID
+        where c.USER_ID=#{USER_ID}
+    </select>
+
+    <select id="findListStatus" parameterType="pd" resultType="pd">
+          select
+            c.CART_ID,
+            c.PRODUCT_ID,
+            c.REMARK_ID,
+            c.NUM,
+            r.MAXNUM,
+            c.USER_ID,
+            c.STATUS STATUS1,
+            p.PRODUCT_NAME,
+            r.REMARK,
+            r.PRICE,
+            r.NUM RNUM,
+            r.IMG,
+            p.REMARKS as SHUOMING,
+            r.SHUMING,
+            p.BSTATUS STATUS
+        from cart c
+        LEFT JOIN product p on p.PRODUCT_ID=c.PRODUCT_ID
+        LEFT JOIN remark r on r.REMARK_ID=c.REMARK_ID
+        where c.USER_ID=#{USER_ID} and c.STATUS=1
+    </select>
+
+    <delete id="deleteStatus" parameterType="pd">
+        delete from cart where USER_ID=#{USER_ID} and STATUS=1
+    </delete>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+            c.CART_ID,
+            c.PRODUCT_ID,
+            c.REMARK_ID,
+            c.NUM,
+             r.MAXNUM,
+            c.USER_ID,
+            c.STATUS,
+            p.PRODUCT_NAME,
+            r.REMARK,
+            r.PRICE,
+            r.NUM RNUM,
+            r.IMG,
+            p.REMARKS as SHUOMING,
+            r.SHUMING
+        from cart c
+        LEFT JOIN product p on p.PRODUCT_ID=c.PRODUCT_ID
+        LEFT JOIN remark r on r.REMARK_ID=c.REMARK_ID
+        where c.CART_ID=#{CART_ID}
+    </select>
+
+    <delete id="delete" parameterType="pd">
+        delete from cart where USER_ID=#{USER_ID} and STATUS=1
+    </delete>
+
+    <delete id="delete1" parameterType="pd">
+        delete from cart where CART_ID=#{CART_ID}
+    </delete>
+
+    <delete id="deleteAll" parameterType="pd">
+        delete from cart where USER_ID=#{USER_ID}
+    </delete>
+
+    <delete id="deletePId" parameterType="pd">
+    	delete from cart where PRODUCT_ID=#{PRODUCT_ID}
+    </delete>
+
+    <select id="findCount" parameterType="pd" resultType="pd">
+        select COUNT(*) as count from cart where USER_ID=#{USER_ID}
+    </select>
+
+    <update id="editStatus" parameterType="pd">
+        update cart
+        SET STATUS=#{STATUS}
+        where CART_ID=#{CART_ID}
+    </update>
+
+    <update id="editStatusAll" parameterType="pd">
+        update cart
+        SET STATUS=#{STATUS}
+        where USER_ID=#{USER_ID}
+    </update>
+
+    <select id="findRemarkId" parameterType="pd" resultType="pd">
+        select
+            c.CART_ID,
+            c.PRODUCT_ID,
+            c.REMARK_ID,
+            c.NUM,
+            c.USER_ID,
+            c.STATUS
+        from cart c
+        where c.USER_ID=#{USER_ID} and c.REMARK_ID=#{REMARK_ID}
+    </select>
+
+
+    <delete id="delUserCart" parameterType="pd">
+        DELETE
+        FROM
+        cart
+        WHERE
+        USER_ID=#{USER_ID}
+        AND
+        PRODUCT_ID=#{PRODUCT_ID}
+    </delete>
+
+
+    <select id="findUserCartBy" parameterType="pd" resultType="pd">
+        select
+            c.NUM,
+            r.PRICE,
+            r.NUM RNUM
+        from cart c
+        LEFT JOIN product p on p.PRODUCT_ID=c.PRODUCT_ID
+        LEFT JOIN remark r on r.REMARK_ID=c.REMARK_ID
+        WHERE
+        c.USER_ID=#{USER_ID}
+        AND
+         c.REMARK_ID=#{REMARK_ID}
+         AND
+          c.PRODUCT_ID=#{PRODUCT_ID}
+          AND
+          c.STATUS ='1'
+    </select>
+</mapper>

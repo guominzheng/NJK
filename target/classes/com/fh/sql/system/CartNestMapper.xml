@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CartNestMapper">
+	<insert id="save" parameterType="pd" keyProperty="CATNEST_ID">
+		insert into
+		cartnest(
+		SUBJECT,
+		MESSAGE,
+		DATE,
+		USER_ID,
+		VIEWS,
+		HUIFU,
+		STATUS,
+		NAME,
+		DATES,
+		CLICK,
+		ZSTATUS
+		)values(
+		#{SUBJECT},
+		#{MESSAGE},
+		#{DATE},
+		#{USER_ID},
+		#{VIEWS},
+		#{HUIFU},
+		#{STATUS},
+		#{NAME},
+		#{DATES},
+		#{CLICK},
+		#{ZSTATUS}
+		)
+	</insert>
+
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+		c.CATNEST_ID,
+		c.SUBJECT,
+		c.MESSAGE,
+		c.DATE,
+		c.USER_ID,
+		c.VIEWS,
+		c.HUIFU,
+		c.STATUS,
+		u.NAME,
+		c.DATES,
+		c.CLICK,
+		c.ZSTATUS,
+		ui.IMG
+		from
+		(
+		select
+		CATNEST_ID,
+		SUBJECT,
+		MESSAGE,
+		DATE,
+		USER_ID,
+		VIEWS,
+		HUIFU,
+		STATUS,
+		DATES,
+		CLICK,
+		ZSTATUS
+		from cartnest
+		<if test="pd.YSTATUS==''||pd.YSTATUS==null||pd.YSTATUS!=1">
+			ORDER BY ZSTATUS DESC,DATE DESC
+		</if>
+		<if test="pd.YSTATUS==1">
+			ORDER BY ZSTATUS DESC,CLICK DESC
+		</if>
+		) c
+		LEFT JOIN sys_app_user u on u.USER_ID=c.USER_ID
+		LEFT JOIN
+		sys_app_userinfo ui on ui.USER_ID=c.USER_ID
+	</select>
+
+	<select id="dataslistPage" parameterType="page" resultType="pd">
+		select
+		c.CATNEST_ID,
+		c.SUBJECT,
+		c.MESSAGE,
+		c.DATE,
+		c.USER_ID,
+		c.VIEWS,
+		c.HUIFU,
+		c.STATUS,
+		u.NAME,
+		c.DATES,
+		c.CLICK,
+		c.ZSTATUS,
+		ui.IMG
+		from cartnest c
+		LEFT JOIN sys_app_user u on u.USER_ID=c.USER_ID
+		LEFT JOIN sys_app_userinfo ui on ui.USER_ID=c.USER_ID
+		where c.USER_ID='17'
+		ORDER BY DATE DESC
+	</select>
+
+
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+		c.CATNEST_ID,
+		c.SUBJECT,
+		c.MESSAGE,
+		c.DATE,
+		c.USER_ID,
+		c.VIEWS,
+		c.HUIFU,
+		c.STATUS,
+		u.NAME,
+		c.DATES,
+		c.CLICK,
+		c.ZSTATUS,
+		ui.IMG
+		from cartnest c
+		LEFT JOIN sys_app_user u on u.USER_ID=c.USER_ID
+		LEFT JOIN sys_app_userinfo ui on ui.USER_ID=c.USER_ID
+		where c.CATNEST_ID=#{CATNEST_ID}
+	</select>
+
+	<update id="edit" parameterType="pd">
+		update cartnest
+		SET
+		SUBJECT=#{SUBJECT},
+		MESSAGE=#{MESSAGE},
+		ZSTATUS=#{ZSTATUS},
+		CLICK=#{CLICK}
+		where CATNEST_ID=#{CATNEST_ID}
+	</update>
+
+	<delete id="delete" parameterType="pd">
+		delete from cartnest where
+		CATNEST_ID=#{CATNEST_ID}
+	</delete>
+
+	<update id="editViews" parameterType="pd">
+		update cartnest
+		SET
+		VIEWS=VIEWS+1
+		where CATNEST_ID=#{CATNEST_ID}
+	</update>
+
+	<update id="editViewss" parameterType='pd'>
+		update cartnest
+		SET
+		VIEWS=VIEWS-1
+		where CATNEST_ID=#{CATNEST_ID}
+	</update>
+
+
+	<update id="editHuiFu" parameterType="pd">
+		update cartnest
+		SET
+		HUIFU=HUIFU+1,
+		DATES=#{DATES}
+		where CATNEST_ID=#{CATNEST_ID}
+	</update>
+
+	<update id="editDates" parameterType="pd">
+		update cartnest
+		SET
+		DATES=#{DATES}
+		where CATNEST_ID=#{CATNEST_ID}
+	</update>
+
+	<update id="editCick" parameterType="pd">
+		update cartnest
+		SET CLICK=CLICK+1
+		where CATNEST_ID=#{CATNEST_ID}
+	</update>
+
+	<select id="findClick" parameterType="pd" resultType="pd">
+		SELECT
+		CATNEST_ID
+		FROM
+		cartnest
+		WHERE
+		CATNEST_ID = #{CATNEST_ID} and CATNEST_ID
+		in (
+		SELECT
+		t.CATNEST_ID
+		FROM
+		(
+		SELECT
+		CATNEST_ID
+		FROM
+		cartnest
+		ORDER BY
+		CLICK
+		DESC
+		limit 5
+		)t
+		)
+
+	</select>
+	
+	
+	<select id="userlistPage" parameterType="page" resultType="pd">
+		select
+		c.CATNEST_ID,
+		c.SUBJECT,
+		c.MESSAGE,
+		c.DATE,
+		c.USER_ID,
+		c.VIEWS,
+		c.HUIFU,
+		c.STATUS,
+		u.NAME,
+		c.DATES,
+		c.CLICK,
+		c.ZSTATUS,
+		ui.IMG
+		from
+		(
+		select
+		CATNEST_ID,
+		SUBJECT,
+		MESSAGE,
+		DATE,
+		USER_ID,
+		VIEWS,
+		HUIFU,
+		STATUS,
+		DATES,
+		CLICK,
+		ZSTATUS
+		from cartnest
+		where USER_ID=#{pd.USER_ID}
+		<if test="pd.YSTATUS==''||pd.YSTATUS==null||pd.YSTATUS!=1">
+			ORDER BY ZSTATUS DESC,DATE DESC
+		</if>
+		<if test="pd.YSTATUS==1">
+			ORDER BY ZSTATUS DESC,CLICK DESC
+		</if>
+		) c
+		LEFT JOIN sys_app_user u on u.USER_ID=c.USER_ID
+		LEFT JOIN
+		sys_app_userinfo ui on ui.USER_ID=c.USER_ID
+	</select>
+</mapper>

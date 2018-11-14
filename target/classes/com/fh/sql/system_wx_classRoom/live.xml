@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_LiveMapper">
+    <!-- 直播间标题内容表 -->
+
+    <!-- 直播间表字段列表-->
+    <sql id="base">
+        l.live_id,
+        l.live_name,
+        l.live_text,
+        l.live_img,
+        l.live_roomId,
+        l.createTime,
+        l.beginTime,
+        l.updateTime,
+        l.live_brief,
+        l.typeId,
+        t.type_name,
+        l.payMoney,
+        l.shareImg,
+        l.userId,
+        l.comeGo,
+        (select count(1) FROM wx_classroom_subscribe WHERE liveId=l.live_id) subsNum,
+        IF(STRCMP(l.comeGo,1),'往期直播','正在直播') AS liveState,
+        l.live_view,
+        l.live_bannerImg,
+        l.live_audioImg,
+        u.cr_userName
+    </sql>
+
+
+    <select id="findComeGolive" parameterType="page" resultType="pd">
+        SELECT
+        <include refid="base"/>,
+        (SELECT count(1) FROM wx_classroom_attend w WHERE w.liveId = l.live_id) AS counts
+        FROM
+        wx_classroom_live l
+        LEFT JOIN wx_classroom_user u ON l.userId = u.cr_userid
+        LEFT JOIN wx_classroom_type t ON t.type_id = l.typeId
+        where l.userId=#{userId} and l.comeGo='1'
+        ORDER BY l.createTime DESC
+    </select>
+
+    <!-- 动态插入sql-->
+    <sql id="save">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="live_id != null">
+                live_id,
+            </if>
+            <if test="live_name != null">
+                live_name,
+            </if>
+            <if test="live_text != null">
+                live_text,
+            </if>
+            <if test="live_img != null">
+                live_img,
+            </if>
+            <if test="live_roomId != null">
+                live_roomId,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="beginTime != null">
+                beginTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="typeId != null">
+                typeId,
+            </if>
+            <if test="payMoney != null">
+                payMoney,
+            </if>
+            <if test="userId != null">
+                userId,
+            </if>
+            <if test="comeGo != null">
+                comeGo,
+            </if>
+            <if test="live_view != null">
+                live_view,
+            </if>
+            <if test="live_bannerImg != null">
+                live_bannerImg,
+            </if>
+            <if test="live_audioImg != null">
+                live_audioImg,
+            </if>
+            <if test="shareImg != null">
+                shareImg,
+            </if>
+            <if test="live_brief != null">
+                live_brief,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="live_id != null">
+                #{live_id},
+            </if>
+            <if test="live_name != null">
+                #{live_name},
+            </if>
+            <if test="live_text != null">
+                #{live_text},
+            </if>
+            <if test="live_img != null">
+                #{live_img},
+            </if>
+            <if test="live_roomId != null">
+                #{live_roomId},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="beginTime != null">
+                #{beginTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="typeId != null">
+                #{typeId},
+            </if>
+            <if test="payMoney != null">
+                #{payMoney},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="comeGo != null">
+                #{comeGo},
+            </if>
+            <if test="live_view != null">
+                #{live_view},
+            </if>
+            <if test="live_bannerImg != null">
+                #{live_bannerImg},
+            </if>
+            <if test="live_audioImg != null">
+                #{live_audioImg},
+            </if>
+            <if test="shareImg != null">
+                #{shareImg},
+            </if>
+            <if test="live_brief != null">
+                #{live_brief},
+            </if>
+        </trim>
+    </sql>
+
+    <!-- 查询直播列表 -->
+    <select id="findLiveListlistPage" parameterType="page" resultType="pd">
+        SELECT
+        <include refid="base"/>,
+        (SELECT count(1) FROM wx_classroom_attend w WHERE w.liveId = l.live_id) AS counts
+        FROM
+        wx_classroom_live l
+        LEFT JOIN wx_classroom_user u ON l.userId = u.cr_userid
+        LEFT JOIN sys_app_user s ON s.USER_ID=u.cr_bind
+        LEFT JOIN wx_classroom_type t ON t.type_id = l.typeId
+        <where>
+            <if test="pd.searchKey != null and pd.searchKey != '' ">
+                AND (l.live_name LIKE CONCAT(CONCAT('%', #{pd.searchKey}),'%') OR u.cr_userName LIKE CONCAT(CONCAT('%',
+                #{pd.searchKey}),'%') )
+            </if>
+            <if test="pd.typeId != null and pd.typeId != '' ">
+                AND l.typeId = #{pd.typeId}
+            </if>
+            <if test="pd.comeGo != null and pd.comeGo != '' ">
+                AND l.comeGo = #{pd.comeGo}
+            </if>
+        </where>
+        ORDER BY l.beginTime DESC
+    </select>
+
+
+    <select id="seache" parameterType="pd" resultType="pd">
+        SELECT
+        l.live_id,
+        l.live_name,
+        u.cr_userName,
+        l.typeId
+        FROM
+        wx_classroom_live l
+        LEFT JOIN wx_classroom_user u ON l.userId = u.cr_userid
+        <where>
+            <if test="searchKey == '' or searchKey ==null ">
+                AND 1 = 2
+            </if>
+            <if test="searchKey !=null and searchKey != '' ">
+                AND    l.live_name LIKE CONCAT(CONCAT('%', #{searchKey}),'%') OR u.cr_userName LIKE CONCAT(CONCAT('%',
+                #{searchKey}),'%')
+            </if>
+        </where>
+        ORDER BY l.beginTime DESC
+    </select>
+
+    <select id="findAllLive" resultType="pd">
+           SELECT
+            live_id,
+	        live_name
+	       FROM
+	        wx_classroom_live
+    </select>
+    <!-- 查询直播列表 -->
+    <select id="findLiveOneGo" parameterType="page" resultType="pd">
+       SELECT
+	l.live_id,
+	l.live_name,
+	l.live_text,
+	l.live_brief,
+	l.live_img,
+	l.live_roomId,
+	l.createTime,
+	l.beginTime,
+	l.updateTime,
+	l.typeId,
+	l.shareImg,
+	t.type_name,
+	l.payMoney,
+	l.userId,
+	l.comeGo,
+  (select count(1) FROM wx_classroom_subscribe WHERE liveId=l.live_id) subsNum,
+IF (
+	STRCMP(l.comeGo, 1),
+	'往期直播',
+	'正在直播'
+) AS liveState,
+ l.live_view,
+ u.cr_userName,
+ (
+	SELECT
+		count(1)
+	FROM
+		wx_classroom_attend w
+	WHERE
+		w.liveId = l.live_id
+) AS counts,
+ (
+	SELECT
+		count(1)
+	FROM
+		wx_classroom_subscribe s
+	LEFT JOIN wx_classroom_live l ON l.live_id = s.liveId
+	WHERE
+		s.userId = #{userId}
+	AND l.comeGo = 1
+) AS scribeState
+FROM
+	wx_classroom_live l
+LEFT JOIN wx_classroom_user u ON l.userId = u.cr_userid
+LEFT JOIN wx_classroom_type t ON t.type_id = l.typeId
+WHERE
+	l.comeGo = 1
+    </select>
+
+
+    <!-- 查询单个直播 -->
+    <select id="findLiveById" parameterType="page" resultType="pd">
+        SELECT
+        l.live_id,
+        l.live_name,
+        l.live_text,
+        l.live_img,
+        l.live_brief,
+        l.live_roomId,
+        l.createTime,
+        l.beginTime,
+        l.updateTime,
+        l.live_bannerImg,
+        l.live_audioImg,
+        l.typeId,
+        l.shareImg,
+        t.type_name,
+        l.payMoney,
+        (select count(1) FROM wx_classroom_subscribe WHERE liveId=l.live_id) subsNum,
+        IFNULL((select record_message FROM wx_classroom_record re where re.record_liveId = #{pd.live_id} AND
+        re.audio_text='4' and teacher='true') ,'') video ,
+        l.userId,
+        l.comeGo,
+        IF(STRCMP(l.comeGo,1),'往期直播','正在直播') AS liveState,
+        l.live_view,
+        u.cr_userName
+        <if test="pd.userId != null">
+            ,(SELECT count(1) FROM wx_classroom_subscribe WHERE userId = #{pd.userId} and liveId=#{pd.live_id}) as
+            subsStatus
+            ,(SELECT count(1) FROM wx_classroom_attend WHERE userId=#{pd.userId} AND liveId=#{pd.live_id} AND look_pay
+            =2 ) as payStatus
+        </if>
+        FROM
+        wx_classroom_live l
+        LEFT JOIN wx_classroom_user u ON l.userId = u.cr_userid
+        LEFT JOIN wx_classroom_type t ON t.type_id = l.typeId
+        WHERE
+        live_id = #{pd.live_id}
+    </select>
+    <select id="findLiveOne" parameterType="pd" resultType="pd">
+        SELECT
+        live_id,
+        live_name,
+        live_text,
+        live_img,
+        live_brief,
+        shareImg,
+        live_roomId,
+        createTime,
+        beginTime,
+        updateTime,
+        payMoney,
+        userId,
+        (select count(1) FROM wx_classroom_subscribe s WHERE s.liveId=live_id) subsNum,
+        comeGo
+        FROM
+        wx_classroom_live
+        WHERE
+        live_id = #{liveId}
+    </select>
+
+    <select id="findLiveByIdWX" parameterType="pd" resultType="pd">
+        SELECT
+        l.live_id,
+        l.live_name,
+        l.live_text,
+        l.live_img,
+        l.live_brief,
+        l.live_roomId,
+        l.shareImg,
+        l.createTime,
+        l.beginTime,
+        l.updateTime,
+        l.live_bannerImg,
+        l.live_audioImg,
+        l.typeId,
+        t.type_name,
+        l.payMoney,
+        (select count(1) FROM wx_classroom_subscribe WHERE liveId=l.live_id) subsNum,
+        IFNULL((select record_message FROM wx_classroom_record re where re.record_liveId = #{live_id} AND
+        re.audio_text='4' and teacher='true') ,'') video ,
+        l.userId,
+        l.comeGo,
+        IF(STRCMP(l.comeGo,1),'往期直播','正在直播') AS liveState,
+        l.live_view,
+        u.cr_userName
+        <if test="userId != null">
+            ,(SELECT count(1) FROM wx_classroom_subscribe WHERE userId = #{userId} and liveId=#{live_id}) as
+            subsStatus
+            ,(SELECT count(1) FROM wx_classroom_attend WHERE userId=#{userId} AND liveId=#{live_id} AND look_pay
+            =2 ) as payStatus
+        </if>
+        FROM
+        wx_classroom_live l
+        LEFT JOIN wx_classroom_user u ON l.userId = u.cr_userid
+        LEFT JOIN wx_classroom_type t ON t.type_id = l.typeId
+        WHERE
+        live_id = #{live_id}
+    </select>
+
+    <update id="update" parameterType="pd">
+        UPDATE
+        wx_classroom_live
+        <set>
+            <if test="live_name!=null">
+                live_name = #{live_name},
+            </if>
+            <if test="live_text!=null">
+                live_text = #{live_text},
+            </if>
+            <if test="live_img!=null">
+                live_img = #{live_img},
+            </if>
+            <if test="live_roomId!=null">
+                live_roomId = #{live_roomId},
+            </if>
+            <if test="beginTime!=null">
+                beginTime = #{beginTime},
+            </if>
+            <if test="updateTime!=null">
+                updateTime = #{updateTime},
+            </if>
+            <if test="typeId!=null and type != 0">
+                typeId = #{typeId},
+            </if>
+            <if test="payMoney!=null">
+                payMoney = #{payMoney},
+            </if>
+            <if test="userId!=null">
+                userId = #{userId},
+            </if>
+            <if test="comeGo!=null">
+                comeGo = #{comeGo},
+            </if>
+            <if test="live_view!=null">
+                live_view = #{live_view},
+            </if>
+            <if test="psal!=null">
+                students_sal = #{psal},
+            </if>
+            <if test="live_bannerImg!=null">
+                live_bannerImg = #{live_bannerImg},
+            </if>
+            <if test="live_audioImg!=null">
+                live_audioImg = #{live_audioImg},
+            </if>
+            <if test="shareImg!=null">
+                shareImg = #{shareImg},
+            </if>
+            <if test="live_brief!=null">
+                live_brief = #{live_brief},
+            </if>
+        </set>
+        WHERE
+        live_id = #{live_id}
+    </update>
+
+    <!-- 添加数据直播 -->
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_live
+        <include refid="save"/>
+    </insert>
+
+    <delete id="delete" parameterType="pd">
+        DELETE
+        FROM
+        wx_classroom_live
+        WHERE
+        live_id = #{live_id}
+    </delete>
+
+    <!-- 查询当前直播间的所有评论-->
+    <select id="findCalByLiveIdlistPage" parameterType="page" resultType="pd">
+        SELECT
+        c.cal_id,
+        c.cal_message,
+        c.cal_liveId,
+        c.cal_userId,
+        c.createTime,
+        u.cr_userName,
+        u.cr_userImg
+        FROM
+        wx_classroom_critical c
+        LEFT JOIN
+        wx_classroom_user u
+        ON
+        c.cal_userId = u.cr_userid
+        WHERE
+        c.cal_liveId = #{pd.live_id}
+    </select>
+    <!-- 添加直播间留言-->
+    <insert id="saveCal" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_critical
+        (
+        cal_message,
+        cal_liveId,
+        cal_userId,
+        createTime
+        )
+        VALUES
+        (
+        #{cal_message},
+        #{cal_liveId},
+        #{cal_userId},
+        #{createTime}
+        )
+    </insert>
+
+
+    <update id="uptateImg" parameterType="pd">
+        UPDATE
+        wx_classroom_live
+        <set>
+            <if test="live_img!=null">
+                live_img=#{live_img},
+            </if>
+            <if test="live_bannerImg!=null">
+                live_bannerImg=#{live_bannerImg},
+            </if>
+            <if test="live_audioImg!=null">
+                live_audioImg=#{live_audioImg},
+            </if>
+            <if test="live_view!=null">
+                live_view=#{live_view},
+            </if>
+            <if test="shareImg!=null">
+                shareImg=#{shareImg},
+            </if>
+        </set>
+        WHERE
+        live_id = #{live_id}
+    </update>
+
+
+    <!-- 启动需求查询 -->
+    <select id="quratzSelectLive" resultType="pd">
+            SELECT
+              live_id,
+              beginTime
+              FROM
+              wx_classroom_live
+              WHERE
+              comeGo = 1
+    </select>
+</mapper>

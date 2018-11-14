@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_CodeMapper">
+    <select id="findAllUrl" parameterType="pd" resultType="pd">
+          SELECT
+          coedUrl
+        FROM
+          wx_classroom_code
+    </select>
+    <select id="findUrlByLiveId" parameterType="pd" resultType="pd">
+        SELECT
+          coedUrl
+        FROM
+          wx_classroom_code
+        WHERE
+          path = #{path}
+    </select>
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_code
+        (
+          path,
+          coedUrl,
+          creatTime
+        )value(
+          #{path},
+          #{coedUrl},
+          #{creatTime}
+        )
+    </insert>
+</mapper>

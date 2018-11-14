@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_UserMapper">
+    <!-- 聊天室用户表 -->
+    <resultMap id="userBase" type="com.fh.entity.vo.User">
+        <id property="cr_userid" column="cr_userid"/>
+        <result property="cr_userBalance" column="cr_userBalance"/>
+        <result property="cr_userName" column="cr_userName"/>
+        <result property="cr_userImg" column="cr_userImg"/>
+        <result property="cr_teacherStatus" column="cr_teacherStatus"/>
+        <result property="cr_userPhone" column="cr_userPhone"/>
+        <result property="cr_openId" column="cr_openId"/>
+        <result property="cr_unionid" column="cr_unionid"/>
+        <result property="cr_session_key" column="cr_session_key"/>
+    </resultMap>
+    <sql id="base">
+        cr_userid,
+        cr_userBalance,
+	   cr_userName ,
+		 cr_userImg,
+        cr_teacherStatus,
+        cr_userPhone,
+        cr_openId,
+        cr_session_key,
+        cr_unionid
+    </sql>
+    <sql id="insert">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cr_userid != null">
+                cr_userid,
+            </if>
+            <if test="cr_userName != null">
+                cr_userName,
+            </if>
+            <if test="cr_userImg != null">
+                cr_userImg,
+            </if>
+            <if test="cr_userBalance != null">
+                cr_userBalance,
+            </if>
+            <if test="cr_teacherStatus != null">
+                cr_teacherStatus,
+            </if>
+            <if test="cr_userPhone != null">
+                cr_userPhone,
+            </if>
+            <if test="cr_createTime != null">
+                cr_createTime,
+            </if>
+            <if test="cr_updataTime != null">
+                cr_updataTime,
+            </if>
+            <if test="cr_openId != null">
+                cr_openId,
+            </if>
+            <if test="cr_bind != null">
+                cr_bind,
+            </if>
+            <if test="cr_session_key != null">
+                cr_session_key,
+            </if>
+            <if test="cr_unionid != null">
+                cr_unionid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cr_userid != null">
+                #{cr_userid},
+            </if>
+            <if test="cr_userName != null">
+                #{cr_userName},
+            </if>
+            <if test="cr_userImg != null">
+                #{cr_userImg},
+            </if>
+            <if test="cr_userBalance != null">
+                #{cr_userBalance},
+            </if>
+            <if test="cr_teacherStatus != null">
+                #{cr_teacherStatus},
+            </if>
+            <if test="cr_userPhone != null">
+                #{cr_userPhone},
+            </if>
+            <if test="cr_createTime != null">
+                #{cr_createTime},
+            </if>
+            <if test="cr_updataTime != null">
+                #{cr_updataTime},
+            </if>
+            <if test="cr_openId != null">
+                #{cr_openId},
+            </if>
+            <if test="cr_bind != null">
+                #{cr_bind},
+            </if>
+            <if test="cr_session_key != null">
+                #{cr_session_key},
+            </if>
+            <if test="cr_unionid != null">
+                #{cr_unionid},
+            </if>
+        </trim>
+    </sql>
+    <sql id="condition">
+        <if test="pd.condition != null ">
+            AND
+            (
+            u.cr_userName LIKE CONCAT(CONCAT('%', #{pd.condition}),'%')
+            OR
+            u.cr_userPhone LIKE CONCAT(CONCAT('%', #{pd.condition}),'%')
+            )
+        </if>
+    </sql>
+
+    <select id="findAllClassRoomUserlistPage" parameterType="page" resultType="pd">
+        SELECT
+        u.*,r.*
+        FROM
+        wx_classroom_user u
+        LEFT JOIN
+        wx_classroom_record r
+        ON
+        r.record_userId = u.cr_userid
+        WHERE
+        1=1
+        <include refid="condition"/>
+    </select>
+
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_user
+        (
+        cr_userName,
+        cr_userImg,
+        cr_userBalance,
+        cr_teacherStatus,
+        cr_userPhone,
+        cr_createTime,
+        cr_updataTime,
+        cr_openId,
+        cr_session_key,
+        cr_unionid,
+        cr_bind
+        )
+        VALUES
+        (
+        #{cr_userName},
+        #{cr_userImg},
+        #{cr_userBalance},
+        #{cr_teacherStatus},
+        #{cr_userPhone},
+        #{cr_createTime},
+        #{cr_updataTime},
+        #{cr_openId},
+        #{cr_session_key},
+        #{cr_unionid},
+        #{cr_bind}
+        )
+    </insert>
+    <update id="update" parameterType="pd">
+        UPDATE
+        wx_classroom_user
+        <set>
+            <if test="cr_userName != null and cr_userName != '' ">
+                cr_userName= #{cr_userName},
+            </if>
+            <if test="cr_userImg != null and cr_userImg != '' ">
+                cr_userImg= #{cr_userImg},
+            </if>
+            <if test="cr_userBalance != null and cr_userBalance != '' ">
+                cr_userBalance= #{cr_userBalance},
+            </if>
+            <if test="cr_teacherStatus != null and cr_teacherStatus != '' ">
+                cr_teacherStatus= #{cr_teacherStatus},
+            </if>
+            <if test="cr_userPhone != null and cr_userPhone != '' ">
+                cr_userPhone= #{cr_userPhone},
+            </if>
+            <if test="cr_createTime != null and cr_createTime != '' ">
+                cr_createTime= #{cr_createTime},
+            </if>
+            <if test="cr_updataTime != null and cr_updataTime != '' ">
+                cr_updataTime= #{cr_updataTime},
+            </if>
+            <if test="openid  != null and openid != '' ">
+                cr_openId= #{openid},
+            </if>
+            <if test="unionid  != null and unionid != '' ">
+                cr_unionid= #{unionid},
+            </if>
+            <if test="cr_bind != null and cr_bind != '' ">
+                cr_bind= #{cr_bind},
+            </if>
+        </set>
+        WHERE
+        cr_userid = #{cr_userid}
+    </update>
+    <select id="findUserByCondition" parameterType="pd" resultType="pd">
+        SELECT
+        cr_userid,
+        cr_userBalance,
+        cr_userName,
+        cr_userImg,
+        cr_teacherStatus,
+        cr_userPhone,
+        cr_openId,
+        cr_session_key,
+        cr_unionid
+        <if test="userId != null ">
+          ,(SELECT
+            count(1)
+            FROM
+            wx_classroom_critical
+            WHERE
+            cal_userId = #{userId}
+            AND
+            cal_state = 1) as calCount
+        </if>
+        FROM
+        wx_classroom_user
+        WHERE
+        1=1
+        <if test="openid != null ">
+            and cr_openId =#{openid}
+        </if>
+        <if test="userId != null ">
+            AND cr_userid =#{userId}
+        </if>
+        <if test="cr_userName != null ">
+            AND cr_userName =#{cr_userName}
+        </if>
+        <if test="cr_teacherStatus != null ">
+            AND cr_teacherStatus =#{cr_teacherStatus}
+        </if>
+    </select>
+
+
+    <select id="findUserByUninonId" parameterType="com.fh.entity.vo.User" resultMap="userBase">
+        SELECT
+        <include refid="base"/>
+        FROM
+        wx_classroom_user
+        <where>
+            <if test="cr_openId != null">
+                AND cr_openId= #{cr_openId}
+            </if>
+            <if test="cr_unionid != null">
+                AND cr_unionid =#{cr_unionid}
+            </if>
+            <if test="cr_userid != null">
+                AND cr_userid =#{cr_userid}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="findUserAllData" parameterType="pd" resultType="pd">
+        SELECT
+        cr_userid,
+        cr_userBalance,
+        cr_userName,
+        cr_userImg,
+        cr_teacherStatus,
+        cr_userPhone,
+        cr_openId,
+        cr_unionid,
+        a.USER_ID,
+        a.USERNAME,
+        a.EMAIL,
+        a.CUSTOMER_NAME,
+        a.CROP,
+        a. NAME,
+        a.IP,
+        a.LAST_LOGIN,
+        a.CHANNELID,
+        a.SALT,
+        a.EXCLU_ID,
+        a. STATUS,
+        b.SEX,
+        a.VIP,
+        a.UNIONID,
+        b.QQ,
+        b.IMG,
+        b.NIAN1,
+        b.YUE,
+        b.RI,
+        b.ZHIYE,
+        b.ADDRESS,
+        a.PHONE,
+        a.PHONEADDRESS,
+        b.QIANMING,
+        b.WEIXIN
+        FROM
+        wx_classroom_user w
+        LEFT JOIN sys_app_user a ON a.UNIONID = w.cr_unionid
+        LEFT JOIN sys_app_userinfo b ON b.USER_ID = a.USER_ID
+        <where>
+            <if test="openid != null">
+                AND cr_openId =#{openid}
+            </if>
+            <if test="userId != null">
+                AND cr_userid =#{userId}
+            </if>
+            <if test="unionid != null">
+                AND cr_unionid= #{unionid}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateMoney" parameterType="pd">
+        UPDATE
+        wx_classroom_user
+        SET
+        cr_userBalance = cr_userBalance+#{cr_userBalance}
+        WHERE
+        cr_userid = #{cr_userid}
+    </update>
+
+    <update id="editUsser" parameterType="pd">
+        UPDATE wx_classroom_user
+        SET cr_userName=#{cr_userName},
+            cr_userImg=#{cr_userImg}
+        WHERE cr_userid=#{userId}
+    </update>
+</mapper>

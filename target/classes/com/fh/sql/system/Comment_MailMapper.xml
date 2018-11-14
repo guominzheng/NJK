@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Comment_MailMapper">
+	<insert id="save" parameterType="pd" useGeneratedKeys="true" keyProperty="COMMENT_MAIL_ID">
+		insert into comment_mail(
+			PRODUCT_ID,
+			USER_ID,
+			NAME,
+			MESSAGE,
+			PUSER_ID,
+			PNAME,
+			DATE,
+			STATUS,
+			VIEWS,
+			YUE,
+			PID
+		)values(
+			#{PRODUCT_ID},
+			#{USER_ID},
+			#{NAME},
+			#{MESSAGE},
+			#{PUSER_ID},
+			#{PNAME},
+			#{DATE},
+			#{STATUS},
+			#{VIEWS},
+			#{YUE},
+			#{PID}
+		)
+	</insert>
+	
+	<select id="datalistPage" parameterType="pd" resultType="pd">
+		select
+            c.COMMENT_MAIL_ID,
+            c.PRODUCT_ID,
+            c.USER_ID,
+            c.MESSAGE,
+            c.PUSER_ID,
+            c.DATE,
+            c.STATUS,
+            c.VIEWS,
+            c.YUE,
+            c.PID,
+            i1.IMG,
+            u1.NAME,
+            u2.NAME as PNAME
+        from comment_mail c
+        LEFT JOIN sys_app_user u1 on u1.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=c.PUSER_ID
+         <where>
+            <if test="pd.PRODUCT_ID!=null and pd.PRODUCT_ID!=''">
+                and c.PRODUCT_ID=#{pd.PRODUCT_ID}
+            </if>
+            <if test="pd.STATUS!=null and pd.STATUS!=''">
+                and c.STATUS=#{pd.STATUS}
+            </if>
+        </where>
+        ORDER BY c.DATE DESC
+	</select>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+        select
+            c.COMMENT_MAIL_ID,
+            c.PRODUCT_ID,
+            c.USER_ID,
+            c.MESSAGE,
+            c.PUSER_ID,
+            c.DATE,
+            c.STATUS,
+            c.VIEWS,
+            c.YUE,
+            c.PID,
+            i1.IMG,
+            u1.NAME,
+            u2.NAME as PNAME
+        from comment_mail c
+        LEFT JOIN sys_app_user u1 on u1.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_userinfo i1 on i1.USER_ID=c.USER_ID
+        LEFT JOIN sys_app_user u2 on u2.USER_ID=c.PUSER_ID
+        where c.STATUS=#{STATUS} and c.PID=#{COMMENT_MAIL_ID}
+        ORDER BY c.DATE
+    </select>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+		select
+			COMMENT_MAIL_ID
+			PRODUCT_ID,
+			USER_ID,
+			NAME,
+			MESSAGE,
+			PUSER_ID,
+			PNAME,
+			DATE,
+			STATUS,
+			VIEWS,
+			YUE,
+			PID
+		from comment_mail
+		where COMMENT_MAIL_ID=#{COMMENT_MAIL_ID}
+	</select>
+    
+    
+    <select id="findCount" parameterType="pd" resultType="pd">
+    	select count(*) as count1 from comment_mail where PRODUCT_ID=#{PRODUCT_ID} and STATUS='0'
+    </select>
+    
+    <select id="findCount1" parameterType="pd" resultType="pd">
+    	select count(*) as count1 from comment_mail where PRODUCT_ID=#{PRODUCT_ID}
+    </select>
+    
+     <update id="editJiaViewss" parameterType="pd">
+    	update comment_mail
+    	SET 
+    			VIEWS=VIEWS+1
+    	where COMMENT_MAIL_ID=#{COMMENT_MAIL_ID}
+    </update>
+    
+     <update id="editJianViewss" parameterType="pd">
+    	update comment_mail
+    	SET 
+    			VIEWS=VIEWS-1
+    	where COMMENT_MAIL_ID=#{COMMENT_MAIL_ID}
+    </update>
+	
+</mapper>

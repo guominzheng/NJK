@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Zan_Comment_ResearchMapper">
+	<insert id="save" parameterType="pd">
+        insert into zan_comment_research(
+            COMMENT_RESEARCH_ID,
+            USER_ID
+        )values(
+            #{COMMENT_RESEARCH_ID},
+            #{USER_ID}
+        )
+    </insert>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+            COMMENT_RESEARCH_ID,
+            USER_ID
+        from zan_comment_research
+        where COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID} and USER_ID=#{USER_ID1}
+    </select>
+    
+      <select id="findByIds" parameterType="pd" resultType="pd">
+        select
+            COMMENT_RESEARCH_ID,
+            USER_ID
+        from zan_comment_research
+        where COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID} and USER_ID=#{USER_ID}
+    </select>
+    
+        <select id="findById1" parameterType="pd" resultType="pd">
+        select
+            COMMENT_RESEARCH_ID,
+            USER_ID
+        from zan_comment_research
+        where COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID} and USER_ID=#{USER_ID}
+    </select>
+    
+    
+    <delete id="delete" parameterType="pd">
+        delete from zan_comment_research where COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID} and USER_ID=#{USER_ID}
+    </delete>
+    
+    <select id="findCount" parameterType="pd" resultType="pd">
+    	select count(*) as count1 from zan_comment_research where COMMENT_RESEARCH_ID=#{COMMENT_RESEARCH_ID}
+    </select>
+
+
+    <delete id="deletes" parameterType="pd">
+        DELETE FROM zan_comment_research where COMMENT_RESEARCH_ID in(select COMMENT_RESEARCH_ID from comment_research where RESEARCH_ID=162)
+    </delete>
+</mapper>

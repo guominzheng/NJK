@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ZuoGuo_WendaMapper">
+	<insert id="save" parameterType="pd">
+		insert into zuoguo_shijuan(
+		ZUOGUO_SHIJUAN_ID,
+		USER_ID,
+		WENDA_SHIJUAN_ID,
+		DATE,
+		FRACTION,
+		STATUS,
+		data,
+		YUE,
+		WENDA_TYPE_ID
+		)values(
+		#{ZUOGUO_SHIJUAN_ID},
+		#{USER_ID},
+		#{WENDA_SHIJUAN_ID},
+		#{DATE},
+		#{FRACTION},
+		#{STATUS},
+		#{data},
+		#{YUE},
+		#{WENDA_TYPE_ID}
+		)
+	</insert>
+
+	<select id="yizuolistPage" parameterType="pd" resultType="pd">
+		select
+		w.WENDA_SHIJUAN_ID,
+		w.WENDA_SHIJUAN_NAME,
+		w.WENDA_TYPE_ID,
+		w.IMG,
+		w.WENDA_SHIJUAN_MIAOSHU,
+		(select count(*) as count1 from zuoguo_shijuan
+		where YUE=#{pd.YUE} and
+		USER_ID=#{pd.USER_ID} and
+		WENDA_SHIJUAN_ID=w.WENDA_SHIJUAN_ID) as
+		count
+		from zuoguo_shijuan z
+		LEFT
+		JOIN wenda_shijuan w on
+		w.WENDA_SHIJUAN_ID=z.WENDA_SHIJUAN_ID
+		where
+		z.USER_ID=#{pd.USER_ID} and
+		z.STATUS=0
+		GROUP BY z.WENDA_SHIJUAN_ID
+		ORDER
+		BY z.DATE DESC
+	</select>
+
+	<select id="findYiBai" parameterType="pd" resultType="pd">
+		select
+		w.WENDA_SHIJUAN_ID,
+		w.WENDA_SHIJUAN_NAME,
+		w.WENDA_TYPE_ID,
+		w.IMG,
+		w.WENDA_SHIJUAN_MIAOSHU,
+		z.FRACTION,
+		u.NAME
+		from zuoguo_shijuan z
+		LEFT
+		JOIN wenda_shijuan w on
+		w.WENDA_SHIJUAN_ID=z.WENDA_SHIJUAN_ID
+		LEFT JOIN
+		sys_app_user u on
+		u.USER_ID=z.USER_ID
+		limit 1
+	</select>
+
+
+	<select id="FractionpageList" parameterType="pd" resultType="pd">
+		SELECT
+		cs.WENDA_COUNT_ID,
+		cs.USER_ID,
+		cs.FRACTION,
+		cs.data,
+		cs.count1,
+		u.`NAME`,
+		'1' as paiming,
+		i.IMG
+		FROM
+		(
+		SELECT
+		w.ZUOGUO_SHIJUAN_ID AS WENDA_COUNT_ID,
+		w.USER_ID,
+		w.FRACTION,
+		'' AS data,
+		SUM(FRACTION) AS count1
+		FROM
+		zuoguo_shijuan w
+		where year(w.DATE)=#{NIAN}
+		GROUP BY
+		w.USER_ID
+		ORDER BY
+		count1 DESC,
+		w.DATE DESC
+		LIMIT
+		30
+		) cs
+		LEFT JOIN sys_app_user u on u.USER_ID=cs.USER_ID
+		LEFT JOIN
+		sys_app_userinfo i on i.USER_ID=u.USER_ID
+	</select>
+
+	<!-- 查询做题分数排名 -->
+	<select id="findFractionPaiMing" parameterType="pd" resultType="pd">
+		SELECT
+		c2.WENDA_COUNT_ID,
+		c2.USER_ID,
+		count1,
+		u.NAME,
+		i.IMG,
+		'上升1名' as paiming,
+		rowno
+		FROM
+		(
+		SELECT
+		WENDA_COUNT_ID,
+		USER_ID,
+		count1,
+		(@rowno :=@rowno + 1) AS rowno
+		FROM
+		(
+		SELECT
+		w.ZUOGUO_SHIJUAN_ID AS WENDA_COUNT_ID,
+		w.DATE,
+		w.USER_ID,
+		SUM(FRACTION) AS count1
+		FROM
+		zuoguo_shijuan w
+		where year(w.DATE)=#{NIAN}
+		GROUP BY
+		w.USER_ID
+		) c,
+		(SELECT(@rowno := 0)) b
+		ORDER BY
+		c.count1 DESC,
+		c.DATE DESC
+		) c2
+		LEFT JOIN
+		sys_app_user u on u.USER_ID=c2.USER_ID
+		LEFT JOIN sys_app_userinfo i on
+		i.USER_ID=c2.USER_ID
+		WHERE
+		c2.USER_ID = #{USER_ID}
+	</select>
+
+
+	<!-- 查询做题次数排名 -->
+	<select id="findZuoTiZiJiPaiMing" parameterType="pd" resultType="pd">
+		SELECT
+		c2.WENDA_COUNT_ID,
+		c2.USER_ID,
+		count1,
+		c2.rowno,
+		u.NAME,
+		i.IMG
+		FROM
+		(
+		SELECT
+		WENDA_COUNT_ID,
+		USER_ID,
+		count1,
+		(@rowno :=@rowno + 1) AS rowno
+		FROM
+		(
+		SELECT
+		w.ZUOGUO_SHIJUAN_ID AS WENDA_COUNT_ID,
+		w.DATE,
+		w.USER_ID,
+		COUNT(*) AS count1
+		FROM
+		zuoguo_shijuan w
+		GROUP BY
+		w.USER_ID
+		) c,
+		(SELECT(@rowno := 0)) b
+		ORDER BY
+		c.count1 DESC,
+		c.DATE DESC
+		) c2
+		LEFT JOIN
+		sys_app_user u on u.USER_ID=c2.USER_ID
+		LEFT JOIN sys_app_userinfo i on
+		i.USER_ID=c2.USER_ID
+		WHERE
+		c2.USER_ID = #{USER_ID}
+	</select>
+	
+	<select id="findNianPaiMing" parameterType="pd" resultType="pd">
+		SELECT
+		c2.WENDA_COUNT_ID,
+		c2.USER_ID,
+		count1,
+		c2.rowno,
+		u.NAME,
+		i.IMG
+		FROM
+		(
+		SELECT
+		WENDA_COUNT_ID,
+		USER_ID,
+		count1,
+		(@rowno :=@rowno + 1) AS rowno
+		FROM
+		(
+		SELECT
+		w.ZUOGUO_SHIJUAN_ID AS WENDA_COUNT_ID,
+		w.DATE,
+		w.USER_ID,
+		SUM(FRACTION) AS count1
+		FROM
+		zuoguo_shijuan w
+		where year(w.DATE)=#{NIAN}
+		GROUP BY
+		w.USER_ID
+		) c,
+		(SELECT(@rowno := 0)) b
+		ORDER BY
+		c.count1 DESC,
+		c.DATE DESC
+		) c2
+		LEFT JOIN
+		sys_app_user u on u.USER_ID=c2.USER_ID
+		LEFT JOIN sys_app_userinfo i on
+		i.USER_ID=c2.USER_ID
+		WHERE
+		c2.USER_ID = #{USER_ID}
+	</select>
+
+	<select id="ZuoTilist" parameterType="page" resultType="pd">
+		SELECT
+		cs.WENDA_COUNT_ID,
+		cs.USER_ID,
+		cs.FRACTION,
+		cs.data,
+		cs.count1,
+		u.`NAME`,
+		i.IMG
+		FROM
+		(
+		SELECT
+		w.ZUOGUO_SHIJUAN_ID AS WENDA_COUNT_ID,
+		w.USER_ID,
+		w.FRACTION,
+		'' AS data,
+		count(*) AS count1
+		FROM
+		zuoguo_shijuan w
+		GROUP BY
+		w.USER_ID
+		ORDER BY
+		count1 DESC,
+		w.DATE DESC
+		LIMIT 10
+		) cs
+		LEFT JOIN
+		sys_app_user u on u.USER_ID=cs.USER_ID
+		LEFT JOIN sys_app_userinfo i on
+		i.USER_ID=u.USER_ID
+	</select>
+
+	<select id="findZiJiDeFei" parameterType="pd" resultType="pd">
+		select
+		z.data
+		from zuoguo_shijuan z
+		where z.USER_ID=#{USER_ID} and
+		z.WENDA_SHIJUAN_ID=#{WENDA_SHIJUAN_ID} and STATUS='0'
+	</select>
+
+	<update id="edit" parameterType="pd">
+		update zuoguo_shijuan
+		SET
+		STATUS='4'
+		where USER_ID=#{USER_ID} and
+		WENDA_SHIJUAN_ID=#{WENDA_SHIJUAN_ID} and STATUS='0'
+	</update>
+
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+		w.ZUOGUO_SHIJUAN_ID as WENDA_COUNT_ID,
+		w.USER_ID,
+		w.FRACTION,
+		w.data,
+		u.NAME,
+		i.IMG,
+		count(*) as count1
+		from zuoguo_shijuan w
+		LEFT JOIN
+		sys_app_user u on
+		u.USER_ID=w.USER_ID
+		LEFT JOIN sys_app_userinfo i on
+		i.USER_ID=u.USER_ID
+		where w.ZUOGUO_SHIJUAN_ID=#{ZUOGUO_SHIJUAN_ID}
+	</select>
+
+	<select id="findCount" parameterType="pd" resultType="pd">
+		select
+		count(*) as count1 from zuoguo_shijuan z
+		LEFT JOIN wenda_shijuan w on
+		w.WENDA_SHIJUAN_ID=z.WENDA_SHIJUAN_ID
+		where w.ZHIDING='1' and
+		z.USER_ID=#{USER_ID} and z.YUE=#{YUE}
+	</select>
+
+	<select id="findCounts" parameterType="pd" resultType="pd">
+		select
+		count(*) as count1 from zuoguo_shijuan z where z.USER_ID=#{USER_ID}
+		and z.YUE=#{YUE} and WENDA_SHIJUAN_ID=#{WENDA_SHIJUAN_ID}
+	</select>
+
+	<update id="editStatus" parameterType="pd">
+		update zuoguo_shijuan
+		SET
+		STATUS="4"
+		where WENDA_SHIJUAN_ID=#{WENDA_SHIJUAN_ID} and
+		USER_ID=#{USER_ID} and STATUS='0'
+	</update>
+
+	<update id="editUserId" parameterType="pd">
+		update zuoguo_shijuan
+		SET
+		USER_ID=#{USER_ID}
+		where USER_ID=#{USER_ID1}
+	</update>
+
+	<select id="findZuiXinDaTi" parameterType="pd" resultType="pd">
+		select
+		z.data
+		from zuoguo_shijuan z
+		where z.USER_ID=#{USER_ID}
+		ORDER BY
+		z.DATE DESC
+		limit 1
+	</select>
+
+	<select id="findByIds" parameterType="pd" resultType="pd">
+		select
+		w.ZUOGUO_SHIJUAN_ID as WENDA_COUNT_ID,
+		w.USER_ID,
+		w.FRACTION,
+		w.data,
+		u.NAME,
+		i.IMG,
+		'0' as count1
+		from zuoguo_shijuan w
+		LEFT JOIN sys_app_user
+		u on
+		u.USER_ID=w.USER_ID
+		LEFT JOIN sys_app_userinfo i on
+		i.USER_ID=u.USER_ID
+		where w.USER_ID=#{USER_ID}
+		ORDER BY w.DATE DESC
+		limit 1
+	</select>
+
+	<select id="findPaoMaDing" parameterType="pd" resultType="pd">
+		select
+		CONCAT(
+		"恭喜",
+		CONCAT(u.`NAME`),
+		CONCAT("获得了"),
+		CONCAT(cs.FRACTION),
+		CONCAT("分")
+		) AS PAOMADING
+		from (
+		select USER_ID,FRACTION from zuoguo_shijuan ORDER BY DATE DESC LIMIT 20
+		) cs
+		LEFT JOIN sys_app_user u on u.USER_ID=cs.USER_ID
+		LEFT JOIN sys_app_userinfo i on i.USER_ID=cs.USER_ID
+	</select>
+
+	<select id="findYueCount" parameterType="pd" resultType="pd">
+		select
+		count(*) as count1,YUE from zuoguo_shijuan where YUE=#{YUE}
+	</select>
+
+	<select id="findYueGCount" parameterType="pd" resultType="pd">
+		select
+		count(cs.count1) as count1,
+		cs.YUE
+		from (
+		select count(*) as count1,YUE from zuoguo_shijuan where YUE=#{YUE} GROUP BY
+		USER_ID
+		) cs
+	</select>
+
+	<select id="findListDate" parameterType="pd" resultType="pd">
+		SELECT count(*) as count1 from zuoguo_shijuan where DATE &gt;= #{KAISHI} and
+		DATE &lt;= #{END}
+	</select>
+
+	<select id="findListGDate" parameterType="pd" resultType="pd">
+		select
+		count(cs.cont1) as count1
+		from (
+		SELECT count(*) as cont1 from zuoguo_shijuan where DATE &gt;= #{KAISHI} and
+		DATE &lt;= #{END} GROUP BY USER_ID
+		) cs
+	</select>
+
+
+
+	<select id="findGenJuYue" parameterType="pd" resultType="pd">
+		select
+		cs.YUE1,
+		cs.count1,
+		cs.MY
+		from (
+		SELECT
+		date_format(DATE, '%m') AS YUE1,
+		count(*) AS count1,
+		date_format(DATE, '%Y') AS MY
+		FROM
+		zuoguo_shijuan
+		GROUP BY
+		YUE1
+		ORDER BY
+		YUE1
+		)cs
+		where cs.MY=#{MY}
+	</select>
+
+	<select id="findGenJuGYue" parameterType="pd" resultType="pd">
+		SELECT
+		cs.YUE1,
+		count(cs.count1) as count1,
+		cs.MY
+		FROM
+		(
+		SELECT
+		date_format(DATE, '%m') AS YUE1,
+		count(*) AS count1,
+		date_format(DATE, '%Y') AS MY
+		FROM
+		zuoguo_shijuan
+		GROUP BY
+		YUE1,USER_ID
+		ORDER BY
+		YUE1
+		) cs
+		WHERE
+		cs.MY = #{MY}
+		GROUP BY cs.YUE1
+	</select>
+
+	<select id="dataSuiJilistPage" parameterType="pd" resultType="pd">
+		SELECT
+		t.count1,
+		s.WENDA_SHIJUAN_ID,
+		s.WENDA_SHIJUAN_NAME
+		from(
+		select count(*) as count1,WENDA_SHIJUAN_ID from zuoguo_shijuan where
+		WENDA_SHIJUAN_ID!='' GROUP BY WENDA_SHIJUAN_ID ORDER BY count1 DESC
+		) t
+		LEFT JOIN wenda_shijuan s on s.WENDA_SHIJUAN_ID=t.WENDA_SHIJUAN_ID
+	</select>
+
+	<select id="findZuoPaiHang" parameterType="pd" resultType="pd">
+		SELECT
+		cs.WENDA_COUNT_ID,
+		cs.USER_ID,
+		cs.FRACTION,
+		cs. DATA,
+		cs.count1,
+		u.`NAME`,
+		'1' as paiming,
+		i.IMG
+		FROM
+		(
+		SELECT
+		w.ZUOGUO_SHIJUAN_ID AS WENDA_COUNT_ID,
+		w.USER_ID,
+		w.FRACTION,
+		'' AS DATA,
+		SUM(FRACTION) AS count1
+		FROM
+		zuoguo_shijuan w
+		where DATE&gt;=#{DATE}
+		GROUP BY
+		w.USER_ID
+		ORDER BY
+		count1 DESC,
+		w.DATE DESC
+		LIMIT 30
+		) cs
+		LEFT JOIN sys_app_user u ON u.USER_ID = cs.USER_ID
+		LEFT JOIN sys_app_userinfo i ON i.USER_ID = u.USER_ID
+	</select>
+
+	<select id="findZhouPaiMing" parameterType="pd" resultType="pd">
+		SELECT
+		c2.WENDA_COUNT_ID,
+		c2.USER_ID,
+		count1,
+		u. NAME,
+		i.IMG,
+		'1' as paiming,
+		rowno
+		FROM
+		(
+		SELECT
+		WENDA_COUNT_ID,
+		USER_ID,
+		count1,
+		(@rowno :=@rowno + 1) AS rowno
+		FROM
+		(
+		SELECT
+		w.ZUOGUO_SHIJUAN_ID AS WENDA_COUNT_ID,
+		w.DATE,
+		w.USER_ID,
+		SUM(FRACTION) AS count1
+		FROM
+		zuoguo_shijuan w
+		where w.DATE&gt;=#{DATE}
+		GROUP BY
+		w.USER_ID
+		) c,
+		(SELECT(@rowno := 0)) b
+		ORDER BY
+		c.count1 DESC,
+		c.DATE DESC
+		) c2
+		LEFT JOIN sys_app_user u ON u.USER_ID = c2.USER_ID
+		LEFT JOIN sys_app_userinfo i ON i.USER_ID = c2.USER_ID
+		WHERE
+		c2.USER_ID = #{USER_ID}
+	</select>
+	
+	
+	<select id="findDateZuoGuoPaiHangBang" parameterType="pd" resultType="pd">
+		SELECT
+		c2.WENDA_COUNT_ID,
+		c2.USER_ID,
+		count1,
+		u. NAME,
+		i.IMG,
+		rowno
+		FROM
+		(
+		SELECT
+		WENDA_COUNT_ID,
+		USER_ID,
+		count1,
+		(@rowno :=@rowno + 1) AS rowno
+		FROM
+		(
+		SELECT
+		w.ZUOGUO_SHIJUAN_ID AS WENDA_COUNT_ID,
+		w.DATE,
+		w.USER_ID,
+		SUM(FRACTION) AS count1
+		FROM
+		zuoguo_shijuan w
+		where DATE&gt;=#{first} and DATE&lt;=#{DATE}
+		GROUP BY
+		w.USER_ID
+		) c,
+		(SELECT(@rowno := 0)) b
+		ORDER BY
+		c.count1 DESC,
+		c.DATE DESC
+		) c2
+		LEFT JOIN sys_app_user u ON u.USER_ID = c2.USER_ID
+		LEFT JOIN sys_app_userinfo i ON i.USER_ID = c2.USER_ID
+		WHERE
+		c2.USER_ID = #{USER_ID}
+	</select>
+	
+	<select id="findZhouPaiMings" parameterType="pd" resultType="pd">
+		SELECT
+		cs.WENDA_COUNT_ID,
+		cs.USER_ID,
+		cs.FRACTION,
+		cs. DATA,
+		cs.count1,
+		u.`NAME`,
+		'1' as paiming,
+		i.IMG
+		FROM
+		(
+		SELECT
+		w.ZUOGUO_SHIJUAN_ID AS WENDA_COUNT_ID,
+		w.USER_ID,
+		w.FRACTION,
+		'' AS DATA,
+		SUM(FRACTION) AS count1
+		FROM
+		zuoguo_shijuan w
+		where DATE&gt;=#{DATE} and DATE&lt;=#{DATE2}
+		GROUP BY
+		w.USER_ID
+		ORDER BY
+		count1 DESC,
+		w.DATE DESC
+		LIMIT 30
+		) cs
+		LEFT JOIN sys_app_user u ON u.USER_ID = cs.USER_ID
+		LEFT JOIN sys_app_userinfo i ON i.USER_ID = u.USER_ID
+	</select>
+</mapper>

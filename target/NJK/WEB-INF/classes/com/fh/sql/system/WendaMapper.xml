@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="WendaMapper">
+	<insert id="save" parameterType="pd">
+		insert into wenda(
+			WENDA_ID,
+			SUBJECT,
+			MESSAGE,
+			STATUS,
+			WENDA_SHIJUAN_ID,
+			WENDA_TYPE_ID,
+			ORDE_BY,
+			DATE,
+			IMG
+		)values(
+			#{WENDA_ID},
+			#{SUBJECT},
+			#{MESSAGE},
+			#{STATUS},
+			#{WENDA_SHIJUAN_ID},
+			#{WENDA_TYPE_ID},
+			#{ORDE_BY},
+			#{DATE},
+			#{IMG}
+		)
+	</insert>
+	
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			WENDA_ID,
+			SUBJECT,
+			MESSAGE,
+			STATUS,
+			WENDA_SHIJUAN_ID,
+			WENDA_TYPE_ID,
+			ORDE_BY,
+			DATE,
+			IMG
+		from wenda
+		where 1=1
+		<if test="pd. WENDA_SHIJUAN_ID != null and pd. WENDA_SHIJUAN_ID != ''">
+			and  WENDA_SHIJUAN_ID=#{pd.WENDA_SHIJUAN_ID}
+		</if>
+		<if test="pd.KEYWORD != null and pd.KEYWORD != ''"><!-- 关键词检索 -->
+            and
+                (
+                 SUBJECT LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+                )
+        </if>
+        <if test="pd.STATUS!=null and pd.STATUS!=''">
+        	and STATUS=#{pd.STATUS}
+        </if>
+        ORDER BY DATE DESC 
+	</select>
+	
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			WENDA_ID,
+			SUBJECT,
+			MESSAGE,
+			STATUS,
+			WENDA_SHIJUAN_ID,
+			WENDA_TYPE_ID,
+			ORDE_BY,
+			DATE,
+			IMG
+		from wenda
+		where WENDA_ID=#{WENDA_ID}
+	</select>
+	
+	<update id="edit" parameterType="pd">
+		update wenda
+		SET SUBJECT=#{SUBJECT},
+			MESSAGE=#{MESSAGE},
+			STATUS=#{STATUS},
+			IMG=#{IMG}
+		where WENDA_ID=#{WENDA_ID}
+	</update>
+	
+	<delete id="delete" parameterType="pd">
+		delete from wenda where WENDA_ID=#{WENDA_ID}
+	</delete>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+		select
+			WENDA_ID,
+			SUBJECT,
+			MESSAGE,
+			WENDA_SHIJUAN_ID,
+			WENDA_TYPE_ID,
+			IMG
+		from wenda
+		where WENDA_SHIJUAN_ID=#{WENDA_SHIJUAN_ID} and STATUS=#{STATUS}
+		ORDER BY DATE DESC
+	</select>
+	
+	<select id="findSuiJi" parameterType="pd" resultType="pd">
+		select 
+			WENDA_ID,
+			SUBJECT,
+			MESSAGE,
+			WENDA_SHIJUAN_ID,
+			WENDA_TYPE_ID,
+			IMG
+		from wenda where WENDA_ID not in (select WENDA_ID from (select WENDA_ID,count(*) as count1 from error_wenda where USER_ID=#{USER_ID} and STATUS='3'  and WENDA_TYPE_ID='1' GROUP BY WENDA_ID HAVING count1>=2) c) 
+		and STATUS='1' and WENDA_TYPE_ID='1'
+		ORDER BY RAND()
+		limit 10
+	</select>
+	
+	<select id="findSuiJis" parameterType="pd" resultType="pd">
+		select 
+			WENDA_ID,
+			SUBJECT,
+			MESSAGE,
+			WENDA_SHIJUAN_ID,
+			WENDA_TYPE_ID,
+			IMG
+		from wenda 
+		where STATUS='1'  
+		<if test="WENDA_TYPE_ID!=null and WENDA_TYPE_ID!='' and WENDA_TYPE_ID!=0">
+			and WENDA_TYPE_ID=#{WENDA_TYPE_ID}
+		</if>
+		<if test="WENDA_SHIJUAN_ID!=null and WENDA_SHIJUAN_ID!='' and WENDA_SHIJUAN_ID!=0">
+			and WENDA_TYPE_ID=#{WENDA_SHIJUAN_ID}
+		</if>
+		and WENDA_ID not in (select WENDA_ID from (select WENDA_ID,count(*) as count1 from error_wenda where USER_ID=#{USER_ID} and STATUS='3'
+			<if test="WENDA_TYPE_ID!=null and WENDA_TYPE_ID!='' and WENDA_TYPE_ID!=0">
+			and WENDA_TYPE_ID=#{WENDA_TYPE_ID}
+		</if>
+		GROUP BY WENDA_ID HAVING count1>=2) c) 
+		ORDER BY RAND() 
+		limit 10
+	</select>
+</mapper>

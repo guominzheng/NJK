@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GameCouponMapper">
+    <select id="findCouponByUser" parameterType="pd" resultType="pd">
+        SELECT
+          createTime,
+          USER_ID,
+          prizeImg,
+          prizeName,
+          STATUS,
+          TYPE,
+          RESTATUS
+        FROM
+        game_coupon
+        WHERE
+        USER_ID=#{USER_ID}
+        AND
+        STATUS = '0'
+    </select>
+
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        game_coupon
+        (
+        createTime,
+        USER_ID,
+        prizeImg,
+        prizeName,
+        STATUS,
+        `TYPE`,
+        RESTATUS
+        )VALUE(
+        #{createTime},
+        #{USER_ID},
+        #{prizeImg},
+        #{prizeName},
+        #{STATUS},
+        #{TYPE},
+        #{RESTATUS}
+        )
+    </insert>
+
+    <update id="update" parameterType="pd">
+        UPDATE
+        game_coupon
+        <set>
+            <if test="STATUS != null ">
+                STATUS=#{STATUS}
+            </if>
+            <if test="RESTATUS != null ">
+                RESTATUS=#{RESTATUS}
+            </if>
+        </set>
+        WHERE
+        USER_ID=#{USER_ID}
+    </update>
+
+
+
+    <select id="findReturnCoupon" parameterType="pd" resultType="pd">
+        SELECT
+        createTime,
+        USER_ID,
+        prizeImg,
+        prizeName,
+        STATUS,
+        TYPE,
+        RESTATUS
+        FROM
+        game_coupon
+        WHERE
+        USER_ID=#{USER_ID}
+        AND
+        STATUS = '0'
+        AND
+        RESTATUS = '0'
+    </select>
+</mapper>

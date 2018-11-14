@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_SubscribeMapper">
+<insert id="save"  parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_subscribe
+        (
+        userId,
+        liveId,
+        createTime
+        )
+        VALUES
+        (
+        #{userId},
+        #{liveId},
+        #{createTime}
+        )
+</insert>
+
+<select id="getSubsCountById" parameterType="pd" resultType="pd">
+    SELECT count(1) as count FROM wx_classroom_subscribe WHERE userId = #{userId} and liveId=#{liveId}
+</select>
+
+</mapper>

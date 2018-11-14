@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Activity_RoomMapper">
+    <insert id="save" parameterType="pd">
+        insert into activity_room(
+            ACTIVITY_ROOM_ID,
+            ACTIVITY_ID,
+            USER_ID,
+            CROP,
+            ADDRESS,
+            IMG,
+            BEIYONG1,
+            BEIYONG2,
+            BEIYONG3,
+            BEIYONG4,
+            BEIYONG5,
+            DATE,
+            VIEWS,
+            HUIFU
+        )values(
+            #{ACTIVITY_ROOM_ID},
+            #{ACTIVITY_ID},
+            #{USER_ID},
+            #{CROP},
+            #{ADDRESS},
+            #{IMG},
+            #{BEIYONG1},
+            #{BEIYONG2},
+            #{BEIYONG3},
+            #{BEIYONG4},
+            #{BEIYONG5},
+            #{DATE},
+            #{VIEWS},
+            #{HUIFU}
+        )
+    </insert>
+    
+    
+    <update id="edit" parameterType="pd">
+        update activity_room
+        SET CROP=#{CROP},
+            ADDRESS=#{ADDRESS},
+            IMG=#{IMG},
+            BEIYONG1=#{BEIYONG1},
+            BEIYONG2=#{BEIYONG2},
+            BEIYONG3=#{BEIYONG3},
+            DATE=#{DATE},
+            VIEWS=#{VIEWS},
+            HUIFU=#{HUIFU},
+            ACTIVITY_ROOM_ID=ACTIVITY_ROOM_ID
+        where ACTIVITY_ROOM_ID=#{ACTIVITY_ROOM_ID}
+    </update>
+    
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+        	a.ACTIVITY_ROOM_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            a.CROP,
+            a.ADDRESS,
+            a.IMG,
+            a.BEIYONG1,
+            a.BEIYONG2,
+            a.BEIYONG3,
+            a.DATE,
+            u.NAME,
+            a.VIEWS,
+            a.HUIFU
+        from activity_room a
+        LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+        ORDER BY a.DATE DESC
+        <where>
+  			<if test="pd.KEYWORD != null and pd.KEYWORD != ''"><!-- 关键词检索 -->
+            and
+                (
+                 a.CROP LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+                 or
+                 a.ADDRESS LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+                 or
+                 u.NAME LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+                )
+        </if>
+        </where>
+    </select>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+        	a.ACTIVITY_ROOM_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            a.CROP,
+            a.ADDRESS,
+            a.IMG,
+            a.BEIYONG1,
+            a.BEIYONG2,
+            a.BEIYONG3,
+            a.DATE,
+            u.NAME,
+            a.VIEWS,
+            a.HUIFU
+        from activity_room a
+        LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+        where a.ACTIVITY_ROOM_ID=#{ACTIVITY_ROOM_ID}
+    </select>
+    
+          <select id="userlistPage" parameterType="page" resultType="pd">        
+SELECT
+        S.*
+    FROM
+    (
+        select
+            a.ACTIVITY_POST_ID,
+			r.ACTIVITY_ROOM_ID,
+            a.USER_ID,
+            u.NAME,
+            a.YUE,
+            a.DATE,
+			r.ADDRESS,
+			r.CROP,
+			r.IMG,
+			r.ACTIVITY_ID,
+			r.VIEWS,
+			r.HUIFU
+        from activity_post a
+        LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_userinfo i on a.USER_ID=i.USER_ID
+		LEFT JOIN activity_room r on r.ACTIVITY_ROOM_ID=a.ACTIVITY_ROOM_ID
+        where 1=1
+        <if test="pd.ACTIVITY_ID!=null and pd.ACTIVITY_ID!=''">
+        	and r.ACTIVITY_ID=#{pd.ACTIVITY_ID}
+        </if>
+        ORDER BY a.DATE DESC
+    ) S
+    GROUP BY S.ACTIVITY_ROOM_ID
+    ORDER BY S.DATE DESC
+    </select>
+    
+      <select id="findList1" parameterType="pd" resultType="pd">        
+SELECT
+        S.*
+    FROM
+    (
+        select
+            a.ACTIVITY_POST_ID,
+			r.ACTIVITY_ROOM_ID,
+            a.USER_ID,
+            u.NAME,
+            a.YUE,
+            a.DATE,
+			r.ADDRESS,
+			r.CROP,
+			r.IMG,
+			r.ACTIVITY_ID,
+			r.VIEWS,
+			r.HUIFU
+        from activity_post a
+        LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_userinfo i on a.USER_ID=i.USER_ID
+		LEFT JOIN activity_room r on r.ACTIVITY_ROOM_ID=a.ACTIVITY_ROOM_ID
+        where 1=1
+        <if test="ACTIVITY_ID!=null and ACTIVITY_ID!=''">
+        	and r.ACTIVITY_ID=#{ACTIVITY_ID}
+        </if>
+        ORDER BY a.DATE DESC
+    ) S
+    GROUP BY S.ACTIVITY_ROOM_ID
+    ORDER BY S.DATE DESC
+    </select>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+    	select
+        	a.ACTIVITY_ROOM_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            a.CROP,
+            a.ADDRESS,
+            a.IMG,
+            a.BEIYONG1,
+            a.BEIYONG2,
+            a.BEIYONG3,
+            a.DATE,
+            u.NAME,
+            a.VIEWS,
+            a.HUIFU
+        from activity_room a
+        LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+    </select>
+    
+    <delete id="delete" parameterType="pd">
+        delete from activity_room where ACTIVITY_ROOM_ID=#{ACTIVITY_ROOM_ID}
+    </delete>
+    
+     <delete id="delete1" parameterType="pd">
+        delete from activity_room where ACTIVITY_ID=#{ACTIVITY_ID} and USER_ID=#{USER_ID}
+    </delete>
+    
+            <!-- 批量删除 -->
+    <delete id="deleteAll" parameterType="String">
+        delete from activity_room
+        where 
+            ACTIVITY_ROOM_ID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+        </foreach>
+    </delete>
+    
+    <select id="findById1" parameterType="pd" resultType="pd">
+    	select
+    		a.ACTIVITY_ROOM_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            a.CROP,
+            a.ADDRESS,
+            a.IMG,
+            a.BEIYONG1,
+            a.BEIYONG2,
+            a.BEIYONG3,
+            a.BEIYONG4,
+   		    a.BEIYONG5,
+            a.DATE,
+            a.VIEWS,
+            a.HUIFU
+    	from activity_room a
+    	where a.USER_ID=#{USER_ID} and a.ACTIVITY_ID=#{ACTIVITY_ID}
+    </select>
+    
+       <select id="findById2" parameterType="pd" resultType="pd">
+    	select
+    		a.ACTIVITY_ROOM_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            a.CROP,
+            a.ADDRESS,
+            a.IMG,
+            a.BEIYONG1,
+            a.BEIYONG2,
+            a.BEIYONG3,
+            a.BEIYONG4,
+   		    a.BEIYONG5,
+            a.DATE,
+            i.IMG UIMG,
+            u.NAME,
+            (select DATE from activity_post where  ACTIVITY_ID=a.ACTIVITY_ID and USER_ID=#{USER_ID} ORDER BY DATE DESC limit 1) as GDATE,
+            (select count(*) from activity_post where ACTIVITY_ROOM_ID=a.ACTIVITY_ROOM_ID) HUIFU,
+            (select count(*) as count from comment_activity_user where ACTIVITY_ID=a.ACTIVITY_ID and QUSER_ID=#{USER_ID} and STATUS='0') PHUIFU,
+            (select count(*) as count from collection_activity_user  where ACTIVITY_ID=a.ACTIVITY_ID and USER_ID=#{USER_ID}) VIEWS,
+            (select count(*) as count from activity_post where STATUS='1' and ACTIVITY_ID=a.ACTIVITY_ID and USER_ID=#{USER_ID}) ZONGSHU
+    	from activity_room a
+    	LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+    	LEFT JOIN sys_app_userinfo i on i.USER_ID=a.USER_ID
+    	where a.USER_ID=#{USER_ID} and a.ACTIVITY_ID=#{ACTIVITY_ID}
+    </select>
+    
+    
+     <select id="findById3" parameterType="pd" resultType="pd">
+    	select
+    		a.ACTIVITY_ROOM_ID,
+            a.ACTIVITY_ID,
+            a.USER_ID,
+            a.CROP,
+            a.ADDRESS,
+            a.IMG,
+            a.BEIYONG1,
+            a.BEIYONG2,
+            a.BEIYONG3,
+            a.BEIYONG4,
+   		    a.BEIYONG5,
+            a.DATE,
+            a.VIEWS,
+            a.HUIFU
+    	from activity_room a
+    	where a.USER_ID=#{USER_ID1} and a.ACTIVITY_ID=#{ACTIVITY_ID}
+    </select>
+    
+    <update id="editS" parameterType="pd">
+    	update activity_room
+    	SET CROP=#{CROP},
+    		ADDRESS=#{ADDRESS},
+    		IMG=#{IMG}
+    	where USER_ID=#{USER_ID} and ACTIVITY_ID=#{ACTIVITY_ID}
+    </update>
+    
+    <update id="editUserId" parameterType="pd">
+    	update activity_room
+    	SET USER_ID=#{USER_ID}
+    	where USER_ID=#{USER_ID1}
+    </update>
+</mapper>

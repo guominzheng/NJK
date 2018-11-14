@@ -1,0 +1,89 @@
+POST https://hitman.net.cn/NJK/app/classRoom/proposSave
+Accept: */*
+COMMENT_RE41SEARCH_ID: 99
+USER_ID: 1
+openid: 123165456
+
+<> 2018-08-28T113128-1.200.html
+
+###
+
+POST https://hitman.net.cn/NJK/app/classRoom/proposSave?openid=1564566456
+Accept: */*
+COMMENT_RE41SEARCH_ID: 99
+USER_ID: 1
+
+<> 2018-08-28T113128.200.html
+
+###
+
+POST https://hitman.net.cn/NJK/app/classRoom/proposSave
+Accept: */*
+COMMENT_RE41SEARCH_ID: 99
+USER_ID: 1
+openid: 123165456
+
+<> 2018-08-28T112909.200.html
+
+###
+
+POST https://hitman.net.cn/NJK/app/classRoom/proposSave
+Accept: */*
+COMMENT_RE41SEARCH_ID: 99
+USER_ID: 1
+openid: 123165456
+
+<> 2018-08-28T112757.200.html
+
+###
+
+POST http://hitman.net.cn/NJK/app/classRoom/proposSave
+Accept: */*
+COMMENT_RE41SEARCH_ID: 99
+USER_ID: 1
+openid: 123165456
+
+###
+
+POST http://s-425807918.vicp.io:40794/NJK/app//findCommentResearchList
+Accept: */*
+COMMENT_RE41SEARCH_ID: 99
+USER_ID: 1
+
+<> 2018-05-09T054915.200.html
+
+###
+
+GET http://s-425807918.vicp.io:40794/NJK/app//findCommentResearchList
+Accept: */*
+COMMENT_RE41SEARCH_ID: 41
+USER_ID: 1
+
+<> 2018-05-09T054810.200.html
+
+###
+
+GET http://s-425807918.vicp.io:40794/NJK/app/
+Accept: */*
+Cache-Control: no-cache
+CATNEST_ID: 7
+MESSAGE: 哈哈哈
+PUSER_ID:
+COMMENT_CATNEST_ID: 16
+USER_ID: 1545
+
+<> 2018-05-04T045931.404.html
+
+###
+
+GET http://http//s-425807918.vicp.io:40794/NJK/app/
+Accept: */*
+Cache-Control: no-cache
+CATNEST_ID: 7
+MESSAGE: 哈哈哈
+PUSER_ID:
+COMMENT_CATNEST_ID: 16
+USER_ID: 1545
+
+###
+

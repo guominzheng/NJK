@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_CriticalMapper">
+    <select id="findAllCal" parameterType="pd" resultType="pd">
+          SELECT
+            c.cal_id,
+            c.cal_message,
+            c.cal_recordId,
+            c.createTime,
+            c.cal_type,
+            c.cal_userId,
+            c.cal_puserId,
+            c.cal_pcalId,
+            s1.cr_userImg as userImg,
+            s1.cr_userName as userName,
+            s2.cr_userImg as puserImg,
+            s2.cr_userName as puserName
+          FROM
+             wx_classroom_critical c
+          LEFT JOIN
+              wx_classroom_user s1
+          ON
+              c.cal_userId = s1.cr_userid
+           LEFT JOIN
+              wx_classroom_user s2
+          ON
+              c.cal_puserId = s2.cr_userid
+          <where>
+              <if test="record_id != null">
+                  AND  c.cal_recordId = #{record_id}
+              </if>
+              <if test="userId != null">
+                  AND  c.cal_puserId = #{userId}
+              </if>
+          </where>
+    </select>
+
+    <select id="findAllCallistPage" parameterType="page" resultType="pd">
+        SELECT
+        c.cal_id,
+        c.cal_message,
+        c.cal_recordId,
+        c.createTime,
+        c.cal_type,
+        c.cal_userId,
+        c.cal_puserId,
+        c.cal_pcalId,
+        s1.cr_userImg as userImg,
+        s1.cr_userName as userName,
+        s2.cr_userImg as puserImg,
+        s2.cr_userName as puserName
+        FROM
+        wx_classroom_critical c
+        LEFT JOIN
+        wx_classroom_user s1
+        ON
+        c.cal_userId = s1.cr_userid
+        LEFT JOIN
+        wx_classroom_user s2
+        ON
+        c.cal_puserId = s2.cr_userid
+        <where>
+            <if test="pd.record_id != null">
+                AND  c.cal_recordId = #{pd.record_id}
+            </if>
+            <if test="pd.userId != null">
+                AND  c.cal_puserId = #{pd.userId}
+            </if>
+        </where>
+        ORDER BY  c.createTime DESC
+    </select>
+
+
+    <select id="findCalById" parameterType="pd" resultType="pd">
+          SELECT
+            cal_id,
+            cal_message as message,
+            createTime,
+            cal_userId,
+            cal_recordId,
+            cal_puserId,
+            cal_pcalId,
+            cal_type
+          FROM
+          wx_classroom_critical
+          WHERE
+          cal_id = #{cal_id}
+    </select>
+
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_critical
+        (
+          cal_message,
+          cal_recordId,
+          cal_liveId,
+          cal_userId,
+          createTime,
+          cal_puserId,
+          cal_pcalId,
+          cal_type,
+          cal_good,
+          cal_gap,
+          cal_state
+        )
+        VALUE
+        (
+          #{cal_message},
+          #{cal_recordId},
+          #{cal_liveId},
+          #{cal_userId},
+          #{createTime},
+          #{cal_puserId},
+          #{cal_pcalId},
+          #{cal_type},
+          #{cal_good},
+          #{cal_gap},
+          #{cal_state}
+        )
+    </insert>
+
+    <delete id="delete" parameterType="pd">
+        DELETE
+        FROM
+        wx_classroom_critical
+        WHERE
+        cal_id = #{cal_id}
+    </delete>
+
+    <update id="updateAll" parameterType="pd">
+        UPDATE
+          wx_classroom_critical
+        SET
+          cal_state = 2
+        WHERE
+          cal_userId = #{userId}
+    </update>
+
+    <select id="findCalCount" parameterType="pd" resultType="pd">
+        SELECT
+          count(1) as count
+        FROM
+          wx_classroom_critical
+        WHERE
+          cal_puserId = #{userId}
+        AND
+          cal_state = 1
+    </select>
+</mapper>

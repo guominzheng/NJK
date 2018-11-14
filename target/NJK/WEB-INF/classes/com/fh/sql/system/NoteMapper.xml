@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NoteMapper">
+    <insert id="save" parameterType="pd">
+        insert into note(
+            NOTE_ID,
+            NOTE,
+            USER_ID
+        )values(
+            #{NOTE_ID},
+            #{NOTE},
+            #{USER_ID}
+        )
+    </insert>
+    
+    <update id="edit" parameterType="pd">
+        update note
+        SET NOTE=#{NOTE}
+        where NOTE_ID=#{NOTE_ID}
+    </update>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+            NOTE_ID,
+            NOTE,
+            USER_ID
+        from note
+        where NOTE_ID=#{NOTE_ID}
+    </select>
+    
+     <select id="findByUId" parameterType="pd" resultType="pd">
+        select
+            NOTE_ID,
+            NOTE,
+            USER_ID
+        from note
+        where USER_ID=#{USER_ID}
+    </select>
+</mapper>

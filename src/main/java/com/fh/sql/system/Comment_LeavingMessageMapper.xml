@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Comment_LeavingMessageMapper">
+    <insert id="save" parameterType="pd">
+		insert into comment_leaving_message(
+			USER_ID,
+			NAME,
+			LEAVING_MESSAGE_ID,
+			MESSAGE,
+			PUSER_ID,
+			PNAME,
+			DATE,
+			STATUS,
+			VIEWS,
+			YUE,
+			PID,
+			HSTATUS,
+			BSTATUS,
+			HUIFUS
+		)values(
+			#{USER_ID},
+			#{NAME},
+			#{LEAVING_MESSAGE_ID},
+			#{MESSAGE},
+			#{PUSER_ID},
+			#{PNAME},
+			#{DATE},
+			#{STATUS},
+			#{VIEWS},
+			#{YUE},
+			#{PID},
+			#{HSTATUS},
+			#{BSTATUS},
+			#{HUIFUS}
+		)
+	</insert>
+
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+        COMMENT_LEAVING_MESSAGE_ID,
+        USER_ID,
+        NAME,
+        LEAVING_MESSAGE_ID,
+        MESSAGE,
+        PUSER_ID,
+        PNAME,
+        DATE,
+        STATUS,
+        VIEWS,
+        YUE,
+        PID,
+        HSTATUS,
+        BSTATUS,
+		HUIFUS
+        from comment_leaving_message
+        where LEAVING_MESSAGE_ID=#{pd.LEAVING_MESSAGE_ID} and BSTATUS='0'
+        <if test="pd.STATUS!=1">
+            ORDER BY DATE DESC
+        </if>
+        <if test="pd.STATUS==1">
+            ORDER BY HSTATUS DESC,DATE DEST
+        </if>
+    </select>
+
+    <update id="editHStatus" parameterType="pd">
+		update comment_leaving_message
+		SET HSTATUS=#{HSTATUS}
+		where COMMENT_LEAVING_MESSAGE_ID=#{COMMENT_LEAVING_MESSAGE_ID}	
+	</update>
+
+    <select id="dataslistPage" parameterType="pd" resultType="pd">
+		select
+			COMMENT_LEAVING_MESSAGE_ID,
+			USER_ID,
+			NAME,
+			LEAVING_MESSAGE_ID,
+			MESSAGE,
+			PUSER_ID,
+			PNAME,
+			DATE,
+			STATUS,
+			VIEWS,
+			YUE,
+			PID,
+			HSTATUS,
+			BSTATUS,
+			HUIFUS
+		from comment_leaving_message
+		where USER_ID=#{USER_ID}
+		ORDER BY DATE DESC
+	</select>
+
+    <select id="findBList" parameterType="pd" resultType="pd">
+		select
+			c.COMMENT_LEAVING_MESSAGE_ID,
+			c.USER_ID,
+			c.NAME,
+			c.LEAVING_MESSAGE_ID,
+			c.MESSAGE,
+			c.PUSER_ID,
+			c.PNAME,
+			c.DATE,
+			c.STATUS,
+			c.VIEWS,
+			c.YUE,
+			c.PID,
+			c.HSTATUS,
+			c.BSTATUS,
+			c.HUIFUS
+		from comment_leaving_message c
+		where c.LEAVING_MESSAGE_ID=#{LEAVING_MESSAGE_ID} and c.BSTATUS='1'
+		ORDER BY c.DATE DESC
+	</select>
+
+    <select id="findLists" parameterType="pd" resultType="pd">
+		select
+			COMMENT_LEAVING_MESSAGE_ID,
+			USER_ID,
+			NAME,
+			LEAVING_MESSAGE_ID,
+			MESSAGE,
+			PUSER_ID,
+			PNAME,
+			DATE,
+			STATUS,
+			VIEWS,
+			YUE,
+			PID,
+			HSTATUS,
+			BSTATUS,
+			HUIFUS
+		from comment_leaving_message
+		where LEAVING_MESSAGE_ID=#{LEAVING_MESSAGE_ID}
+		limit 1
+	</select>
+
+    <select id="datasslistPage" parameterType="page" resultType="pd">
+		select
+			c.COMMENT_LEAVING_MESSAGE_ID,
+			c.USER_ID,
+			u.NAME,
+			c.LEAVING_MESSAGE_ID,
+			c.MESSAGE,
+			c.PUSER_ID,
+			c.PNAME,
+			c.DATE,
+			c.STATUS,
+			c.VIEWS,
+			c.YUE,
+			c.PID,
+			c.HSTATUS,
+			c.BSTATUS,
+			c.HUIFUS,
+			ui.IMG
+		from comment_leaving_message c
+		LEFT JOIN sys_app_user u on u.USER_ID=c.USER_ID
+		LEFT JOIN sys_app_userinfo ui  on ui.USER_ID=c.USER_ID
+		where c.LEAVING_MESSAGE_ID=#{pd.LEAVING_MESSAGE_ID}
+		ORDER BY c.VIEWS DESC , c.DATE ASC
+	</select>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+			SELECT
+			m.COMMENT_LEAVING_MESSAGE_ID,
+			m.USER_ID,
+			u.NAME,
+			m.LEAVING_MESSAGE_ID,
+			m.MESSAGE,
+			m.PUSER_ID,
+			m.PNAME,
+			m.DATE,
+			m.STATUS,
+			m.VIEWS,
+			m.YUE,
+			m.PID,
+			m.HSTATUS,
+			m.BSTATUS,
+			m.HUIFUS
+			from comment_leaving_message m
+			LEFT JOIN
+			sys_app_user u
+			ON
+			u.USER_ID = m.USER_ID
+			WHERE
+			COMMENT_LEAVING_MESSAGE_ID=#{COMMENT_LEAVING_MESSAGE_ID}
+	</select>
+
+
+	<update id="editHUIFUSjia" parameterType="pd">
+		UPDATE
+		comment_leaving_message
+		SET
+		HUIFUS=HUIFUS+1
+		WHERE
+		COMMENT_LEAVING_MESSAGE_ID=#{COMMENT_LEAVING_MESSAGE_ID}
+	</update>
+	<update id="editHUIFUSjian" parameterType="pd">
+		UPDATE
+		comment_leaving_message
+		SET
+		HUIFUS=HUIFUS-1
+		WHERE
+		COMMENT_LEAVING_MESSAGE_ID=#{COMMENT_LEAVING_MESSAGE_ID}
+	</update>
+
+
+
+	<update id="editViewsJia" parameterType="pd">
+		UPDATE
+		comment_leaving_message
+		SET
+		VIEWS=VIEWS+1
+		WHERE
+		COMMENT_LEAVING_MESSAGE_ID=#{COMMENT_LEAVING_MESSAGE_ID}
+	</update>
+	<update id="editViewsJian" parameterType="pd">
+		UPDATE
+		comment_leaving_message
+		SET
+		VIEWS=VIEWS-1
+		WHERE
+		COMMENT_LEAVING_MESSAGE_ID=#{COMMENT_LEAVING_MESSAGE_ID}
+	</update>
+</mapper>

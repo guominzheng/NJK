@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Sys_cityMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into SYS_CITY(
+			ID,	
+			NAME,	
+			PID
+		) values (
+			#{ID},	
+			#{NAME},	
+			#{PID}
+		)
+	</insert>
+	
+	<!-- 通过父ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			ID,	
+			NAME,	
+			PID
+		from 
+			SYS_CITY
+		where 
+			PID = #{PID}
+	</select>		
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.ID,	
+				a.NAME,	
+				a.PID
+		from 
+				SYS_CITY a
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.ID,	
+				a.NAME,	
+				a.PID
+		from 
+				SYS_CITY a
+		<where>
+			<if test="PID != null and PID != null">
+				and a.PID = #{PID}
+			</if>
+			<if test="ID!=null and ID!=''">
+				and a.PID=#{ID}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 列表(全部) -->
+    <select id="listAll1" parameterType="pd" resultType="pd">
+        select
+                a.ID,   
+                a.NAME, 
+                a.PID
+        from 
+                SYS_CITY a
+           where a.PID = #{PROVINCE}
+    </select>
+    
+        <select id="listAll2" parameterType="pd" resultType="pd">
+        select
+                a.ID,   
+                a.NAME, 
+                a.PID
+        from 
+                SYS_CITY a
+           where a.PID = #{CITY}
+    </select>
+		<!-- 通过父ID获取数据 -->
+	<select id="findId" parameterType="pd" resultType="pd">
+		select 
+			ID,	
+			NAME,	
+			PID
+		from 
+			SYS_CITY
+		where 
+			ID = #{PID}
+	</select>		
+	<!-- 列表 -->
+	
+		<!-- 通过父ID获取数据 -->
+	<select id="findByPId" parameterType="pd" resultType="pd">
+		select 
+			ID,	
+			NAME,	
+			PID
+		from 
+			SYS_CITY
+		where 
+			PID = #{PID}
+	</select>	
+	
+	
+	<select id="findProvince" parameterType="pd" resultType="pd">
+		select 
+			ID,	
+			NAME,	
+			PID
+		from 
+			SYS_CITY
+		where 
+			NAME = #{PROVINCE} and PID=0
+	</select>	
+</mapper>

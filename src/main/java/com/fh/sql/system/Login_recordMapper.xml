@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Login_recordMapper">
+    <insert id="save" parameterType="pd">
+        insert into login_record(
+            LOGIN_RECORD_ID,
+            DATE,
+            NIAN1,
+            YUE,
+            USER_ID,
+            TIME
+        )values(
+            #{LOGIN_RECORD_ID},
+            #{DATE},
+            #{NIAN1},
+            #{YUE},
+            #{USER_ID},
+            #{TIME}
+        )
+    </insert>
+    
+    
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        SELECT 
+        count(*) as cont1,
+        DATE
+        from login_record 
+        GROUP BY DATE
+        ORDER BY DATE DESC
+    </select>
+    
+    <select id="userlistPage" parameterType="page" resultType="pd">
+        select
+            l.LOGIN_RECORD_ID,
+            l.DATE,
+            l.NIAN1,
+            l.YUE,
+            l.USER_ID,
+            l.TIME,
+            u.USERNAME,
+            u.NAME
+        from login_record l
+        LEFT JOIN sys_app_user u on u.USER_ID=l.USER_ID
+        <where>
+            <if test="pd.DATE!=null and pd.DATE!=''">
+                l.DATE=#{pd.DATE}
+            </if>
+        </where>
+        ORDER BY TIME DESC
+    </select>
+    
+    
+    <select id="renshulistPage" parameterType="page" resultType="pd">
+    	SELECT
+			l.LOGIN_RECORD_ID,
+			l.DATE,
+			l.NIAN1,
+			l.YUE,
+			l.USER_ID,
+			l.TIME,
+			u.USERNAME,
+			u.NAME,
+			count(*) as counts
+		FROM
+			login_record l
+			LEFT JOIN sys_app_user u ON u.USER_ID = l.USER_ID
+			where l.DATE=#{pd.DATE}
+			GROUP BY USER_ID
+			ORDER BY counts DESC
+    </select>
+    
+        <select id="findYDuiBi" parameterType="pd" resultType="pd">
+        SELECT 
+        count(*) as cont1,
+        YUE 
+        from login_record 
+        where NIAN1=#{NIAN1}
+        GROUP BY YUE
+        ORDER BY YUE
+    </select>
+    
+        <select id="findListDate" parameterType="pd" resultType="pd">
+        SELECT  count(*) as cont1 from login_record where DATE &gt;= #{KAISHI} and  DATE &lt;= #{END} 
+    </select>
+    
+     <select id="findTDate" parameterType="pd" resultType="pd">
+       SELECT count(*) as cont1,IFNULL(DATE,#{DATE}) AS DATE from login_record where DATE=#{DATE}
+    </select>
+ 
+</mapper>

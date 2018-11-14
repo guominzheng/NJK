@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_RecordMapper">
+    <!-- 聊天室消息内容记录表 -->
+    <resultMap id="liveBase" type="com.fh.entity.vo.LiveRecord">
+        <id property="record_id" column="record_id"/>
+        <result property="userName" column="NAME"/>
+        <result property="img" column="IMG"/>
+        <result property="message" column="record_message"/>
+        <result property="audio_text" column="audio_text"/>
+        <result property="size" column="record_size"/>
+        <result property="createTime" column="createTime"/>
+        <result property="teacher" column="teacher"/>
+        <result property="doom" column="doom"/>
+        <result property="userId" column="record_userId"/>
+    </resultMap>
+
+    <select id="findLiveRecordList" parameterType="pd" resultMap="liveBase">
+        SELECT
+          u.cr_userName as NAME,
+          u.cr_userImg as IMG,
+          r.record_message,
+          r.audio_text,
+          r.record_size,
+          r.createTime,
+          r.record_userId,
+          r.teacher,
+          r.doom
+        FROM
+        wx_classroom_record r
+        LEFT JOIN
+        wx_classroom_user u
+        ON
+        r.record_userId = u.cr_userid
+        LEFT JOIN
+        sys_app_user s
+        ON
+        s.USER_ID = u.cr_bind
+        left JOIN
+        sys_app_userinfo b
+        ON
+        s.USER_ID = b.USER_ID
+        WHERE
+        teacher = 'true'
+        AND
+        record_liveId = #{liveId}
+    </select>
+    <select id="findTeacherRecordList" parameterType="pd" resultMap="liveBase">
+        SELECT
+        u.cr_userName as NAME,
+        u.cr_userImg as IMG,
+        r.record_message,
+        r.audio_text,
+        r.record_size,
+        r.createTime,
+         r.record_userId,
+        r.teacher,
+        r.doom
+        FROM
+        wx_classroom_record r
+        LEFT JOIN
+        wx_classroom_user u
+        ON
+        r.record_userId = u.cr_userid
+        LEFT JOIN
+        sys_app_user s
+        ON
+        s.USER_ID = u.cr_bind
+        left JOIN
+        sys_app_userinfo b
+        ON
+        s.USER_ID = b.USER_ID
+        WHERE
+        audio_text = 2
+        AND
+        audio_text = 3
+        AND
+        teacher = 'true'
+        AND
+        record_liveId = #{liveId}
+    </select>
+
+
+    <select id="findLiveRecordListByLivelistPage" parameterType="page" resultMap="liveBase">
+        SELECT
+        r.record_id,
+         u.cr_userName as NAME,
+          u.cr_userImg as IMG,
+        r.record_message,
+        r.audio_text,
+         r.record_userId,
+        r.record_size,
+        r.createTime,
+        r.teacher,
+        r.doom
+        FROM
+        wx_classroom_record r
+        LEFT JOIN
+        wx_classroom_user u
+        ON
+        r.record_userId = u.cr_userid
+        LEFT JOIN
+        sys_app_user s
+        ON
+        s.USER_ID = u.cr_bind
+        left JOIN
+        sys_app_userinfo b
+        ON
+        s.USER_ID = b.USER_ID
+        WHERE
+        audio_text = 2
+        AND
+        record_liveId = #{pd.live_id} and record_message != '进入了直播间' AND teacher='false'
+        ORDER BY r.createTime DESC
+    </select>
+    <select id="findRecordById" parameterType="pd" resultType="pd">
+        SELECT
+          record_id,
+          record_userId,
+          record_liveId,
+          record_message as message
+        FROM
+        wx_classroom_record
+        WHERE
+          record_id = #{record_id}
+    </select>
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_record
+        (
+        record_message,
+        record_userId,
+        createTime,
+        updateTime,
+        audio_text,
+        record_liveId,
+        record_size,
+        teacher,
+        doom
+        )
+        VALUES
+        (
+        #{record_message},
+        #{record_userId},
+        #{createTime},
+        #{updateTime},
+        #{audio_text},
+        #{record_liveId},
+        #{record_size},
+        #{teacher},
+        #{doom}
+        )
+    </insert>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Zan_SpecialMapper">
+    <insert id="save" parameterType="pd">
+        insert into zan_special(
+            FID,
+            USER_ID
+        )values(
+            #{FID},
+            #{USER_ID}
+        )
+    </insert>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+            FID,
+            USER_ID
+        from zan_special
+        where FID=#{FID} and USER_ID=#{USER_ID}
+    </select>
+    
+    
+    <delete id="delete" parameterType="pd">
+        delete from zan_special where FID=#{FID} and USER_ID=#{USER_ID}
+    </delete>
+</mapper>

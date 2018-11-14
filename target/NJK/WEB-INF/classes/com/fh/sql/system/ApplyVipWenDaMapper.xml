@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ApplyVipWenDaMapper">
+    <insert id="save" parameterType="pd">
+        insert into apply_vip_wenda(
+        APPLYVIP_ID_WENDA,
+        USER_ID,
+        NAME,
+        PHONE,
+        ZHIYE,
+        ADDRESS,
+        APPLY_DATE,
+        QQ,
+        CROP,
+        SEEK,
+        PRODUCT_ID
+        )values(
+        #{APPLYVIP_ID_WENDA},
+        #{USER_ID},
+        #{NAME},
+        #{PHONE},
+        #{ZHIYE},
+        #{ADDRESS},
+        #{APPLY_DATE},
+        #{QQ},
+        #{CROP},
+        #{SEEK},
+        #{PRODUCT_ID}
+        )
+    </insert>
+
+
+    <delete id="deleteA" parameterType="pd">
+        delete from apply_vip_wenda where USER_ID=#{USER_ID}
+    </delete>
+    <delete id="delete" parameterType="pd">
+        delete from apply_vip_wenda where APPLYVIP_ID_WENDA=#{APPLYVIP_ID_WENDA}
+    </delete>
+
+
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+        a.APPLYVIP_ID_WENDA,
+        a.USER_ID,
+        a.NAME,
+        a.PHONE,
+        a.ZHIYE,
+        a.ADDRESS,
+        a.APPLY_DATE,
+        a.QQ,
+        a.CROP,
+        a.SEEK,
+        u.USERNAME,
+        u.NAME NAME1,
+        u.VIP,
+        p.PRODUCT_NAME
+        from apply_vip_wenda a
+        LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+        LEFT JOIN product p ON  p.PRODUCT_ID =a.PRODUCT_ID
+        <where>
+            <if test="pd.KEYWORD != null and pd.KEYWORD != ''"><!-- 关键词检索 -->
+                and
+                (
+                a.NAME LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+                or
+                a.PHONE LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+                or
+                u.USERNAME LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+                )
+            </if>
+            <if test="pd.lastLoginStart!=null and pd.lastLoginStart!=''"><!-- 下单时间检索 -->
+                and a.APPLY_DATE &gt;= #{pd.lastLoginStart}
+            </if>
+            <if test="pd.lastLoginEnd!=null and pd.lastLoginEnd!=''"><!-- 下单时间检索 -->
+                and a.APPLY_DATE &lt;= #{pd.lastLoginEnd}
+            </if>
+            <if test="pd.VIP!=null and pd.VIP!=''">
+                and u.VIP=#{pd.VIP}
+            </if>
+            <!-- <if test="pd.VIP==null or pd.VIP==''">
+                 and u.VIP=2
+            </if> -->
+        </where>
+        ORDER BY a.APPLY_DATE DESC
+    </select>
+    <select id="findList" parameterType="pd" resultType="pd">
+    select
+    a.APPLYVIP_ID_WENDA,
+    a.USER_ID,
+    a.NAME,
+    a.PHONE,
+    a.ZHIYE,
+    a.ADDRESS,
+    a.APPLY_DATE,
+    a.QQ,
+    a.CROP,
+    a.SEEK,
+    u.USERNAME,
+    u.NAME NAME1,
+    u.VIP,
+    p.PRODUCT_NAME
+    from apply_vip_wenda a
+    LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+    LEFT JOIN product p ON  p.PRODUCT_ID =a.PRODUCT_ID
+    </select>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+        a.APPLYVIP_ID_WENDA,
+        a.USER_ID,
+        a.NAME,
+        a.PHONE,
+        a.ZHIYE,
+        a.ADDRESS,
+        a.APPLY_DATE,
+        a.QQ,
+        a.PRODUCT_ID,
+        a.CROP,
+        a.SEEK,
+        u.USERNAME,
+        u.NAME NAME1,
+        i.VIP
+        from apply_vip_wenda a
+        LEFT JOIN sys_app_user u on u.USER_ID=a.USER_ID
+        LEFT JOIN sys_app_userinfo i on i.USER_ID=u.USER_ID
+        where a.APPLYVIP_ID_WENDA=#{APPLYVIP_ID_WENDA}
+    </select>
+</mapper>

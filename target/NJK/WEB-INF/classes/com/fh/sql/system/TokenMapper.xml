@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TokenMapper">
+    <insert id="save" parameterType="pd">
+        insert into token(
+            token,
+            DATE
+        )values(
+            #{token},
+            #{DATE}
+        )
+    </insert>
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+            token,
+            DATE
+        from token
+        ORDER BY DATE DESC
+        limit 1
+    </select>
+    
+     <update id="edit" parameterType="pd">
+        update token
+        SET token=#{token},
+            DATE=#{DATE}
+    </update>
+</mapper>

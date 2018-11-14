@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TiWenMapper">
+    <insert id="save" parameterType="pd">
+        insert into tiwen(
+            TIWEN_ID,
+            MESSAGE,
+            USER_ID,
+            HUIFU,
+            VIEWS,
+            DATE,
+            YUE,
+            ADDRESS,
+            STATUS,
+            SHENCHA
+        )values(
+            #{TIWEN_ID},
+            #{MESSAGE},
+            #{USER_ID},
+            #{HUIFU},
+            #{VIEWS},
+            #{DATE},
+            #{YUE},
+            #{ADDRESS},
+            #{STATUS},
+            #{SHENCHA}
+        )
+    </insert>
+
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+        t.TIWEN_ID,
+        t.MESSAGE,
+        t.USER_ID,
+        t.HUIFU,
+        t.VIEWS,
+        t.DATE,
+        t.YUE,
+        t.ADDRESS,
+        t.STATUS,
+        a.NAME,
+        u.IMG,
+        t.SHENCHA
+        from tiwen t
+        LEFT JOIN sys_app_user a on a.USER_ID=t.USER_ID
+        LEFT JOIN sys_app_userinfo u on u.USER_ID=t.USER_ID
+        WHERE
+        1=1
+        <if test="pd.SHENCHA != null and pd.SHENCHA != '' ">
+            and t.SHENCHA=#{pd.SHENCHA}
+        </if>
+        ORDER BY t.DATE DESC
+    </select>
+
+    <select id="data2listPage" parameterType="page" resultType="pd">
+        select
+            t.TIWEN_ID,
+            t.MESSAGE,
+            t.USER_ID,
+            t.DATE,
+            t.YUE,
+            t.ADDRESS,
+            t.STATUS,
+            a.NAME,
+            (SELECT COUNT(*) from zan_tiwen where TIWEN_ID=t.TIWEN_ID) as VIEWS,
+		    (SELECT COUNT(*) from comment_tiwen where TIWEN_ID=t.TIWEN_ID and STATUS='0') as HUIFU,
+            u.IMG
+        from tiwen t
+        LEFT JOIN sys_app_user a on a.USER_ID=t.USER_ID
+        LEFT JOIN sys_app_userinfo u on u.USER_ID=t.USER_ID
+        ORDER BY t.DATE DESC
+    </select>
+
+    <select id="userlistPage" parameterType="page" resultType="pd">
+        select
+            t.TIWEN_ID,
+            t.MESSAGE,
+            t.USER_ID,
+            t.DATE,
+            t.YUE,
+            t.ADDRESS,
+            t.STATUS,
+            a.NAME,
+            (SELECT COUNT(*) from zan_tiwen where TIWEN_ID=t.TIWEN_ID) as VIEWS,
+		    (SELECT COUNT(*) from comment_tiwen where TIWEN_ID=t.TIWEN_ID and STATUS='0') as HUIFU,
+            u.IMG
+        from tiwen t
+        LEFT JOIN sys_app_user a on a.USER_ID=t.USER_ID
+        LEFT JOIN sys_app_userinfo u on u.USER_ID=t.USER_ID
+        where t.USER_ID=#{pd.USER_ID}
+        ORDER BY t.DATE DESC
+    </select>
+
+    <delete id="delete" parameterType="pd">
+        delete from tiwen where TIWEN_ID=#{TIWEN_ID}
+    </delete>
+
+    <!-- 批量删除 -->
+    <delete id="deleteAll" parameterType="String">
+        delete from tiwen
+        where
+        TIWEN_ID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+            t.TIWEN_ID,
+            t.MESSAGE,
+            t.USER_ID,
+            t.DATE,
+            t.YUE,
+            t.ADDRESS,
+            t.STATUS,
+            (SELECT COUNT(*) from zan_tiwen where TIWEN_ID=t.TIWEN_ID) as VIEWS,
+		     (SELECT COUNT(*) from comment_tiwen where TIWEN_ID=t.TIWEN_ID and STATUS='0') as HUIFU,
+            a.NAME,
+            u.IMG
+        from tiwen t
+        LEFT JOIN sys_app_user a on a.USER_ID=t.USER_ID
+        LEFT JOIN sys_app_userinfo u on u.USER_ID=t.USER_ID  
+        where t.TIWEN_ID=#{TIWEN_ID}
+        ORDER BY t.DATE DESC
+    </select>
+
+    <update id="editHuiFu" parameterType="pd">
+        update tiwen
+        SET HUIFU=#{HUIFU}
+        where TIWEN_ID=#{TIWEN_ID}
+    </update>
+
+    <update id="editViews" parameterType="pd">
+        update tiwen
+        SET VIEWS=#{VIEWS}
+        where TIWEN_ID=#{TIWEN_ID}
+    </update>
+
+    <update id="editUserId" parameterType="pd">
+    	update tiwen
+    	SET USER_ID=#{USER_ID}
+    	where USER_ID=#{USER_ID1}
+    </update>
+
+    <update id="updateAll" parameterType="pd">
+        update
+        tiwen
+        SET
+        SHENCHA='1'
+        where
+        TIWEN_ID in
+        <foreach item="item" index="index" collection="array" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="editSHENCHA" parameterType="pd">
+        update
+        tiwen
+        SET
+        SHENCHA='1'
+        where
+        TIWEN_ID =#{TIWEN_ID}
+    </update>
+
+    <select id="dataslistPage" parameterType="page" resultType="pd">
+        select
+            t.TIWEN_ID,
+            t.MESSAGE,
+            t.USER_ID,
+            t.HUIFU,
+            t.VIEWS,
+            t.DATE,
+            t.YUE,
+            t.ADDRESS,
+            t.STATUS,
+            a.NAME,
+            u.IMG
+        from tiwen t
+        LEFT JOIN sys_app_user a on a.USER_ID=t.USER_ID
+        LEFT JOIN sys_app_userinfo u on u.USER_ID=t.USER_ID
+        where t.STATUS='1'
+        ORDER BY t.DATE DESC
+    </select>
+
+    <!-- 混查所有的提问和研究院帖子-->
+    <select id="TIRElistPage" parameterType="page" resultType="pd">
+SELECT
+	base.ID,
+	base. SUBJECT,
+	base.MESSAGE,
+	base.DATE,
+	base.HUIFU,
+	base.VIEWS,
+	base.USER_ID,
+	base.t_o_r,
+	base.ADDRESS,
+	base.PRO_NAME,
+	base.SHENCHA
+FROM
+	(
+		SELECT
+			t.TIWEN_ID 'ID',
+			'' AS 'SUBJECT',
+			t.MESSAGE,
+			t.DATE,
+			'0' AS HUIFU,
+			'0' AS VIEWS,
+			t.USER_ID,
+			't' AS t_o_r,
+			t.ADDRESS,
+			'' AS PRO_NAME,
+			SHENCHA
+		FROM
+			tiwen t
+		LEFT JOIN sys_app_user u ON u.USER_ID = t.USER_ID
+		UNION
+			SELECT
+				r.RESEARCH_ID 'ID',
+				r.`SUBJECT` 'SUBJECT',
+				r.MESSAGE,
+				r.DATE,
+				r.HUIFU,
+				r.VIEWS,
+				r.USER_ID,
+				'r' AS t_o_r,
+				r.ADDRESS,
+				p.PRODUCT_NAME AS PRO_NAME,
+				SHENCHA
+			FROM
+				research r
+			LEFT JOIN sys_app_user u ON u.USER_ID = r.USER_ID
+			LEFT JOIN product p ON p.PRODUCT_ID = r.PRODUCT_ID
+			UNION
+				SELECT
+					p.PRODUCT_ID 'ID',
+					'' AS 'SUBJECT',
+					p.IMG 'MESSAGE',
+					P.CREATE_DATE AS DATE,
+					'0' AS HUIFU,
+					'0' AS VIEWS,
+					'' AS USER_ID,
+					'c' AS t_o_r,
+					'' AS 'ADDRESS',
+					'' AS PRO_NAME,
+					'0' AS SHENCHA
+				FROM
+					product p
+				WHERE
+					p.TAOCAN = '1'
+	) base
+ORDER BY
+	base.DATE DESC
+    </select>
+
+
+</mapper>

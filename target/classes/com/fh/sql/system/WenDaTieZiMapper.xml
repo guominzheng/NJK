@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="WenDaTieZiMapper">
+	<insert id="save" parameterType="pd">
+		insert into wenda_tiezi(
+			IMG,
+			MESSAGE,
+			STATUS,
+			URL,
+			ID,
+			ORDE_BY,
+			SUBJECT,
+			SHUZI,
+			DATE,
+			GSTATUS,
+			FIMG,
+			JIANJIE
+		)values(
+			#{IMG},
+			#{MESSAGE},
+			#{STATUS},
+			#{URL},
+			#{ID},
+			#{ORDE_BY},
+			#{SUBJECT},
+			#{SHUZI},
+			#{DATE},
+			#{GSTATUS},
+			#{FIMG},
+			#{JIANJIE}
+		)
+	</insert>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+		select
+			WENDA_TIEZI_ID,
+			IMG,
+			MESSAGE,
+			STATUS,
+			URL,
+			ID,
+			ORDE_BY,
+			SUBJECT,
+			SHUZI,
+			DATE,
+			GSTATUS,
+			FIMG,
+			JIANJIE
+		from wenda_tiezi
+		where GSTATUS='0'
+		ORDER BY ORDE_BY
+	</select>
+	
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			WENDA_TIEZI_ID,
+			IMG,
+			MESSAGE,
+			STATUS,
+			URL,
+			ID,
+			ORDE_BY,
+			SUBJECT,
+			SHUZI,
+			DATE,
+			GSTATUS,
+			FIMG,
+			JIANJIE
+		from wenda_tiezi
+		where WENDA_TIEZI_ID=#{WENDA_TIEZI_ID}
+	</select>
+	
+	<update id="edit" parameterType="pd">
+		update wenda_tiezi
+		SET IMG=#{IMG},
+			MESSAGE=#{MESSAGE},
+			URL=#{URL},
+			ID=#{ID},
+			ORDE_BY=#{ORDE_BY},
+			SUBJECT=#{SUBJECT},
+			FIMG=#{FIMG},
+			STATUS=#{STATUS},
+			JIANJIE=#{JIANJIE}
+		where WENDA_TIEZI_ID=#{WENDA_TIEZI_ID}
+	</update>
+	
+	<select id="datalistPage" parameterType="pd" resultType="pd">
+		select
+			WENDA_TIEZI_ID,
+			IMG,
+			MESSAGE,
+			STATUS,
+			URL,
+			ID,
+			SUBJECT,
+			SHUZI,
+			DATE,
+			GSTATUS,
+			ORDE_BY,
+			JIANJIE
+		from wenda_tiezi
+		<where>
+			<if test="pd.KEYWORD!=null and pd.KEYWORD!=''">
+				and
+				(
+				 SUBJECT LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+				)
+			</if>
+		</where>
+		ORDER BY DATE DESC
+	</select>
+	
+	<update id="editShuZi" parameterType="pd">
+		update wenda_tiezi
+		SET SHUZI=SHUZI+1
+		where WENDA_TIEZI_ID=#{WENDA_TIEZI_ID}
+	</update>
+	
+	<update id="editGStatus" parameterType="pd">
+		update wenda_tiezi
+		SET GSTATUS='0'
+		where GSTATUS='1'
+	</update>
+	
+	<update id="editGStatuss" parameterType="pd">
+		update wenda_tiezi
+		SET GSTATUS='1'
+		where WENDA_TIEZI_ID=#{WENDA_TIEZI_ID}
+	</update>
+	
+	<delete id="delete" parameterType="pd">
+		delete from wenda_tiezi where WENDA_TIEZI_ID=#{WENDA_TIEZI_ID}
+	</delete>
+	
+	<select id="findGuang" parameterType="pd" resultType="pd">
+		select
+			WENDA_TIEZI_ID,
+			IMG,
+			MESSAGE,
+			STATUS,
+			URL,
+			ID,
+			ORDE_BY,
+			SUBJECT,
+			SHUZI,
+			DATE,
+			GSTATUS,
+			FIMG,
+			JIANJIE
+		from wenda_tiezi
+		where GSTATUS=#{GSTATUS}
+	</select>
+</mapper>

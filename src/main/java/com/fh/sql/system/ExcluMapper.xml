@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ExcluMapper">
+    <insert id="save" parameterType="pd">
+        insert into exclu(
+            EXCLU_ID,
+            PHONE,
+            NAME,
+            QQ,
+            WEIXIN,
+            IMG
+        )values(
+            #{EXCLU_ID},
+            #{PHONE},
+            #{NAME},
+            #{QQ},
+            #{WEIXIN},
+            #{IMG}
+        )
+    </insert>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+          select
+            EXCLU_ID,
+            PHONE,
+            NAME,
+            QQ,
+            WEIXIN,
+            IMG
+        from exclu
+        where EXCLU_ID=#{EXCLU_ID}
+    </select>
+    
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+            EXCLU_ID,
+            PHONE,
+            NAME,
+            QQ,
+            WEIXIN,
+            IMG
+        from exclu
+    </select>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+          select
+            EXCLU_ID,
+            PHONE,
+            NAME,
+            QQ,
+            WEIXIN,
+            IMG
+        from exclu
+    </select>
+    
+    <update id="edit" parameterType="pd">
+        update exclu
+        SET PHONE=#{PHONE},
+            NAME=#{NAME},
+            QQ=#{QQ},
+            WEIXIN=#{WEIXIN},
+            IMG=#{IMG},
+            EXCLU_ID=EXCLU_ID
+        where EXCLU_ID=#{EXCLU_ID}
+    </update>
+    
+    <delete id="delete" parameterType="pd">
+        delete from exclu where EXCLU_ID=#{EXCLU_ID}
+    </delete>
+
+
+    <select id="getZCount" parameterType="pd" resultType="pd">
+         select
+        IFNULL((select sum(o.MONEY) FROM order_info o,exclu e1,sys_app_user s2 WHERE s2.EXCLU_ID=e1.EXCLU_ID
+        AND o.USER_ID=s2.USER_ID AND o.STATUS!='10' and o.TIAN &gt;= #{KAISHI}  AND e1.EXCLU_ID=e.EXCLU_ID),0.0) ZMONEY,
+        e.NAME
+        from
+        exclu e
+        GROUP BY e.EXCLU_ID
+    </select>
+
+
+    <select id="getTCount" parameterType="pd" resultType="pd">
+        select
+        IFNULL((select sum(o.MONEY) FROM order_info o,exclu e1,sys_app_user s2 WHERE s2.EXCLU_ID=e1.EXCLU_ID
+        AND o.USER_ID=s2.USER_ID AND o.TIAN &gt;= #{TIAN}  AND e1.EXCLU_ID=e.EXCLU_ID),0.0) ZMONEY,
+        e.NAME
+        from
+        exclu e
+        GROUP BY e.EXCLU_ID
+    </select>
+
+    <select id="getYCount" parameterType="pd" resultType="pd">
+        select
+        IFNULL((select sum(o.MONEY) FROM order_info o,exclu e1,sys_app_user s2 WHERE s2.EXCLU_ID=e1.EXCLU_ID
+        AND o.USER_ID=s2.USER_ID AND o.YUE=#{YUE} and o.NIAN1=#{NIAN1}  AND e1.EXCLU_ID=e.EXCLU_ID),0.0) ZMONEY,
+        e.NAME
+        from
+        exclu e
+        GROUP BY e.EXCLU_ID
+    </select>
+</mapper>

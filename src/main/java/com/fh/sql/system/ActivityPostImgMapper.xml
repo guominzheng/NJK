@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ActivityPostImgMapper">
+    <insert id="save" parameterType="pd">
+        insert into activity_post_img(
+            ACTIVITY_POST_IMG_ID,
+            IMG,
+            ORDE_BY,
+            ACTIVITY_POST_ID
+        )values(
+            #{ACTIVITY_POST_IMG_ID},
+            #{IMG},
+            #{ORDE_BY},
+            #{ACTIVITY_POST_ID}
+        )
+    </insert>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+            ACTIVITY_POST_IMG_ID,
+            IMG,
+            ACTIVITY_POST_ID
+        from activity_post_img
+        where ACTIVITY_POST_ID=#{ACTIVITY_POST_ID}
+        ORDER BY ORDE_BY
+        limit 3
+    </select>
+    
+    <select id="findLists" parameterType="pd" resultType="pd">
+    	 select
+            ACTIVITY_POST_IMG_ID,
+            IMG,
+            ACTIVITY_POST_ID
+        from activity_post_img
+        where ACTIVITY_POST_ID=#{ACTIVITY_POST_ID}
+        ORDER BY ORDE_BY
+    </select>
+</mapper>

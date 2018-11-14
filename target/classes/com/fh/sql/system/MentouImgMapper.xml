@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MentouImgMapper">
+	<insert id="save" parameterType="pd">
+		insert into mentou_img(
+			MENTOU_IMG_ID,
+			MENTOU_IMG,
+			APPLYVIP_ID
+		)values(
+			#{MENTOU_IMG_ID},
+			#{MENTOU_IMG},
+			#{APPLYVIP_ID}
+		)
+	</insert>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+		select
+			MENTOU_IMG_ID,
+			MENTOU_IMG,
+			APPLYVIP_ID
+		from mentou_img
+		where APPLYVIP_ID=#{APPLYVIP_ID}
+	</select>
+</mapper>

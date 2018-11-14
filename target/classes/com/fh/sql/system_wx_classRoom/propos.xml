@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_ProposMapper">
+
+    <select id="findProposListlistPage" parameterType="page" resultType="pd">
+        SELECT
+        propos_id,
+        propos_userId,
+        createTime,
+        propos_status,
+        propos_userName,
+        propos_userPhone,
+        propos_title,
+        propos_text
+        FROM
+        wx_classroom_propos
+        <where>
+            <if test="pd.propos_userName != null and pd.propos_userName != '' ">
+                l.propos_userName LIKE CONCAT(CONCAT('%', #{pd.propos_userName}),'%')
+            </if>
+        </where>
+        ORDER BY createTime DESC
+    </select>
+
+    <select id="findProposById" parameterType="pd" resultType="pd">
+SELECT
+        propos_id,
+        propos_userId,
+        createTime,
+        propos_status,
+        propos_userName,
+        propos_userPhone,
+        propos_title,
+        propos_text
+        FROM
+        wx_classroom_propos
+        WHERE
+        propos_id = #{propos_id}
+    </select>
+    <update id="updateStatus" parameterType="pd">
+
+        UPDATE
+        wx_classroom_propos
+        SET
+        propos_status = #{propos_status}
+        WHERE
+        propos_id = #{propos_id}
+    </update>
+
+    <sql id="insert">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="propos_id != null">
+                propos_id,
+            </if>
+            <if test="propos_userId != null and propos_userId != '' and propos_userId != 0">
+                propos_userId,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="propos_status != null">
+                propos_status,
+            </if>
+            <if test="propos_userName != null">
+                propos_userName,
+            </if>
+            <if test="propos_userPhone != null">
+                propos_userPhone,
+            </if>
+            <if test="propos_title != null">
+                propos_title,
+            </if>
+            <if test="propos_text != null">
+                propos_text,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="propos_id != null">
+                #{propos_id},
+            </if>
+            <if test="propos_userId != null and propos_userId != '' and propos_userId != 0">
+                #{propos_userId},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="propos_status != null">
+                #{propos_status},
+            </if>
+            <if test="propos_userName != null">
+                #{propos_userName},
+            </if>
+            <if test="propos_userPhone != null">
+                #{propos_userPhone},
+            </if>
+            <if test="propos_title != null">
+                #{propos_title},
+            </if>
+            <if test="propos_text != null">
+                #{propos_text},
+            </if>
+        </trim>
+    </sql>
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_propos
+      <include refid="insert"/>
+    </insert>
+</mapper>

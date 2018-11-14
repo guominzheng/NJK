@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GameInviteMapper">
+    <select id="findInviteByUser" parameterType="pd" resultType="pd">
+        SELECT
+          count(1) as count
+        FROM
+        game_invite
+        WHERE
+        DATE_FORMAT(createTime,'%Y%m%d')=DATE_FORMAT(NOW(),'%Y%m%d')
+        AND
+       openId=#{openId}
+    </select>
+
+    <select id="findInviteByOpenId" parameterType="pd" resultType="pd">
+        SELECT
+          u.userName,
+          u.userImg,
+          u.openId,
+          i.openId_p
+        FROM
+        game_invite i
+        LEFT JOIN
+        game_user u
+        ON
+        i.openId_p = u.openId
+        WHERE
+        DATE_FORMAT(i.createTime,'%Y%m%d')=DATE_FORMAT(NOW(),'%Y%m%d')
+        AND
+        i.openId=#{openId}
+    </select>
+
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        game_invite
+        (
+        openId,
+        openId_p,
+        createTime
+        )
+        VALUES
+        (
+        #{openId},
+        #{openId_p},
+        #{createTime}
+        )
+
+    </insert>
+</mapper>

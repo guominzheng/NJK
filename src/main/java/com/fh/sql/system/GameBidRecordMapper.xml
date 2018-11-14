@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GameBidRecordMapper">
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        game_bidRecord
+        (
+          openId,
+          prizeName,
+          status,
+          giveTime,
+          prizeImg,
+          createTime,
+          `type`,
+          USER_ID
+        )VALUE (
+          #{openId},
+          #{prizeName},
+          #{status},
+          #{giveTime},
+          #{prizeImg},
+          #{createTime},
+          #{type},
+          #{USER_ID}
+        )
+    </insert>
+
+
+    <select id="findPrizeByUserlistPage" parameterType="page" resultType="pd">
+        SELECT
+        b.bidId,
+        u.userName,
+        b.createTime,
+        b.`status`,
+        b.giveTime,
+        b.prizeName,
+        b.prizeImg,
+        b.USER_ID,
+        su.USERNAME AS phone
+        FROM
+        `game_bidrecord` b
+        LEFT JOIN game_user u ON b.openId = u.openId
+        LEFT JOIN sys_app_user su ON b.USER_ID = su.USER_ID
+        WHERE
+        1=1
+        <if test="pd.openId != null and pd.openId != '' ">
+            AND b.openId=#{pd.openId}
+        </if>
+        <if test="pd.userName != null and pd.userName != '' ">
+           AND u.userName LIKE CONCAT(CONCAT('%', #{pd.userName}),'%')
+        </if>
+        <if test="pd.prizeName != null and pd.prizeName != '' ">
+            AND b.prizeName = #{pd.prizeName}
+        </if>
+        <if test="pd.status != null and pd.status != '' ">
+            AND b.`status` = #{pd.status}
+        </if>
+        <if test="pd.lastLoginStart != null and pd.lastEndStart == '' ">
+          AND  DATE_FORMAT(b.createTime,'%Y-%m-%d') &gt; #{pd.lastLoginStart}
+        </if>
+        <if test="pd.lastLoginStart == '' and pd.lastEndStart != null ">
+            AND DATE_FORMAT(b.createTime,'%Y-%m-%d') &lt; #{pd.lastEndStart}
+        </if>
+        <if test="pd.lastLoginStart != null and pd.lastEndStart != null and pd.lastLoginStart != '' and pd.lastEndStart != '' ">
+            AND  DATE_FORMAT(b.createTime,'%Y-%m-%d') &gt; #{pd.lastLoginStart}
+            AND  DATE_FORMAT(b.createTime,'%Y-%m-%d') &lt; #{pd.lastEndStart}
+        </if>
+        ORDER BY b.createTime DESC
+    </select>
+
+
+    <update id="update" parameterType="pd">
+        UPDATE
+        game_bidrecord
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="giveTime != null">
+                giveTime = #{giveTime},
+            </if>
+        </set>
+        WHERE
+        bidId=#{bidId}
+    </update>
+    <select id="findPrizeById" parameterType="pd" resultType="pd">
+        SELECT
+        b.bidId,
+        u.userName,
+        b.createTime,
+        b.`status`,
+        b.giveTime,
+        b.prizeName,
+        b.prizeImg,
+        b.USER_ID,
+        su.USERNAME AS phone
+        FROM
+        `game_bidrecord` b
+        LEFT JOIN game_user u ON b.openId = u.openId
+        LEFT JOIN sys_app_user su ON b.USER_ID = su.USER_ID
+        WHERE
+        b.bidId=#{bidId}
+    </select>
+</mapper>

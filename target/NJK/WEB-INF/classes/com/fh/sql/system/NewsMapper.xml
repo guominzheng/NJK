@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NewsMapper">
+     <insert id="save" parameterType="pd">
+        insert into news(
+            NEWS_ID,
+            ID,
+            MESSAGE,
+            NAME,
+            IMG,
+            DATE,
+            USER_ID,
+            SUBJECT,
+            STATUS,
+            USER_ID1,
+            url
+        )values(
+            #{NEWS_ID},
+            #{ID},
+            #{MESSAGE},
+            #{NAME},
+            #{IMG},
+            #{DATE},
+            #{USER_ID},
+            #{SUBJECT},
+            #{STATUS},
+            #{USER_ID1},
+            #{url}
+        )
+     </insert>
+
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+            n.NEWS_ID,
+            n.ID,
+            n.MESSAGE,
+            n.NAME,
+            n.IMG,
+            n.DATE,
+            n.USER_ID1 as USER_ID,
+            n.SUBJECT,
+            n.STATUS,
+            n.url
+        from news n
+        LEFT JOIN sys_app_user u on u.USER_ID=n.USER_ID
+        LEFT JOIN sys_app_userinfo i on i.USER_ID=u.USER_ID
+        where n.USER_ID=#{pd.USER_ID} and (n.STATUS='1' or n.STATUS='2' or n.STATUS='0' or n.STATUS='8')
+        ORDER BY n.DATE DESC
+     </select>
+
+    <select id="maolistPage" parameterType="page" resultType="pd">
+        select
+        n.NEWS_ID,
+        n.ID,
+        n.MESSAGE,
+        n.NAME,
+        n.IMG,
+        n.DATE,
+        n.USER_ID1 as USER_ID,
+        n.SUBJECT,
+        n.STATUS,
+        n.url,
+        u1.NAME AS HNAME,
+        i1.IMG AS HIMG
+        from news n
+        LEFT JOIN sys_app_user u on u.USER_ID=n.USER_ID
+        LEFT JOIN sys_app_userinfo i on i.USER_ID=u.USER_ID
+        LEFT JOIN sys_app_user u1 ON u1.USER_ID =n.USER_ID1
+        LEFT JOIN sys_app_userinfo i1 ON i1.USER_ID=n.USER_ID1
+        where n.USER_ID=#{pd.USER_ID} and (n.STATUS='3' or n.STATUS='4')
+        ORDER BY n.DATE DESC
+    </select>
+     
+		<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from news
+		where 
+			ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="pd">
+		delete from news where ID=#{TID}
+	</delete>
+</mapper>

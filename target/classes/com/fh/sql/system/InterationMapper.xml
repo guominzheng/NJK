@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="IntegrationMapper">
+<select id="findAllDatalistPage" parameterType="page" resultType="pd">
+    SELECT
+    *
+    FROM
+    integration
+    <where>
+        <if test="pd.key != null">
+            USERNAME = #{pd.key}
+            OR
+            `NAME` LIKE
+            CONCAT(CONCAT('%',#{pd.key}),'%')
+            OR
+            EXCLUName LIKE
+            CONCAT(CONCAT('%',#{pd.key}),'%')
+        </if>
+    </where>
+</select>
+    <select id="fdinDataById" parameterType="pd" resultType="pd">
+        SELECT
+        *
+        FROM
+        integration
+        WHERE
+        id = #{id}
+    </select>
+
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        integration
+        (
+        USERNAME,
+        USER_ID,
+        NAME,
+        JIFEN,
+        EXCLUName,
+        money,
+        createTime,
+        text
+        )
+        VALUE
+        (
+        #{USERNAME},
+        #{USER_ID},
+        #{NAME},
+        #{JIFEN},
+        #{EXCLUName},
+        #{money},
+        #{createTime},
+        #{text}
+        )
+    </insert>
+
+    <update id="update" parameterType="pd">
+        UPDATE
+        integration
+        SET
+          JIFEN = #{JIFEN},
+          money = #{money},
+          text = #{text}
+        WHERE
+          id = #{id}
+    </update>
+
+
+    <delete id="delete" parameterType="pd">
+        DELETE
+        FROM
+        integration
+        WHERE
+        id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Collection_WendaMapper">
+	<insert id="save" parameterType="pd">
+		insert into collection_wenda(
+			COLLECTION_WENDA_ID,
+			USER_ID,
+			WENDA_ID,
+			DATE
+		)values(
+			#{COLLECTION_WENDA_ID},
+			#{USER_ID},
+			#{WENDA_ID},
+			#{DATE}
+		)
+	</insert>
+	
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			c.COLLECTION_WENDA_ID,
+			c.USER_ID,
+			c.WENDA_ID,
+			w.SUBJECT,
+			w.MESSAGE,
+			w.WENDA_SHIJUAN_ID,
+			w.WENDA_TYPE_ID,
+			w.IMG,
+			0 as `STATUS`
+		from collection_wenda c
+		LEFT JOIN WENDA w on c.WENDA_ID=w.WENDA_ID
+		where c.USER_ID=#{pd.USER_ID}
+		ORDER BY c.DATE DESC
+	</select>
+	
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			WENDA_ID
+		from collection_wenda
+		where USER_ID=#{USER_ID} and WENDA_ID=#{WENDA_ID}
+	</select>
+	
+	<delete id="delete" parameterType="pd">
+		delete from collection_wenda where COLLECTION_WENDA_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteAll" parameterType="pd">
+		delete from collection_wenda where USER_ID=#{USER_ID} 
+	</delete>
+	
+	<delete id="deletes" parameterType="pd">
+		delete from collection_wenda where USER_ID=#{USER_ID} and WENDA_ID=#{WENDA_ID}
+	</delete>
+	
+	<select id="findCollectionlistPage" parameterType="pd" resultType="pd">
+		SELECT
+			count(*) AS counts,
+			c.WENDA_ID,
+			w.`SUBJECT`,
+			s.WENDA_SHIJUAN_NAME
+		FROM
+			collection_wenda c
+		LEFT JOIN WENDA w on c.WENDA_ID=w.WENDA_ID
+		LEFT JOIN wenda_shijuan s on s.WENDA_SHIJUAN_ID=w.WENDA_SHIJUAN_ID
+				GROUP BY
+			c.WENDA_ID
+		ORDER BY counts DESC
+	</select>
+</mapper>

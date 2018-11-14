@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AppUserInfoMapper">
+	<update id="editVip" parameterType="pd">
+		update sys_app_userinfo
+		SET VIP=#{VIP}
+		where USER_ID=#{USER_ID}
+	</update>
+	
+	
+	<insert id="save" parameterType="pd">
+	   insert into sys_app_userinfo(
+	       SYS_APP_USERINFO_ID,
+	       SEX,
+	       VIP,
+	       USER_ID,
+	       IMG,
+	       QQ,
+	       NIAN1,
+	       YUE,
+	       RI,
+	       ZHIYE,
+	       ADDRESS,
+	       PHONE,
+	       QIANMING,
+	       WEIXIN
+	   )values(
+	       #{SYS_APP_USERINFO_ID},
+	       #{SEX},
+	       #{VIP},
+	       #{USER_ID},
+	       #{IMG},
+	       #{QQ},
+	       #{NIAN1},
+	       #{YUE},
+	       #{RI},
+	       #{ZHIYE},
+	       #{ADDRESS},
+	       #{PHONE},
+	       #{QIANMING},
+	       #{WEIXIN}
+	   )
+	</insert>
+	
+	<update id="editQianMing" parameterType="pd">
+	    update sys_app_userinfo
+        SET QIANMING=#{QIANMING}
+        where USER_ID=#{USER_ID}
+	</update>
+	
+	<update id="edit" parameterType="pd">
+	    update sys_app_userinfo
+        SET QIANMING=#{QIANMING},
+            SEX=#{SEX},
+            NIAN1=#{NIAN1},
+            YUE=#{YUE},
+            RI=#{RI},
+            ZHIYE=#{ZHIYE},
+            ADDRESS=#{ADDRESS},
+            QQ=#{QQ}
+            <if test="WEIXIN!=null and WEIXIN!=''">
+            	,WEIXIN=#{WEIXIN}
+            </if>
+            
+        where USER_ID=#{USER_ID}
+	</update>
+	
+	<update id="editImg" parameterType="pd">
+	    update sys_app_userinfo
+        SET IMG=#{IMG},
+        	STATUS='1'
+        where USER_ID=#{USER_ID}
+	</update>
+	
+	<select id="findList" parameterType="pd" resultType="pd">
+	   select
+	       USER_ID,
+	       VIP,
+	       PHONE
+	   from sys_app_userinfo
+	</select>
+	
+	<select id="findUserById" parameterType="pd" resultType="pd">
+		SELECT
+			USER_ID,
+			USERNAME,
+			NAME
+		FROM
+			sys_app_user
+		WHERE
+			USERNAME = #{USERNAME}
+	</select>
+
+	<select id="findUserIMGById" parameterType="pd" resultType="pd">
+		SELECT
+		USER_ID,
+		IMG
+		FROM
+		sys_app_userinfo
+		WHERE
+		  USER_ID=#{USER_ID}
+	</select>
+</mapper>

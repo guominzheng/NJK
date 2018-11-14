@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Collection_proMapper">
+    
+<insert id="save" parameterType="pd">
+        insert into collection_pro(
+            COLLECTION_PRO_ID,
+            USER_ID,
+            PRODUCT_ID,
+            DATE
+        )values(
+            #{COLLECTION_PRO_ID},
+            #{USER_ID},
+            #{PRODUCT_ID},
+            #{DATE}
+        )
+    </insert>
+    
+    <delete id="delete" parameterType="pd">
+        delete from collection_pro where USER_ID=#{USER_ID} and PRODUCT_ID=#{PRODUCT_ID}
+    </delete>
+    
+    <select id="findCollection" parameterType="pd" resultType="pd">
+        select
+            COLLECTION_PRO_ID,
+            USER_ID,
+            PRODUCT_ID,
+            DATE
+        from collection_pro
+        where USER_ID=#{USER_ID} and PRODUCT_ID=#{PRODUCT_ID}
+    </select>
+    
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+            c.COLLECTION_PRO_ID,
+            c.PRODUCT_ID,
+            p.PRODUCT_NAME,
+            p.IMG,
+            p.DATE,
+            p.COMPONENT
+        from collection_pro c
+        LEFT JOIN product p on p.PRODUCT_ID=c.PRODUCT_ID
+        where c.USER_ID=#{pd.USER_ID}
+    </select>
+</mapper>
+
+
+
+

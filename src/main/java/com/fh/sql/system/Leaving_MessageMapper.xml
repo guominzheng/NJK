@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Leaving_MessageMapper">
+    <insert id="save" parameterType="pd">
+	insert into leaving_message(
+	SUBJECT,
+	MESSAGE,
+	DATE,
+	USER_ID,
+	VIEWS,
+	HUIFU,
+	STATUS,
+	NAME,
+	DATES,
+	BSTATUS,
+	HSTATUS
+	)values(
+	#{SUBJECT},
+	#{MESSAGE},
+	#{DATE},
+	#{USER_ID},
+	#{VIEWS},
+	#{HUIFU},
+	#{STATUS},
+	#{NAME},
+	#{DATES},
+	#{BSTATUS},
+	#{HSTATUS}
+	)
+</insert>
+
+    <insert id="savePMessage" parameterType="pd">
+		insert into leaving_message(
+		SUBJECT,
+		MESSAGE,
+		DATE,
+		USER_ID,
+		VIEWS,
+		HUIFU,
+		STATUS,
+		NAME,
+		DATES,
+		BSTATUS,
+		HSTATUS
+		)values(
+		#{SUBJECT},
+		#{MESSAGE},
+		#{DATE},
+		#{USER_ID},
+		#{VIEWS},
+		#{HUIFU},
+		#{STATUS},
+		#{NAME},
+		#{DATES},
+		#{BSTATUS},
+		#{HSTATUS}
+		)
+	</insert>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+		select
+	 		l.LEAVING_MESSAGE_ID,
+	 		l.SUBJECT,
+			l.MESSAGE,
+			l.DATE,
+			l.USER_ID,
+			l.VIEWS,
+			l.HUIFU,
+			l.STATUS,
+			u.NAME,
+			l.DATES,
+			l.BSTATUS,
+			l.HSTATUS,
+			i.IMG
+	 	from leaving_message l
+	 	LEFT JOIN sys_app_user u
+	 	ON
+	 	u.USER_ID = l.USER_ID
+	 	LEFT  JOIN
+	 	sys_app_userinfo i
+	 	ON
+	 	i.USER_ID = l.USER_ID
+	 	where LEAVING_MESSAGE_ID=#{LEAVING_MESSAGE_ID}
+	</select>
+
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+        l.LEAVING_MESSAGE_ID,
+        l.SUBJECT,
+        l.MESSAGE,
+        l.DATE,
+        l.USER_ID,
+        l.VIEWS,
+        l.HUIFU,
+        l.STATUS,
+        u.NAME,
+        l.DATES,
+        l.BSTATUS,
+        l.HSTATUS,
+        sf.IMG
+        from leaving_message l
+        LEFT JOIN sys_app_user u on u.USER_ID=l.USER_ID
+        LEFT JOIN sys_app_userinfo sf ON u.USER_ID = sf.USER_ID
+        <if test="pd.YSTATUS==0">
+            ORDER BY l.DATE DESC
+        </if>
+        <if test="pd.YSTATUS==1">
+            ORDER BY l.BSTATUS DESC
+        </if>
+        <if test="pd.YSTATUS==2">
+            ORDER BY l.HSTATUS DESC
+        </if>
+        <if test="pd.YSTATUS==3">
+            ORDER BY l.HSTATUS
+        </if>
+        <if test="pd.YSTATUS==4">
+            ORDER BY l.HUIFU DESC
+        </if>
+        <if test="pd.YSTATUS==5">
+            ORDER BY l.VIEWS DESC
+        </if>
+    </select>
+
+    <select id="dataslistPage" parameterType="page" resultType="pd">
+		select
+	 		LEAVING_MESSAGE_ID,
+	 		SUBJECT,
+			MESSAGE,
+			DATE,
+			USER_ID,
+			VIEWS,
+			HUIFU,
+			STATUS,
+			NAME,
+			DATES,
+			BSTATUS,
+			HSTATUS
+	 	from leaving_message
+	 	where USER_ID=#{pd.USER_ID}
+	 	ORDER BY DATE DESC
+	</select>
+
+
+    <update id="editStatus" parameterType="pd">
+	 	update leaving_message
+	 	SET STATUS=#{STATUS}
+	 	where LEAVING_MESSAGE_ID=#{LEAVING_MESSAGE_ID}
+	 </update>
+
+    <update id="editHUIFU" parameterType="pd">
+        update leaving_message
+        SET HUIFU=#{HUIFU}
+        where LEAVING_MESSAGE_ID=#{LEAVING_MESSAGE_ID}
+    </update>
+
+    <update id="editHStatus" parameterType="pd">
+	 	update leaving_message
+	 	SET HSTATUS=#{HSTATUS}
+	 	where LEAVING_MESSAGE_ID=#{LEAVING_MESSAGE_ID}
+	 </update>
+    <update id="editViewsJia" parameterType="pd">
+	update leaving_message
+	SET VIEWS=VIEWS+1
+	where LEAVING_MESSAGE_ID=#{LEAVING_MESSAGE_ID}
+</update>
+    <update id="editViewsJian" parameterType="pd">
+		update leaving_message
+		SET VIEWS=VIEWS-1
+		where LEAVING_MESSAGE_ID=#{LEAVING_MESSAGE_ID}
+	</update>
+    <delete id="delete" parameterType="pd">
+		DELETE FROM leaving_message where LEAVING_MESSAGE_ID=#{LEAVING_MESSAGE_ID}
+	</delete>
+</mapper>

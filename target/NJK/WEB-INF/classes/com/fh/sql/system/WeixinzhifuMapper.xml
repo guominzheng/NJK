@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="WeixinzhifuMapper">
+    <insert id="save" parameterType="pd">
+        insert into weixinzhifu(
+            WEIXINZHIFU,
+            WEIXIN
+        )values(
+            #{WEIXINZHIFU},
+            #{WEIXIN}
+        )
+    </insert>
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+            WEIXINZHIFU,
+            WEIXIN,
+            WSTATUS
+        from weixinzhifu
+    </select>
+    
+     <update id="edit1" parameterType="pd">
+        update weixinzhifu
+        SET WEIXINZHIFU=#{WEIXINZHIFU},
+            WEIXIN=#{WEIXIN}
+    </update>
+    
+         <update id="edit2" parameterType="pd">
+        update weixinzhifu
+        SET WEIXINZHIFU=#{WEIXINZHIFU},
+            WSTATUS=#{WSTATUS}
+    </update>
+    
+    <select id="findById" parameterType="pd" resultType="pd">
+    	select
+            WEIXINZHIFU,
+            WEIXIN,
+            WSTATUS
+        from weixinzhifu
+    </select>
+</mapper>

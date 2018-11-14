@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OrderInfoMapper">
+    <insert id="save" parameterType="pd">
+		insert into order_info(
+			ORDER_INFO_ID,
+			ORDER_NUMBER,
+			ORDER_DATE,
+			PAY_MONEY,
+			PAY_METHOD,
+			PAY_DATE,
+			ADDRESS,
+			USER_ID,
+			PHONE,
+			NAME,
+			END_DATE,
+			STATUS,
+			PROVINCE,
+			CITY,
+			YUE,
+			NIAN1,
+			TIAN,
+			MONEY,
+			CSTATUS,
+			BEIZHU,
+			COUPON_ID
+		)values(
+			#{ORDER_INFO_ID},
+			#{ORDER_NUMBER},
+			#{ORDER_DATE},
+			#{PAY_MONEY},
+			#{PAY_METHOD},
+			#{PAY_DATE},
+			#{ADDRESS},
+			#{USER_ID},
+			#{PHONE},
+			#{NAME},
+			#{END_DATE},
+			#{STATUS},
+			#{PROVINCE},
+			#{CITY},
+			#{YUE},
+			#{NIAN1},
+			#{TIAN},
+			#{MONEY},
+			#{CSTATUS},
+			#{BEIZHU},
+			#{COUPON_ID}
+		)
+	</insert>
+
+    <update id="edit" parameterType="pd">
+		update order_info
+		SET ORDER_INFO_ID=#{ORDER_INFO_ID},
+			ORDER_NUMBER=#{ORDER_NUMBER},
+			ORDER_DATE=#{ORDER_DATE},
+			PAY_MONEY=#{PAY_MONEY},
+			PAY_DATE=#{PAY_DATE},
+			ADDRESS=#{ADDRESS},
+			USER_ID=#{USER_ID},
+			PHONE=#{PHONE},
+			NAME=#{NAME},
+			END_DATE=#{END_DATE},
+			STATUS=#{STATUS},
+			PROVINCE=#{PROVINCE},
+			CITY=#{CITY},
+			TIAN=#{TIAN},
+			MONEY=#{MONEY}
+		where ORDER_INFO_ID=#{ORDER_INFO_ID}
+	</update>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+		select
+			ORDER_INFO_ID,
+			ORDER_NUMBER,
+			ORDER_DATE,
+			PAY_MONEY,
+			PAY_METHOD,
+			PAY_DATE,
+			ADDRESS,
+			USER_ID,
+			PHONE,
+			NAME,
+			END_DATE,
+			STATUS,
+			PROVINCE,
+			CITY,
+			YUE,
+			NIAN1,
+			TIAN,
+			MONEY,
+			CSTATUS
+		from order_info
+		where ORDER_INFO_ID=#{ORDER_INFO_ID}
+	</select>
+
+
+    <select id="findByNumber" parameterType="pd" resultType="pd">
+        select
+            ORDER_INFO_ID,
+            ORDER_NUMBER,
+            ORDER_DATE,
+            PAY_MONEY,
+            PAY_METHOD,
+            PAY_DATE,
+            ADDRESS,
+            USER_ID,
+            PHONE,
+            NAME,
+            END_DATE,
+            STATUS,
+            PROVINCE,
+            CITY,
+            YUE,
+            NIAN1,
+            TIAN,
+            MONEY,
+            CSTATUS,
+            COUPON_ID
+        from order_info
+        where ORDER_NUMBER=#{ORDER_NUMBER}
+    </select>
+
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+        o.ORDER_INFO_ID,
+        o.ORDER_NUMBER,
+        o.ORDER_DATE,
+        o.PAY_MONEY,
+        o.PAY_METHOD,
+        o.PAY_DATE,
+        o.ADDRESS,
+        o.USER_ID,
+        o.PHONE,
+        o.NAME,
+        o.END_DATE,
+        o.STATUS,
+        o.PROVINCE,
+        o.CITY,
+        o.MONEY,
+        o.CSTATUS,
+        o.BEIZHU,
+        a.USERNAME
+        from order_info o
+        LEFT JOIN sys_app_user a on a.USER_ID=o.USER_ID
+        where o.STATUS!='10'
+        <if test="pd.KEYWORD!=null and pd.KEYWORD!=''">
+            and
+            (
+            o.ORDER_NUMBER LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            or
+            o.ADDRESS LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            or
+            o.PHONE LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            or
+            o.NAME LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            )
+        </if>
+        <if test="pd.YONGHU!=null and pd.YONGHU!=''">
+            and
+            (
+            o.STATUS!='0' or o.PAY_METHOD='xx'
+            )
+        </if>
+        <if test="pd.PROVINCE!=null and pd.PROVINCE!=''">
+            and o.PROVINCE=#{pd.PROVINCE}
+        </if>
+        <if test="pd.CITY!=null and pd.CITY!=''">
+            and o.CITY=#{pd.CITY}
+        </if>
+        <if test="pd.lastLoginStart!=null and pd.lastLoginStart!=''"><!-- 下单时间检索 -->
+            and o.ORDER_DATE &gt;= #{pd.lastLoginStart}
+        </if>
+        <if test="pd.lastLoginEnd!=null and pd.lastLoginEnd!=''"><!-- 下单时间检索 -->
+            and o.ORDER_DATE &lt;= #{pd.lastLoginEnd}
+        </if>
+        <if test="pd.STATUS!=null and pd.STATUS!=''">
+            and o.STATUS=#{pd.STATUS}
+        </if>
+        <if test="pd.CSTATUS!=null and pd.CSTATUS!=''">
+            and o.CSTATUS=#{pd.CSTATUS}
+        </if>
+        <if test="pd.USER_ID!=null and pd.USER_ID!=''">
+            and o.USER_ID=#{pd.USER_ID}
+        </if>
+        ORDER BY o.ORDER_DATE DESC
+    </select>
+
+
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+        o.ORDER_INFO_ID,
+        o.ORDER_NUMBER,
+        o.ORDER_DATE,
+        o.PAY_MONEY,
+        o.PAY_METHOD,
+        o.PAY_DATE,
+        o.ADDRESS,
+        o.USER_ID,
+        o.PHONE,
+        o.NAME,
+        o.END_DATE,
+        o.STATUS,
+        o.PROVINCE,
+        o.CITY,
+        o.MONEY,
+        o.CSTATUS,
+        a.NAME USNAME,
+        a.USERNAME,
+        e.NAME AS EXCLUNAME
+        from order_info o
+        LEFT JOIN sys_app_user a on a.USER_ID=o.USER_ID
+        LEFT JOIN exclu e ON a.EXCLU_ID = e.EXCLU_ID
+        where o.STATUS!='10'
+        <if test="KEYWORD!=null and KEYWORD!=''">
+            and
+            (
+            o.ORDER_NUMBER LIKE CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            or
+            o.ADDRESS LIKE CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            or
+            o.PHONE LIKE CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            or
+            o.NAME LIKE CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            )
+        </if>
+        <if test="PROVINCE!=null and PROVINCE!=''">
+            and o.PROVINCE=#{PROVINCE}
+        </if>
+        <if test="CITY!=null and CITY!=''">
+            and o.CITY=#{CITY}
+        </if>
+        <if test="lastLoginStart!=null and lastLoginStart!=''"><!-- 下单时间检索 -->
+            and o.ORDER_DATE &gt;= #{lastLoginStart}
+        </if>
+        <if test="lastLoginEnd!=null and lastLoginEnd!=''"><!-- 下单时间检索 -->
+            and o.ORDER_DATE &lt;= #{lastLoginEnd}
+        </if>
+        <if test="STATUS!=null and STATUS!=''">
+            and o.STATUS=#{STATUS}
+        </if>
+        ORDER BY o.ORDER_DATE
+    </select>
+
+    <select id="findMoney" parameterType="pd" resultType="pd">
+        select SUM(MONEY) as MONEY from order_info
+        where STATUS!='10'
+        <if test="KEYWORD!=null and KEYWORD!=''">
+            and
+            (
+            ORDER_NUMBER LIKE CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            or
+            ADDRESS LIKE CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            or
+            PHONE LIKE CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            or
+            NAME LIKE CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            )
+        </if>
+        <if test="PROVINCE!=null and PROVINCE!=''">
+            and PROVINCE=#{PROVINCE}
+        </if>
+        <if test="CITY!=null and CITY!=''">
+            and CITY=#{CITY}
+        </if>
+        <if test="lastLoginStart!=null and lastLoginStart!=''"><!-- 下单时间检索 -->
+            and ORDER_DATE &gt;= #{lastLoginStart}
+        </if>
+        <if test="lastLoginEnd!=null and lastLoginEnd!=''"><!-- 下单时间检索 -->
+            and ORDER_DATE &lt;= #{lastLoginEnd}
+        </if>
+        <if test="STATUS!=null and STATUS!=''">
+            and STATUS=#{STATUS}
+        </if>
+        <if test="USER_ID!=null and USER_ID!=''">
+            and USER_ID=#{USER_ID}
+        </if>
+    </select>
+
+    <delete id="delete" parameterType="pd">
+		delete from order_info where ORDER_INFO_ID=#{ORDER_INFO_ID}
+	</delete>
+
+    <!-- 批量删除 -->
+    <delete id="deleteAll" parameterType="String">
+        delete from order_info
+        where
+        ORDER_INFO_ID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="editStatus" parameterType="pd">
+		update order_info
+		SET STATUS=#{STATUS}
+		where ORDER_INFO_ID=#{ORDER_INFO_ID}
+	</update>
+
+    <update id="editPayDate" parameterType="pd">
+        update order_info
+        SET PAY_DATE=#{PAY_DATE}
+        where ORDER_INFO_ID=#{ORDER_INFO_ID}
+    </update>
+
+    <update id="editCtatus" parameterType="pd">
+        update order_info
+        SET CSTATUS=1
+        where ORDER_INFO_ID=#{ORDER_INFO_ID}
+    </update>
+
+    <select id="findDuiBi" parameterType="pd" resultType="pd">
+		SELECT SUM(MONEY) as MONEY,YUE from order_info where STATUS!='10' and NIAN1=#{NIAN1} GROUP BY YUE
+	</select>
+
+    <!-- 根据天查询统计订单 -->
+    <select id="findTDuiBi" parameterType="pd" resultType="pd">
+		SELECT SUM(MONEY) as MONEY,TIAN from order_info where STATUS!='10' and TIAN=#{TIAN}
+	</select>
+
+    <select id="findHOrder" parameterType="pd" resultType="pd">
+        SELECT
+        IFNULL(count(1),0) AS cunt
+        from order_info
+        WHERE  ORDER_INFO_ID in
+        (
+        SELECT
+        ORDER_INFO_ID
+        FROM
+        order_info o1
+        where
+        DATE_FORMAT(o1.ORDER_DATE,'%H') =#{SHI}
+        )
+        AND
+        TIAN = #{TIAN}
+    </select>
+
+
+    <select id="findListDate" parameterType="pd" resultType="pd">
+		SELECT SUM(MONEY) as MONEY from order_info where STATUS!='10' and TIAN &gt;= #{KAISHI} and  TIAN &lt;= #{END} 
+	</select>
+
+    <select id="findOrderC" parameterType="pd" resultType="pd">
+       SELECT  IFNULL(count(1),0) as cunt,TIAN from order_info  where TIAN &gt;= #{BEGIN} and  TIAN &lt;= #{END}  GROUP BY TIAN
+    </select>
+
+    <delete id="deleteOrderNumber" parameterType="pd">
+	   delete from order_info where ORDER_NUMBER=#{ORDER_NUMBER}
+	</delete>
+
+    <update id="editUserId" parameterType="pd">
+		update order_info
+		SET USER_ID=#{USER_ID}
+		where USER_ID=#{USER_ID1}
+	</update>
+
+    <!--寻找订单信息-->
+    <select id="findOrderlistPage" parameterType="page" resultType="pd">
+        select
+        o.ORDER_INFO_ID,
+        o.ORDER_NUMBER,
+        o.ORDER_DATE,
+        o.PAY_MONEY,
+        o.PAY_METHOD,
+        o.PAY_DATE,
+        o.ADDRESS,
+        o.USER_ID,
+        o.PHONE,
+        o.NAME,
+        o.END_DATE,
+        o.STATUS,
+        o.PROVINCE,
+        o.CITY,
+        o.MONEY,
+        o.CSTATUS,
+        o.BEIZHU,
+        a.NAME USNAME,
+        a.USERNAME,
+        e.NAME AS EXCLUNAME
+        from order_info o
+        LEFT JOIN sys_app_user a on a.USER_ID=o.USER_ID
+        LEFT JOIN exclu e ON a.EXCLU_ID = e.EXCLU_ID
+        LEFT JOIN coupon co ON o.COUPON_ID = co.COUPON_ID
+        where 1=1
+        and a.STATUS != 11
+        <if test="pd.KEYWORD!=null and pd.KEYWORD!=''">
+            and
+            (
+            o.ORDER_NUMBER LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            or
+            o.ADDRESS LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            or
+            o.PHONE LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            or
+            o.NAME LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            )
+        </if>
+        <if test="pd.YONGHU!=null and pd.YONGHU!=''">
+            and
+            (
+            o.STATUS!='0' or o.PAY_METHOD='xx'
+            )
+        </if>
+        <if test="pd.PROVINCE!=null and pd.PROVINCE!=''">
+            and o.PROVINCE=#{pd.PROVINCE}
+        </if>
+        <if test="pd.CITY!=null and pd.CITY!=''">
+            and o.CITY=#{pd.CITY}
+        </if>
+        <if test="pd.lastLoginStart!=null and pd.lastLoginStart!=''"><!-- 下单时间检索 -->
+            and o.ORDER_DATE &gt;= #{pd.lastLoginStart}
+        </if>
+        <if test="pd.lastLoginEnd!=null and pd.lastLoginEnd!=''"><!-- 下单时间检索 -->
+            and o.ORDER_DATE &lt;= #{pd.lastLoginEnd}
+        </if>
+        <if test="pd.STATUS!=null and pd.STATUS!=''"> <!-- 订单状态-->
+            and o.STATUS=#{pd.STATUS}
+        </if>
+        <if test="pd.CSTATUS!=null and pd.CSTATUS!=''"><!-- 订单状态-->
+            and o.CSTATUS=#{pd.CSTATUS}
+        </if>
+        <if test="pd.USER_ID!=null and pd.USER_ID!=''"><!-- 用户id-->
+            and o.USER_ID=#{pd.USER_ID}
+        </if>
+        <if test="pd.EXCLU_ID!=null and pd.EXCLU_ID!=''"><!-- 客服人员姓名-->
+            and e.EXCLU_ID=#{pd.EXCLU_ID}
+        </if>
+        <if test="pd.JIAN!=null and pd.JIAN!='' "><!-- 客服人员姓名-->
+            and co.JIAN=#{pd.JIAN}
+        </if>
+        ORDER BY o.ORDER_DATE DESC
+    </select>
+
+    <update id="editCtatusAndEndDate" parameterType="pd">
+		update order_info
+		SET CSTATUS=1, END_DATE=NOW()
+		where ORDER_INFO_ID=#{ORDER_INFO_ID}
+	</update>
+
+    <!-- 获取某个客户下的所有订单信息-->
+    <select id="userOrderlistPage" parameterType="page" resultType="pd">
+		SELECT
+		s.USERNAME,
+		s.NAME,
+		ord.ORDER_NUMBER,
+		ord.ORDER_DATE,
+		pr.PRO_NAME,
+		ord.PHONE,
+		ord.ADDRESS,
+		ex.NAME AS EXCLUNAME
+		FROM
+		order_info ord
+		LEFT JOIN
+		sys_app_user s
+		ON
+		ord.USER_ID=s.USER_ID
+		LEFT JOIN
+		order_pro pr
+		ON
+		ord.ORDER_INFO_ID= pr.ORDER_INFO_ID
+		LEFT JOIN
+		exclu ex
+		ON
+		s.EXCLU_ID = ex.EXCLU_ID
+		WHERE
+		s.USERNAME =#{pd.USERNAME}
+		ORDER BY ord.ORDER_DATE DESC
+	</select>
+
+    <select id="findOrderUserId" parameterType="pd" resultType="pd">
+        select
+            ORDER_INFO_ID,
+            ORDER_NUMBER,
+            ORDER_DATE,
+            PAY_MONEY,
+            PAY_METHOD,
+            PAY_DATE,
+            ADDRESS,
+            USER_ID,
+            PHONE,
+            NAME,
+            END_DATE,
+            STATUS,
+            PROVINCE,
+            CITY,
+            YUE,
+            NIAN1,
+            TIAN,
+            MONEY,
+            CSTATUS,
+            COUPON_ID
+        from order_info
+        where USER_ID=#{USER_ID}
+        ORDER BY ORDER_DATE DESC
+        limit 1
+    </select>
+
+    <update id="updateSTATUS"  parameterType="pd">
+        UPDATE
+        order_info
+        SET
+        STATUS = 11
+        WHERE
+        ORDER_INFO_ID=#{ORDER_INFO_ID}
+    </update>
+
+
+    <select id="findAllData" resultType="pd">
+        SELECT
+        *
+        FROM
+        WHERE
+        linshi
+    </select>
+</mapper>

@@ -1,0 +1,757 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AppuserMapper">
+    <select id="datalistPage" parameterType="pd" resultType="pd">
+        select
+        a.USER_ID,
+        a.USERNAME,
+        a.NAME,
+        a.CROP,
+        a.PROVINCE,
+        a.CITY,
+        a.DISTRICT,
+        a.CUSTOMER_NAME,
+        a.EXCLU_ID,
+        a.VIP,
+        a.PHONE,
+        a.PHONEADDRESS,
+        e.PHONE as EPHONE,
+        e.NAME as ENAME,
+        c1.NAME as P_NAME,
+        c2.NAME as C_NAME,
+        c3.NAME as D_NAME
+        from sys_app_user a
+        LEFT JOIN exclu e on
+        e.EXCLU_ID=a.EXCLU_ID
+        LEFT JOIN
+        sys_city c1 on c1.ID=a.PROVINCE
+        LEFT
+        JOIN sys_city c2 on c2.ID=a.CITY
+        LEFT JOIN sys_city c3 on
+        c3.ID=a.DISTRICT
+        where 1=1
+        <if test="pd.KEYWORD != null and pd.KEYWORD != ''"><!-- 关键词检索 -->
+            and
+            (
+            a.USERNAME LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            or
+            a.NAME
+            LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            or
+            a.PHONE LIKE
+            CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            or
+            c1.NAME LIKE
+            CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            or
+            c2.NAME LIKE
+            CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            or
+            c3.NAME LIKE
+            CONCAT(CONCAT('%', #{pd.KEYWORD}),'%')
+            )
+        </if>
+        <if test="pd.VIP!=null and pd.VIP!=''">
+            and a.VIP=#{pd.VIP}
+        </if>
+        <if test="pd.EXCLU_ID!=null and pd.EXCLU_ID!=''">
+            and a.EXCLU_ID=#{pd.EXCLU_ID}
+        </if>
+        <if test="pd.PROVINCE!=null and pd.PROVINCE!=''">
+            and a.PROVINCE=#{pd.PROVINCE}
+        </if>
+        <if test="pd.CITY!=null and pd.CITY!=''">
+            and a.CITY=#{pd.CITY}
+        </if>
+        <if test="pd.DISTRICT!=null and pd.DISTRICT!=''">
+            and a.DISTRICT=#{pd.DISTRICT}
+        </if>
+        ORDER BY a.DATE DESC
+    </select>
+
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+        a.USER_ID,
+        a.USERNAME,
+        a.NAME,
+        a.CROP,
+        a.PROVINCE,
+        a.CITY,
+        a.DISTRICT,
+        a.CUSTOMER_NAME,
+        a.EXCLU_ID,
+        a.VIP,
+        a.PHONE,
+        a.PHONEADDRESS,
+        e.PHONE as EPHONE,
+        e.NAME as ENAME,
+        c1.NAME as P_NAME,
+        c2.NAME as C_NAME,
+        c3.NAME as D_NAME
+        from sys_app_user a
+        LEFT JOIN exclu e on
+        e.EXCLU_ID=a.EXCLU_ID
+        LEFT JOIN
+        sys_city c1 on c1.ID=a.PROVINCE
+        LEFT
+        JOIN sys_city c2 on c2.ID=a.CITY
+        LEFT JOIN sys_city c3 on
+        c3.ID=a.DISTRICT
+        where 1=1
+        <if test="KEYWORD != null and KEYWORD != ''"><!-- 关键词检索 -->
+            and
+            (
+            a.USERNAME LIKE CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            or
+            a.NAME LIKE
+            CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            or
+            a.PHONE LIKE CONCAT(CONCAT('%',
+            #{KEYWORD}),'%')
+            or
+            c1.NAME LIKE CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            or
+            c2.NAME LIKE CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            or
+            c3.NAME LIKE
+            CONCAT(CONCAT('%', #{KEYWORD}),'%')
+            )
+        </if>
+        <if test="VIP!=null and VIP!=''">
+            and a.VIP=#{pd.VIP}
+        </if>
+        <if test="EXCLU_ID!=null and EXCLU_ID!=''">
+            and a.EXCLU_ID=#{EXCLU_ID}
+        </if>
+        <if test="PROVINCE!=null and PROVINCE!=''">
+            and a.PROVINCE=#{PROVINCE}
+        </if>
+        <if test="CITY!=null and CITY!=''">
+            and a.CITY=#{CITY}
+        </if>
+        <if test="DISTRICT!=null and DISTRICT!=''">
+            and a.DISTRICT=#{DISTRICT}
+        </if>
+        ORDER BY a.DATE DESC
+    </select>
+
+    <select id="login" parameterType="pd" resultType="pd">
+		select
+		a.USER_ID,
+		a.USERNAME,
+		a.EMAIL,
+		a.NAME,
+		a.IP,
+		a.LAST_LOGIN,
+		a.CHANNELID,
+		a.SALT,
+		a.EXCLU_ID,
+		a.UNIONID,
+		b.SEX,
+		a.VIP,
+		b.QQ,
+		b.IMG,
+		b.NIAN1,
+		b.YUE,
+		b.RI,
+		b.ZHIYE,
+		b.ADDRESS,
+		a.PHONE,
+		a.PHONEADDRESS,
+		b.QIANMING,
+		b.WEIXIN,
+		e.PHONE as EPHONE,
+		e.NAME as ENAME
+		from sys_app_user a
+		LEFT JOIN sys_app_userinfo b on
+		b.USER_ID=a.USER_ID
+		LEFT JOIN exclu e on e.EXCLU_ID=a.EXCLU_ID
+		where
+		a.USERNAME=#{USERNAME} and
+		a.PASSWORD=#{PASSWORD}
+	</select>
+
+
+    <select id="findUnionId" parameterType="pd" resultType="pd">
+		select
+		a.USER_ID,
+		a.USERNAME,
+		a.EMAIL,
+		a.NAME,
+		a.IP,
+		a.LAST_LOGIN,
+		a.CHANNELID,
+		a.SALT,
+		a.UNIONID,
+		a.EXCLU_ID,
+		b.SEX,
+		a.VIP,
+		b.QQ,
+		b.IMG,
+		b.NIAN1,
+		b.YUE,
+		b.RI,
+		b.ZHIYE,
+		b.ADDRESS,
+		a.PHONE,
+		a.PHONEADDRESS,
+		b.QIANMING,
+		b.WEIXIN,
+		e.PHONE as EPHONE,
+		e.NAME as ENAME
+		from sys_app_user a
+		LEFT JOIN sys_app_userinfo b on
+		b.USER_ID=a.USER_ID
+		LEFT JOIN exclu e on e.EXCLU_ID=a.EXCLU_ID
+		where
+		a.UNIONID=#{UNIONID}
+	</select>
+
+
+	<select id="findOpenId" parameterType="pd" resultType="pd">
+		select
+		a.USER_ID,
+		a.USERNAME,
+		a.EMAIL,
+		a.NAME,
+		a.IP,
+		a.LAST_LOGIN,
+		a.CHANNELID,
+		a.SALT,
+		a.UNIONID,
+		a.EXCLU_ID,
+		b.SEX,
+		a.VIP,
+		b.QQ,
+		b.IMG,
+		b.NIAN1,
+		b.YUE,
+		b.RI,
+		b.ZHIYE,
+		b.ADDRESS,
+		a.PHONE,
+		a.PHONEADDRESS,
+		b.QIANMING,
+		b.WEIXIN,
+		e.PHONE as EPHONE,
+		e.NAME as ENAME
+		from sys_app_user a
+		LEFT JOIN sys_app_userinfo b on
+		b.USER_ID=a.USER_ID
+		LEFT JOIN exclu e on e.EXCLU_ID=a.EXCLU_ID
+		where
+		a.OPENID=#{OPENID}
+	</select>
+
+    <select id="findName" parameterType="pd" resultType="pd">
+		select
+		a.USER_ID,
+		a.USERNAME,
+		a.EMAIL,
+		a.CUSTOMER_NAME,
+		a.CROP,
+		a.NAME,
+		a.OPENID,
+		a.IP,
+		a.LAST_LOGIN,
+		a.CHANNELID,
+		a.SALT,
+		a.EXCLU_ID,
+		a.STATUS,
+		b.SEX,
+		a.VIP,
+		a.UNIONID,
+		b.QQ,
+		b.IMG,
+		b.NIAN1,
+		b.YUE,
+		b.RI,
+		b.ZHIYE,
+		b.ADDRESS,
+		a.PHONE,
+		a.PHONEADDRESS,
+		b.QIANMING,
+		b.WEIXIN,
+		e.PHONE as EPHONE,
+		e.NAME as ENAME
+		from sys_app_user
+		a
+		LEFT JOIN sys_app_userinfo b on b.USER_ID=a.USER_ID
+		LEFT JOIN exclu e
+		on e.EXCLU_ID=a.EXCLU_ID
+		where a.USERNAME=#{USERNAME}
+	</select>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+		select
+		a.USER_ID,
+		a.USERNAME,
+		a.EMAIL,
+		a.CUSTOMER_NAME,
+		a.CROP,
+		a.NAME,
+		a.IP,
+		a.LAST_LOGIN,
+		a.CHANNELID,
+		a.SALT,
+		a.EXCLU_ID,
+		a.STATUS,
+		b.SEX,
+		a.VIP,
+		a.UNIONID,
+		b.QQ,
+		b.IMG,
+		b.NIAN1,
+		b.YUE,
+		b.RI,
+		b.ZHIYE,
+		b.ADDRESS,
+		a.PHONE,
+		b.QIANMING,
+		b.WEIXIN,
+		e.PHONE as EPHONE,
+		e.NAME as ENAME,
+		a.JIFEN,
+		a.ZJIFEN
+		from sys_app_user
+		a
+		LEFT JOIN sys_app_userinfo b on b.USER_ID=a.USER_ID
+		LEFT JOIN exclu e
+		on e.EXCLU_ID=a.EXCLU_ID
+		where a.USER_ID=#{USER_ID}
+	</select>
+
+    <select id="findById1" parameterType="pd" resultType="pd">
+		select
+		a.USER_ID,
+		a.USERNAME,
+		a.EMAIL,
+		a.NAME,
+		a.IP,
+		a.LAST_LOGIN,
+		a.CHANNELID,
+		a.SALT,
+		a.EXCLU_ID,
+		a.STATUS,
+		b.SEX,
+		a.VIP,
+		b.QQ,
+		b.IMG,
+		b.NIAN1,
+		b.YUE,
+		b.RI,
+		b.ZHIYE,
+		b.ADDRESS,
+		a.PHONE,
+		b.QIANMING,
+		b.WEIXIN,
+		e.PHONE as EPHONE,
+		e.NAME as ENAME
+		from sys_app_user a
+		LEFT JOIN sys_app_userinfo b on
+		b.USER_ID=a.USER_ID
+		LEFT JOIN exclu e on e.EXCLU_ID=a.EXCLU_ID
+		where
+		a.USER_ID=#{PUSER_ID}
+	</select>
+
+    <select id="findBySId" parameterType="pd" resultType="pd">
+		select
+		a.USER_ID,
+		a.USERNAME,
+		a.NAME,
+		a.VIP,
+		b.IMG,
+		b.QIANMING
+		from sys_app_user a
+		LEFT JOIN sys_app_userinfo b on b.USER_ID=a.USER_ID
+		where
+		a.USER_ID=#{SUSER_ID}
+	</select>
+
+    <update id="editIp" parameterType="pd">
+		update sys_app_user
+		SET
+		IP=#{ip}
+		where USER_ID=#{USER_ID}
+	</update>
+
+
+    <update id="editVip" parameterType="pd">
+		update sys_app_user
+		SET
+		VIP=#{VIP}
+		where USER_ID=#{USER_ID}
+	</update>
+
+
+    <insert id="save" parameterType="pd">
+		insert into sys_app_user(
+		USER_ID,
+		USERNAME,
+		PASSWORD,
+		NAME,
+		EMAIL,
+		ROLE_ID,
+		DATE,
+		IP,
+		LAST_LOGIN,
+		CHANNELID,
+		SALT,
+		EXCLU_ID,
+		CROP,
+		PROVINCE,
+		CITY,
+		DISTRICT,
+		CUSTOMER_NAME,
+		VIP,
+		PHONE,
+		STATUS,
+		ADDRESS,
+		OPENID,
+		UNIONID,
+		JIFEN,
+		ZJIFEN
+		)values(
+		#{USER_ID},
+		#{USERNAME},
+		#{PASSWORD},
+		#{NAME},
+		#{EMAIL},
+		#{ROLE_ID},
+		#{DATE},
+		#{IP},
+		#{LAST_LOGIN},
+		#{CHANNELID},
+		#{SALT},
+		#{EXCLU_ID},
+		#{CROP},
+		#{PROVINCE},
+		#{CITY},
+		#{DISTRICT},
+		#{CUSTOMER_NAME},
+		#{VIP},
+		#{PHONE},
+		#{STATUS},
+		#{ADDRESS},
+		#{OPENID},
+		#{UNIONID},
+		#{JIFEN},
+		#{ZJIFEN}
+		)
+	</insert>
+
+    <update id="editStatus" parameterType="pd">
+		update sys_app_user
+		SET
+		STATUS=#{STATUS}
+		where USER_ID=#{USER_ID}
+	</update>
+
+    <update id="editEXCLU_ID" parameterType="pd">
+        update sys_app_user
+        SET
+        <if test="EXCLU_ID!=null and EXCLU_ID!=''">
+            EXCLU_ID=#{EXCLU_ID},
+        </if>
+        <if test="PROVINCE!=null and PROVINCE!=''">
+            PROVINCE=#{PROVINCE},
+        </if>
+        <if test="CITY!=null and CITY!=''">
+            CITY=#{CITY},
+        </if>
+        <if test="DISTRICT!=null and DISTRICT!=''">
+            DISTRICT=#{DISTRICT},
+        </if>
+        CUSTOMER_NAME=#{CUSTOMER_NAME},
+        <if test="VIP!=null and VIP!=''">
+            VIP=#{VIP},
+        </if>
+        CROP=#{CROP},
+        ADDRESS=#{ADDRESS}
+        where USER_ID=#{USER_ID}
+    </update>
+
+    <update id="editCHANNELID" parameterType="pd">
+		update sys_app_user
+		SET
+		CHANNELID=#{CHANNELID}
+		where USER_ID=#{USER_ID}
+	</update>
+
+    <update id="editPassword" parameterType="pd">
+		update sys_app_user
+		SET
+		PASSWORD=#{PASSWORD}
+		where USER_ID=#{USER_ID}
+	</update>
+
+    <update id="editName" parameterType="pd">
+        update
+		sys_app_user
+        <set>
+            <if test="NAME != null and NAME !='' ">NAME=#{NAME},</if>
+            <if test="PHONE != null and PHONE !='' ">PHONE=#{PHONE},</if>
+        </set>
+        where
+		USER_ID=#{USER_ID}
+    </update>
+
+
+    <update id="editTianChou" parameterType="pd">
+		update sys_app_user
+		SET
+		VIP=#{VIP},
+		PHONE=#{PHONE}
+		where USER_ID=#{USER_ID}
+	</update>
+
+    <update id="editloginDate" parameterType="pd">
+		update sys_app_user
+		SET
+		LAST_LOGIN=#{LAST_LOGIN}
+		where USER_ID=#{USER_ID}
+	</update>
+
+    <select id="findListName" parameterType="pd" resultType="pd">
+		select
+		USERNAME
+		from sys_app_user
+	</select>
+
+    <!-- 通过USERNAME获取数据 -->
+    <select id="findByUId" parameterType="pd" resultType="pd">
+		select
+		a.USER_ID,
+		a.USERNAME,
+		a.EMAIL,
+		a.NAME,
+		a.IP,
+		a.LAST_LOGIN,
+		a.CHANNELID,
+		a.SALT,
+		a.EXCLU_ID,
+		a.STATUS,
+		b.SEX,
+		a.VIP,
+		b.QQ,
+		b.IMG,
+		b.NIAN1,
+		b.YUE,
+		b.RI,
+		b.ZHIYE,
+		b.ADDRESS,
+		a.PHONE,
+		b.QIANMING,
+		b.WEIXIN,
+		e.PHONE as EPHONE,
+		e.NAME as ENAME
+		from sys_app_user a
+		LEFT JOIN sys_app_userinfo b on
+		b.USER_ID=a.USER_ID
+		LEFT JOIN exclu e on e.EXCLU_ID=a.EXCLU_ID
+		where
+		a.USERNAME = #{USERNAME}
+	</select>
+
+
+    <select id="findById111" parameterType="pd" resultType="pd">
+		select
+		a.USER_ID,
+		a.NAME,
+		b.IMG,
+		a.STATUS
+		from sys_app_user a
+		LEFT JOIN
+		sys_app_userinfo b on b.USER_ID=a.USER_ID
+		where a.USER_ID=#{USER_ID}
+	</select>
+
+
+    <select id="findById222" parameterType="pd" resultType="pd">
+		select
+		a.USER_ID,
+		a.CHANNELID,
+		a.STATUS
+		from sys_app_user a
+		where
+		a.USER_ID=#{PUSER_ID}
+	</select>
+
+    <select id="findByUserName" parameterType="pd" resultType="pd">
+		select
+		a.USER_ID,
+		a.OPENID,
+		a.NAME
+		from sys_app_user a
+		where
+		a.USERNAME=#{USERNAME}
+	</select>
+
+    <update id="editOpenId" parameterType="pd">
+		update sys_app_user
+		SET
+		OPENID=#{OPENID}
+		where USER_ID=#{USER_ID}
+	</update>
+
+    <select id="findAppUserVip" parameterType="pd" resultType="pd">
+		select
+		USER_ID,
+		OPENID,
+		NAME,
+		USERNAME
+		from sys_app_user
+		where VIP='1' or
+		VIP='3'
+	</select>
+
+    <update id="editUnionId" parameterType="pd">
+		update sys_app_user
+		SET
+		USERNAME=#{USERNAME},
+		PASSWORD=#{PASSWORD},
+		VIP=#{VIP},
+		SALT=#{SALT}
+		where UNIONID=#{UNIONID}
+	</update>
+
+    <update id="editUnionIds" parameterType="pd">
+		update sys_app_user
+		SET
+		USERNAME=#{USERNAME},
+		PASSWORD=#{PASSWORD},
+		SALT=#{SALT}
+		where
+		UNIONID=#{UNIONID}
+	</update>
+
+    <delete id="delete" parameterType="pd">
+		delete from sys_app_user where
+		USER_ID=#{USER_ID}
+	</delete>
+
+    <update id="editunionIDss" parameterType="pd">
+		update sys_app_user
+		SET
+		OPENID=#{OPENID},
+		UNIONID=#{UNIONID},
+		NAME=#{NAME}
+		where
+		USER_ID=#{USER_ID}
+	</update>
+
+    <update id="editType" parameterType="pd">
+		update sys_app_user
+		SET
+		TYPE=#{TYPE}
+		where USER_ID=#{USER_ID}
+	</update>
+
+    <update id="editJifen" parameterType="pd">
+		update sys_app_user
+		SET
+		JIFEN=JIFEN+#{JIFEN}
+		where USER_ID=#{USER_ID}
+	</update>
+
+	<update id="editJifenJ" parameterType="pd">
+		update sys_app_user
+		SET
+		JIFEN=#{JIFEN}
+		where USER_ID=#{USER_ID}
+	</update>
+
+    <select id="findJiFen" parameterType="pd" resultType="pd">
+		SELECT *
+		from sys_app_user
+		where USER_ID=#{USER_ID} and
+		USER_ID in (
+		SELECT
+		t.USER_ID
+		FROM
+		(
+		SELECT
+		USER_ID
+		FROM
+		sys_app_user
+		ORDER BY
+		JIFEN DESC
+		limit 5
+		)
+		t
+		)
+	</select>
+
+    <select id="findJiFens" parameterType="pd" resultType="pd">
+		SELECT *
+		from sys_app_user
+		where USER_ID=#{USER_ID1} and
+		USER_ID in (
+		SELECTVIP
+		t.USER_ID
+		FROM
+		(
+		SELECT
+		USER_ID
+		FROM
+		sys_app_user
+		ORDER BY
+		JIFEN DESC
+		limit 5
+		)
+		t
+		)
+	</select>
+
+    <select id="findVipAppUser" parameterType="pd" resultType="pd">
+		select
+			USER_ID,
+			'http://m.nongjike.cn/NJK/uploadFiles/uploadImgs/3yuan.png' as IMG,
+			'3月活动红包' as BEIZHU,
+			'0' as MAX,
+			'30' as JIAN,
+			'2018-03-01' as DATE,
+			'2018-04-01' as END,
+			'0' as STATUS
+		from sys_app_user
+		where VIP='1' or Vip='3'
+	</select>
+
+    <!-- 插入电话地址-->
+    <update id="addPhoneAddress" parameterType="pd">
+		UPDATE
+		sys_app_user
+		SET
+		PHONEADDRESS=#{PHONEADDRESS}
+		WHERE
+		USER_ID=#{USER_ID}
+	</update>
+
+	<update id="addZJIFEN" parameterType="pd">
+		UPDATE
+		sys_app_user
+		SET
+		ZJIFEN=ZJIFEN+#{JIFEN}
+		WHERE
+		USER_ID=#{USER_ID}
+	</update>
+
+
+
+	<update id="updateUserInfoGame" parameterType="pd">
+		UPDATE
+		sys_app_user
+		<set>
+			<if test="OPENID != null">
+				OPENID = #{OPENID}
+			</if>
+			<if test="UNIONID != null">
+				UNIONID=#{UNIONID}
+			</if>
+		</set>
+		WHERE
+		USER_ID=#{USER_ID}
+	</update>
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GameRankMapper">
+    <!-- rank表  排行 -->
+
+    <select id="getAllRankList" resultType="pd">
+        SELECT
+		@rowno :=@rowno + 1 AS rowno,
+		z.*
+		FROM
+		(SELECT @rowno := 0) t,
+		(
+			SELECT
+			r.rankId,
+			r.score,
+			r.createTime,
+			u.userName,
+			u.userImg,
+			u.draw_count,
+			r.openId
+			FROM
+			game_user u,
+			game_rank r
+			WHERE
+			r.openId = u.openId
+			ORDER BY r.score DESC
+		) z
+    </select>
+    <select id="findRankByUserId" parameterType="pd" resultType="pd">
+		SELECT
+		rankId,
+		openId,
+		score
+		FROM
+		game_rank
+		WHERE
+		openId=#{openId}
+	</select>
+    <!-- 修改分数 -->
+    <update id="update" parameterType="pd">
+		update
+		game_rank
+		SET
+		score=#{score}
+		WHERE
+		openId= #{openId}
+	</update>
+
+    <!-- 新添用户游戏分数-->
+    <insert id="save" parameterType="pd">
+		INSERT
+		INTO
+		game_rank
+		(
+		openId,
+		score,
+		createTime
+		)
+		VALUES
+		(
+		#{openId},
+		#{score},
+		#{createTime}
+		)
+	</insert>
+</mapper>

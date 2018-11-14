@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Comment_Activity_UserImgMapper">
+    <select id="save" parameterType="pd">
+        insert into comment_activity_user_img(
+            COMMENT_ACTIVITY_USER_ID,
+            IMG,
+            DATE
+        )values(
+            #{COMMENT_ACTIVITY_USER_ID},
+            #{IMG},
+            #{DATE}
+        )
+    </select>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+        select
+            COMMENT_ACTIVITY_USER_ID,
+            IMG
+        from  comment_activity_user_img
+        where COMMENT_ACTIVITY_USER_ID=#{COMMENT_ACTIVITY_USER_ID}
+    </select>
+    
+</mapper>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="User_WendaQuanxianMapper">
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        user_wendaquanxian
+        (
+        USER_ID,
+        PRODUCT_ID,
+        PAYSTA,
+        FENSHU,
+        DATE
+        )
+        VALUES
+        (
+        #{USER_ID},
+        #{PRODUCT_ID},
+        '0',
+        #{FENSHU},
+        #{DATE}
+        )
+    </insert>
+
+
+    <select id="findAll" parameterType="pd" resultType="pd">
+        SELECT
+        UWQ_ID,
+        USER_ID,
+        PRODUCT_ID,
+        PAYSTA,
+        FENSHU
+        FROM
+        user_wendaquanxian
+    </select>
+
+
+    <select id="findQByUserId" resultType="pd" parameterType="pd">
+        SELECT
+        UWQ_ID,
+        USER_ID,
+        PRODUCT_ID,
+        PAYSTA,
+        FENSHU
+        FROM
+        user_wendaquanxian
+        WHERE
+        USER_ID=#{USER_ID}
+        AND
+        PRODUCT_ID=#{PRODUCT_ID}
+    </select>
+
+    <update id="editPAYSTA" parameterType="pd">
+        UPDATE
+        user_wendaquanxian
+        SET
+        PAYSTA =1
+        WHERE
+        USER_ID=#{USER_ID}
+        AND
+        PRODUCT_ID=#{PRODUCT_ID}
+    </update>
+
+    <update id="editFEN" parameterType="pd">
+        UPDATE
+        user_wendaquanxian
+        SET
+        FENSHU=#{FENSHU},
+        DATE=#{DATE}
+        WHERE
+        USER_ID=#{USER_ID}
+        AND
+        PRODUCT_ID=#{PRODUCT_ID}
+    </update>
+
+
+</mapper>

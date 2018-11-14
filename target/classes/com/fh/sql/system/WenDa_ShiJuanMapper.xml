@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="WenDa_ShiJuanMapper">
+	<insert id="save" parameterType="pd">
+		insert into wenda_shijuan(
+			WENDA_SHIJUAN_ID,
+			WENDA_SHIJUAN_NAME,
+			DATE,
+			STATUS,
+			WENDA_TYPE_ID,
+			IMG,
+			WENDA_SHIJUAN_MIAOSHU,
+			ZHIDING,
+			FIMG
+		)values(
+			#{WENDA_SHIJUAN_ID},
+			#{WENDA_SHIJUAN_NAME},
+			#{DATE},
+			#{STATUS},
+			#{WENDA_TYPE_ID},
+			#{IMG},
+			#{WENDA_SHIJUAN_MIAOSHU},
+			#{ZHIDING},
+			#{FIMG}
+		)
+	</insert>
+	
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			w.WENDA_SHIJUAN_ID,
+			w.WENDA_SHIJUAN_NAME,
+			w.WENDA_TYPE_ID,
+			w.IMG,
+			w.WENDA_SHIJUAN_MIAOSHU,
+			w.STATUS,
+			w.ZHIDING,
+			w.XIN,
+			w.FIMG,
+			(select count(*) from zuoguo_shijuan z where z.WENDA_SHIJUAN_ID=w.WENDA_SHIJUAN_ID) as counts
+		from wenda_shijuan w
+		where 1=1
+		<if test="pd.WENDA_TYPE_ID != null and pd.WENDA_TYPE_ID != ''">
+			and w.WENDA_TYPE_ID=#{pd.WENDA_TYPE_ID}
+		</if>
+		 <if test="pd.KEYWORD != null and pd.KEYWORD != ''"><!-- 关键词检索 -->
+            and
+                (
+                 w.WENDA_SHIJUAN_NAME LIKE CONCAT(CONCAT('%', #{pd.KEYWORD}),'%') 
+                )
+        </if>
+        <if test="pd.STATUS!=null and pd.STATUS!=''">
+        	and w.STATUS=#{pd.STATUS}
+        </if>
+		ORDER BY w.DATE DESC
+	</select>
+	
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			WENDA_SHIJUAN_ID,
+			WENDA_SHIJUAN_NAME,
+			WENDA_TYPE_ID,
+			IMG,
+			WENDA_SHIJUAN_MIAOSHU,
+			STATUS,
+			XIN,
+			FIMG
+		from wenda_shijuan
+		where WENDA_SHIJUAN_ID=#{WENDA_SHIJUAN_ID}
+	</select>
+	
+	<update id="edit" parameterType="pd">
+		update wenda_shijuan
+		SET 
+			<if test="STATUS=='1'">
+				DATE=#{DATE},
+			</if>
+			WENDA_SHIJUAN_NAME=#{WENDA_SHIJUAN_NAME},
+			STATUS=#{STATUS},
+			IMG=#{IMG},
+			WENDA_SHIJUAN_MIAOSHU=#{WENDA_SHIJUAN_MIAOSHU},
+			FIMG=#{FIMG}
+		where WENDA_SHIJUAN_ID=#{WENDA_SHIJUAN_ID}
+	</update>
+	
+	<delete id="delete" parameterType="pd">
+		delete from wenda_shijuan where WENDA_SHIJUAN_ID=#{WENDA_SHIJUAN_ID}
+	</delete>
+	
+	<select id="weidalistPage" parameterType="page" resultType="pd">
+		select
+			WENDA_SHIJUAN_ID,
+			WENDA_SHIJUAN_NAME,
+			WENDA_TYPE_ID,
+			IMG,
+			WENDA_SHIJUAN_MIAOSHU,
+			XIN,
+			FIMG
+		from wenda_shijuan
+		where WENDA_SHIJUAN_ID not in (select WENDA_SHIJUAN_ID from zuoguo_shijuan where USER_ID=#{pd.USER_ID} GROUP BY WENDA_SHIJUAN_ID) and STATUS='1' and WENDA_TYPE_ID=#{pd.WENDA_TYPE_ID}
+		ORDER BY DATE DESC
+	</select>
+	
+	<select id="findweizuoList" parameterType="pd" resultType="pd">
+		select
+			WENDA_SHIJUAN_ID,
+			WENDA_SHIJUAN_NAME,
+			WENDA_TYPE_ID,
+			IMG,
+			WENDA_SHIJUAN_MIAOSHU,
+			XIN,
+			FIMG
+		from wenda_shijuan
+		where STATUS='1'
+		<if test="WENDA_TYPE_ID!=null and WENDA_TYPE_ID!=null and WENDA_TYPE_ID!=0">
+			 and WENDA_TYPE_ID=#{WENDA_TYPE_ID}
+		</if>
+		and WENDA_SHIJUAN_ID not in (select WENDA_SHIJUAN_ID from zuoguo_shijuan where USER_ID=#{USER_ID}
+		<if test="WENDA_TYPE_ID!=null and WENDA_TYPE_ID!=null and WENDA_TYPE_ID!=0">
+			 and WENDA_TYPE_ID=#{WENDA_TYPE_ID}
+		</if>
+		GROUP BY WENDA_SHIJUAN_ID)
+		ORDER BY DATE DESC
+		limit 10
+	</select>
+	
+	<select id="findPage" parameterType="pd" resultType="pd">	
+		select
+			WENDA_SHIJUAN_ID,
+			WENDA_SHIJUAN_NAME,
+			WENDA_TYPE_ID,
+			IMG,
+			WENDA_SHIJUAN_MIAOSHU,
+			XIN,
+			FIMG
+		from wenda_shijuan
+		where STATUS='1' and XIN='1'
+		<if test="WENDA_TYPE_ID!=null and WENDA_TYPE_ID!=null and WENDA_TYPE_ID!=0">
+			 and WENDA_TYPE_ID=#{WENDA_TYPE_ID}
+		</if>
+		and WENDA_SHIJUAN_ID not in (select WENDA_SHIJUAN_ID from zuoguo_shijuan where USER_ID=#{USER_ID}
+		<if test="WENDA_TYPE_ID!=null and WENDA_TYPE_ID!=null and WENDA_TYPE_ID!=0">
+			 and WENDA_TYPE_ID=#{WENDA_TYPE_ID}
+		</if>
+		GROUP BY WENDA_SHIJUAN_ID)
+		limit 1
+	</select>
+	
+	
+	<select id="yizuolistPage" parameterType="page" resultType="pd">
+		select
+			WENDA_SHIJUAN_ID,
+			WENDA_SHIJUAN_NAME,
+			WENDA_TYPE_ID,
+			IMG,
+			WENDA_SHIJUAN_MIAOSHU,
+			XIN,
+			FIMG
+		from wenda_shijuan
+		where WENDA_SHIJUAN_ID in (select WENDA_SHIJUAN_ID from zuoguo_shijuan where USER_ID=#{pd.USER_ID}) 
+	</select>
+	
+	<select id="findZuiXin" parameterType="pd" resultType="pd">
+		select
+			WENDA_SHIJUAN_ID,
+			WENDA_SHIJUAN_NAME,
+			WENDA_TYPE_ID,
+			IMG,
+			WENDA_SHIJUAN_MIAOSHU,
+			URL,
+			XIN,
+			FIMG,
+			(select WENDA_SHIJUAN_MIAOSHU from wenda_shijuan where WENDA_SHIJUAN_ID='') as SUIJI
+		from wenda_shijuan
+		where STATUS='1' and ZHIDING='1'
+		ORDER By DATE DESC
+		limit 1
+	</select>
+	
+	<select id="findWeiDuCount" parameterType="pd" resultType="pd">
+		select count(*) as count1 from wenda_shijuan where WENDA_SHIJUAN_ID not in (select WENDA_SHIJUAN_ID from zuoguo_shijuan where USER_ID=#{pd.USER_ID})
+	</select>
+	
+	<update id="editZhiDing" parameterType="pd">
+		update wenda_shijuan
+		SET ZHIDING='0'
+		where ZHIDING='1'
+	</update>
+	
+	
+	<update id="editZhiDings" parameterType="pd">
+		update wenda_shijuan
+		SET ZHIDING='1'
+		where WENDA_SHIJUAN_ID=#{WENDA_SHIJUAN_ID}
+	</update>
+	
+	<update id="editXin" parameterType="pd">
+		update wenda_shijuan
+		SET XIN=#{XIN}
+		where WENDA_SHIJUAN_ID=#{WENDA_SHIJUAN_ID}
+	</update>
+</mapper>

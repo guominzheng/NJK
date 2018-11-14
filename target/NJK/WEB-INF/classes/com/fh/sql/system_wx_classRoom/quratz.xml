@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassRoom_QuratzMapper">
+    <select id="findAll" parameterType="pd" resultType="pd">
+        select
+form_id,
+key1,
+key2,
+key3,
+key4,
+page,
+openId
+         from
+         wx_classroom_quratz
+         WHERE
+         liveId = #{liveId}
+    </select>
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        wx_classroom_quratz
+        (
+        liveId,
+        form_id,
+        key1,
+        key2,
+        key3,
+        key4,
+        page,
+        openId
+        )
+        VALUES
+        (
+        #{liveId},
+        #{form_id},
+        #{key1},
+        #{key2},
+        #{key3},
+        #{key4},
+        #{page},
+        #{openId}
+        )
+    </insert>
+</mapper>

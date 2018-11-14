@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Count_communityMapper">
+
+
+    <insert id="save" parameterType="pd">
+        INSERT
+        INTO
+        count_community
+        (
+        community_id,
+        USER_ID,
+        community_type,
+        NUM,
+        create_date,
+        MIAOSHU,
+        ORDER_NUM
+        )
+        VALUES
+        (
+        #{community_id},
+        #{USER_ID},
+        #{community_type},
+        #{NUM},
+        #{create_date},
+        #{MIAOSHU},
+        #{ORDER_NUM}
+        )
+    </insert>
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        SELECT
+        ID,
+        community_id,
+        USER_ID,
+        community_type,
+        NUM,
+        create_date,
+        MIAOSHU,
+        ORDER_NUM
+        FROM
+        count_community
+        WHERE
+        USER_ID= #{pd.USER_ID}
+        ORDER BY create_date DESC,ID DESC
+    </select>
+
+
+    <select id="USERdatalistPage" parameterType="page" resultType="pd">
+        SELECT
+        ID,
+        community_id,
+        USER_ID,
+        community_type,
+        NUM,
+        create_date,
+        MIAOSHU,
+        ORDER_NUM
+        FROM
+        count_community
+        WHERE
+        1=1
+        <if test="USER_ID != null">AND USER_ID= #{pd.USER_ID}</if>
+        AND
+        community_type='6'
+        ORDER BY create_date DESC,ID DESC
+    </select>
+    <delete id="delete" parameterType="pd">
+        DELETE
+        count_community
+        WHERE
+        USER_ID=#{USER_ID}
+    </delete>
+
+    <select id="findById" parameterType="pd" resultType="pd">
+        SELECT
+        ID,
+        community_id,
+        USER_ID,
+        community_type,
+        NUM,
+        create_date,
+        MIAOSHU,
+        ORDER_NUM
+        FROM
+        count_community
+        WHERE
+        1=1
+        <if test="USER_ID != null">AND USER_ID= #{USER_ID}</if>
+        <if test="create_date != null">AND create_date= #{create_date}</if>
+        <if test="community_type != null">AND community_type= #{community_type}</if>
+        <if test="ID != null">AND ID= #{ID}</if>
+    </select>
+
+
+    <select id="UdatalistPage" parameterType="page" resultType="pd">
+        SELECT
+        c.ID,
+        c.community_id,
+        c.USER_ID,
+        c.community_type,
+        c.NUM,
+        c.create_date,
+        c.MIAOSHU,
+        c.ORDER_NUM,
+        s. NAME,
+        j.JIFENSHOP_NAME,
+        j.JIFENSHOP_IMG,
+        j.JIFEN_MIAOSHU
+        FROM
+        count_community c
+        LEFT JOIN sys_app_user s ON c.USER_ID = s.USER_ID
+        LEFT JOIN jifen_shop j ON c.community_id = j.JIFENSHOP_ID
+        WHERE
+        community_type='6'
+        <if test="pd.NAME !=null and pd.NAME!='' ">AND s.NAME LIKE CONCAT(CONCAT('%', #{pd.NAME}),'%')</if>
+        ORDER BY
+        c.create_date DESC,c.ID DESC
+    </select>
+
+    <update id="edit" parameterType="pd">
+      UPDATE
+      count_community
+      SET
+      ORDER_NUM=#{ORDER_NUM}
+      WHERE
+      ID=#{ID}
+    </update>
+</mapper>
